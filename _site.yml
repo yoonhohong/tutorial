@@ -1,0 +1,13 @@
+name: "Yoon H. Hong"
+output_dir: "."
+navbar:
+  title: "Tutorials"
+  left:
+    - text: "by Yoon H. Hong"
+      href: https://yoonhohong.github.io
+    - icon: fa-github fa-lg
+      href: http://github.com/yoonhohong/tutorials
+output:
+  html_document:
+    theme: paper
+    css: 'styles.css'

@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Yoon-Ho Hong, MD, PhD" />
+
+<meta name="date" content="2018-07-31" />
+
+<title>데이터 임상의학 w/ R (1)</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/united.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.0.13/css/fa-svg-with-js.css" rel="stylesheet" />
+<script src="site_libs/font-awesome-5.0.13/js/fontawesome-all.min.js"></script>
+<script src="site_libs/font-awesome-5.0.13/js/fa-v4-shims.min.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="styles.css" type="text/css" />
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Tutorials</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="https://yoonhohong.github.io">by Yoon H. Hong</a>
+</li>
+<li>
+  <a href="http://github.com/yoonhohong/tutorials">
+    <span class="fa fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">데이터 임상의학 w/ R (1)</h1>
+<h4 class="author"><em>Yoon-Ho Hong, MD, PhD</em></h4>
+<h4 class="date"><em>July 31, 2018</em></h4>
+
+</div>
+
+
+<div class="section level2">
+<h2>시작하기</h2>
+</div>
+<div id="-" class="section level2">
+<h2>데이터 의학이란?</h2>
+<p>의료정보학? 정보의학? 예방의학?</p>
+<blockquote>
+<p>데이터 의학 = 데이터 과학 + 의학(기초, 임상)</p>
+</blockquote>
+</div>
+<div id="--" class="section level2">
+<h2>데이터 과학은 무엇인가?</h2>
+<p>통계학? 컴퓨터 과학? 인공지능? 기계학습? 통계학습?</p>
+<div class="figure">
+<img src="https://github.com/yoonhohong/DataMedicine/blob/master/DataScienceVennDiagram.png?raw=true" alt="그림. 데이터 사이언스" />
+<p class="caption">그림. 데이터 사이언스</p>
+</div>
+<p><a href="https://www.shellypalmer.com/data-science/">Shelly Palmer</a></p>
+</div>
+<div id="--" class="section level2">
+<h2>데이터 과학자는 누구인가?</h2>
+<p>Data scientist…</p>
+<blockquote>
+<p>“Person who is better at statistics than any software engineer, and better at software engineering than any statistician”<br />
+- Josh Wills</p>
+</blockquote>
+<div class="figure">
+<img src="https://github.com/yoonhohong/DataMedicine/blob/master/modernDataScientist.png?raw=true" alt="그림. 데이터 과학자" />
+<p class="caption">그림. 데이터 과학자</p>
+</div>
+<p>데이터 의학자? 데이터 의사?</p>
+</div>
+<div id="-----" class="section level2">
+<h2>데이터 과학(의학?)으로 무엇을 할 수 있는가?</h2>
+<div id="-1.-gapminder" class="section level3">
+<h3>사례 1. <a href="https://www.gapminder.org/">Gapminder</a></h3>
+<p>지하철에서 경고 문구 Mind the gap!<br />
+세계관과 사실/데이터 간의 간극(gap)을 조심하고 좁히자는 이상을 반영(fact-based worldview).</p>
+<p><a href="https://www.youtube.com/watch?v=hVimVzgtD6w">The best stats you’ve ever seen</a> by Hans Rosling</p>
+<p><a href="http://forms.gapminder.org/s3/test-2018">Take the Gapminder Test 2018</a></p>
+</div>
+<div id="-2.-pro-act" class="section level3">
+<h3>사례 2. <a href="https://nctu.partners.org/ProACT/Home/Index">PRO-ACT</a></h3>
+<p>Pooled Resource Open-Access ALS Clinical Trials Database</p>
+<p>$50,000 crowd-sourcing challenge <a href="https://nctu.partners.org/ProACT/Document/DisplayLatest/3">The DREAM Phil Bowen ALS Prediction Prize4Life Challenge</a></p>
+<blockquote>
+<p>The challenge used a subset of the PRO-ACT database consisting of 1822 patients. Solvers had to develop an algorithm that used the first three months (time 0–3 months from trial onset) of clinical trial data available for a given patient to predict the slope of change in that patient’s disease over months 3–12 (based on a widely used functional rating scale: the ALSFRS. Measures of prediction success were RMSD and Pearson correlation.</p>
+</blockquote>
+<div class="figure">
+<img src="https://github.com/yoonhohong/DataMedicine/blob/master/DreamChallengeDiagram.png?raw=true" alt="그림. Challenge outline" />
+<p class="caption">그림. Challenge outline</p>
+</div>
+<div class="figure">
+<img src="https://github.com/yoonhohong/DataMedicine/blob/master/DreamChallenge_Performance.png?raw=true" alt="그림. Performance of methods" />
+<p class="caption">그림. Performance of methods</p>
+</div>
+<p>The frequency with which methods were ranked first is estimated across different bootstrap samples of patients. Teams 1 and 2 were ranked first in 71% and 26%, respectively, of the bootstrap samples (percentage rounded to the nearest integer)</p>
+<p>You can read more about the specific challenge results in a publication summarizing the challenge: <a href="https://www.nature.com/articles/nbt.3051">Küffner R, Zach N et al. Crowdsourced analysis of clinical trial data to predict amyotrophic lateral sclerosis progression. Nat Biotechnol. 2015 33:51-7</a></p>
+<p>You can also read more about Dr. Hothorn’s approach in: <a href="http://www.zora.uzh.ch/id/eprint/98322/1/RF4Life.pdf">Hothorn T, Jung HH. RandomForest4Life: a Random Forest for predicting ALS disease progression. Amyotroph Lateral Scler Frontotemporal Degener. 2014 15(5-6):444-52</a></p>
+</div>
+</div>
+<div id="--workflow" class="section level2">
+<h2>데이터 과학의 workflow</h2>
+<blockquote>
+<p>문제 정의</p>
+</blockquote>
+<p>문제가 무엇인가? (ex. 경제와 의료 수준의 상관 관계)<br />
+중요한 문제인가? 왜 그러한가?<br />
+통계적, 수리적 언어로 번역될 수 있는가?</p>
+<blockquote>
+<p>데이터 정의</p>
+</blockquote>
+<p>어떤 변수(variable, feature)들이 필요한가? (ex. GDP, 총인구수, 평균기대수명)<br />
+각 변수들은 어떤 타입(type)인가? (ex. 수치, 범주)</p>
+<blockquote>
+<p>실험 계획 및 자료 수집</p>
+</blockquote>
+<p>자료를 어떻게 수집할 것인가? (ex. 통제 실험, 공공데이터)<br />
+통제 실험(randomized controlled experiment)에서 각 실험,대조군을 어떻게 정의할 것인가? (수면제 A vs. 위약, 수면제 A vs. B)<br />
+자료의 크기는 어떻게 정할 것인가?<br />
+수집된 자료는 문제에 대한 답을 얻는데 적절한가?</p>
+<blockquote>
+<p>데이터 가공</p>
+</blockquote>
+<p>데이터 분석을 위해 적절한 표 형태로 가공하는 작업.<br />
+표 형태의 데이터에서 각 열은 변수를 나타내고, 각 행은 관측치를 나타냄.</p>
+<blockquote>
+<p>탐색적 분석</p>
+</blockquote>
+<p>기술 통계(descriptive statistics, 평균, 분산, 범위)와 데이터 시각화를 통해 이상치(outlier), 분포, 패턴(상관관계) 을 점검하는 단계.</p>
+<blockquote>
+<p>모형화</p>
+</blockquote>
+<p>어떤 모델을 적용할 것인가?<br />
+모델의 모수 추정, 가설 검정 등.</p>
+<blockquote>
+<p>보고서 작성</p>
+</blockquote>
+<p>시각화, 결과의 해석, 함의(implications)<br />
+재현가능한 연구(reproducible research) ex. R markdown.</p>
+<div class="figure">
+<img src="https://github.com/yoonhohong/DataMedicine/blob/master/Data_science_workflow.png?raw=true" alt="그림. 데이터 분석의 이상적 과정(좌)과 현실(우)" />
+<p class="caption">그림. 데이터 분석의 이상적 과정(좌)과 현실(우)</p>
+</div>
+<p>직선적인 과정이 아니라, 매우 반복적이고 순환적인 과정으로 이해해야 함.</p>
+</div>
+<div id="group-work" class="section level2">
+<h2>Group work</h2>
+<p>Gapminder 웹사이트에서 각 대륙 각 나라의 의료 및 건강 수준이 경제, 교육, 환경 등 다른 요인과 어떤 관계를 이루며 변화해왔는지 탐색해보고, 한 가지 주제 (흥미로운 상관 관계, 현상, 통계치 등)를 정해서 발표해봅시다.</p>
+</div>
+<div id="individual-work" class="section level2">
+<h2>Individual work</h2>
+<p>성찰일지 (slack / #reflection channel 에 작성)</p>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

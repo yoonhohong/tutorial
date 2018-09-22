@@ -1,0 +1,5 @@
+---
+title: "Tutorials"
+---
+
+- [Lecture 1](DataMedicine_Lecture1.html)
