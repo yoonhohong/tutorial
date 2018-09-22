@@ -1,12 +1,12 @@
-name: "Yoon H. Hong"
+name: "Emily C. Zabor"
 output_dir: "."
 navbar:
   title: "Tutorials"
   left:
-    - text: "by Yoon H. Hong"
-      href: http://yoonhohong.github.io
+    - text: "by Emily C. Zabor"
+      href: http://www.emilyzabor.com
     - icon: fa-github fa-lg
-      href: http://github.com/yoonhohong/tutorials
+      href: http://github.com/zabore/tutorials
 output:
   html_document:
     theme: paper
