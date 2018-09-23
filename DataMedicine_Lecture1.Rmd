@@ -20,8 +20,6 @@ output:
 
 통계학? 컴퓨터 과학? 인공지능? 기계학습? 통계학습?  
 
-![그림. 데이터 사이언스](https://github.com/yoonhohong/DataMedicine/blob/master/DataScienceVennDiagram.png?raw=true)   
-
 <img src="img/DataScienceVennDiagram.png" style="border: #A9A9A9 1px solid; width:75%">
 
 [Shelly Palmer](https://www.shellypalmer.com/data-science/)   
@@ -33,7 +31,7 @@ Data scientist...
 > "Person who is better at statistics than any software engineer, and better at software engineering than any statistician"   
 - Josh Wills   
 
-![그림. 데이터 과학자](https://github.com/yoonhohong/DataMedicine/blob/master/modernDataScientist.png?raw=true)   
+<img src="img/modernDataScientist.png" style="border: #A9A9A9 1px solid; width:75%">
 
 데이터 의학자? 데이터 의사?   
 
@@ -56,9 +54,9 @@ $50,000 crowd-sourcing challenge [The DREAM Phil Bowen ALS Prediction Prize4Life
 
 > The challenge used a subset of the PRO-ACT database consisting of 1822 patients. Solvers had to develop an algorithm that used the first three months (time 0–3 months from trial onset) of clinical trial data available for a given patient to predict the slope of change in that patient’s disease over months 3–12 (based on a widely used functional rating scale: the ALSFRS. Measures of prediction success were RMSD and Pearson correlation. 
 
-![그림. Challenge outline](https://github.com/yoonhohong/DataMedicine/blob/master/DreamChallengeDiagram.png?raw=true)
+<img src="img/DreamChallengeDiagram.png" style="border: #A9A9A9 1px solid; width:75%">
 
-![그림. Performance of methods](https://github.com/yoonhohong/DataMedicine/blob/master/DreamChallenge_Performance.png?raw=true)   
+<img src="img/DreamChallenge_Performance.png" style="border: #A9A9A9 1px solid; width:75%">
 
 The frequency with which methods were ranked first
 is estimated across different bootstrap samples
@@ -108,8 +106,7 @@ You can also read more about Dr. Hothorn’s approach in: [Hothorn T, Jung HH. R
 시각화, 결과의 해석, 함의(implications)  
 재현가능한 연구(reproducible research) ex. R markdown. 
 
-
-![그림. 데이터 분석의 이상적 과정(좌)과 현실(우)](https://github.com/yoonhohong/DataMedicine/blob/master/Data_science_workflow.png?raw=true)   
+<img src="img/Data_science_workflow.png" style="border: #A9A9A9 1px solid; width:75%">
 
 직선적인 과정이 아니라, 매우 반복적이고 순환적인 과정으로 이해해야 함. 
 
