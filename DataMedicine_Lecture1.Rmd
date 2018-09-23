@@ -6,11 +6,6 @@ output:
   html_document:
     toc: yes
     toc_float: true
-    number_sections: no
-    theme: united
-    hightlight: tango
-editor_options:
-  chunk_output_type: inline
 ---
 
 ## 시작하기
@@ -26,6 +21,8 @@ editor_options:
 통계학? 컴퓨터 과학? 인공지능? 기계학습? 통계학습?  
 
 ![그림. 데이터 사이언스](https://github.com/yoonhohong/DataMedicine/blob/master/DataScienceVennDiagram.png?raw=true)   
+
+<img src="img/DataScienceVennDiagram.png" style="border: #A9A9A9 1px solid; width:75%">
 
 [Shelly Palmer](https://www.shellypalmer.com/data-science/)   
 
