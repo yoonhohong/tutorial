@@ -17,14 +17,14 @@ title: "Tutorial"
 (Gareth James, Daniel Witten, Trevor Hastie, Robert Tibshirani, 2013)](https://www-bcf.usc.edu/~gareth/ISL/)
 
 **강의록**    
-- [Lecture 1](DataMedicine_Lecture1.html)  
-- [Lecture 2](DataMedicine_Lecture2.html)  
-- [Lecture 3](DataMedicine_Lecture3.html)  
-- [Lecture 4](DataMedicine_Lecture4.html)  
-- [Lecture 5](DataMedicine_Lecture5.html)  
-- [Lecture 6](DataMedicine_Lecture6.html)  
-- [Lecture 7](DataMedicine_Lecture7.html)  
-- [Lecture 8](DataMedicine_Lecture8.html)  
+- [Lecture 1](DataMedicine_Lecture1.html) 데이터 의학이란?  
+- [Lecture 2](DataMedicine_Lecture2.html) R 프로그래밍의 기초   
+- [Lecture 3](DataMedicine_Lecture3.html) 탐색적 데이터 분석: 데이터 가공과 시각화   
+- [Lecture 4](DataMedicine_Lecture4.html) 기계학습의 개요 및 기초      
+- [Lecture 5](DataMedicine_Lecture5.html) 통계적 모델링: 회귀와 분류  
+- [Lecture 6](DataMedicine_Lecture6.html) Resampling: Cross validation & Bootstrap  
+- [Lecture 7](DataMedicine_Lecture7.html) Decision tree & bagging/random forest/ boosting  
+- [Lecture 8](DataMedicine_Lecture8.html) 정규화(Ridge/Lasso)와 차원축소, 비지도 기계학습(clustering)   
 
 
 
