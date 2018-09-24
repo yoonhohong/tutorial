@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Yoon-Ho Hong, MD, PhD" />
+
+
+<title>데이터 임상의학 w/ R (7)</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/paper.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.0.13/css/fa-svg-with-js.css" rel="stylesheet" />
+<script src="site_libs/font-awesome-5.0.13/js/fontawesome-all.min.js"></script>
+<script src="site_libs/font-awesome-5.0.13/js/fa-v4-shims.min.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="styles.css" type="text/css" />
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 64px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 69px;
+  margin-top: -69px;
+}
+
+.section h2 {
+  padding-top: 69px;
+  margin-top: -69px;
+}
+.section h3 {
+  padding-top: 69px;
+  margin-top: -69px;
+}
+.section h4 {
+  padding-top: 69px;
+  margin-top: -69px;
+}
+.section h5 {
+  padding-top: 69px;
+  margin-top: -69px;
+}
+.section h6 {
+  padding-top: 69px;
+  margin-top: -69px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Tutorial</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="https://yoonhohong.github.io">by Yoon H. Hong</a>
+</li>
+<li>
+  <a href="http://www.github.com/yoonhohong/tutorial">
+    <span class="fa fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">데이터 임상의학 w/ R (7)</h1>
+<h4 class="author"><em>Yoon-Ho Hong, MD, PhD</em></h4>
+<h4 class="date"><em>Sept 11, 2018</em></h4>
+
+</div>
+
+
+<div id="decision-trees-regression" class="section level1">
+<h1>Decision trees: regression</h1>
+<p>설명변수 공간을 다수의 영역으로 분할하는 방법<br />
+예측: 해당 관측치가 속하는 영역의 훈련 관측치들의 평균 (회귀) 또는 최빈값 (분류)을 사용한다.</p>
+<p><img src="img/tree1.png" style="border: #A9A9A9 1px solid; width:75%"></p>
+<p><img src="img/treeRegression.png" style="border: #A9A9A9 1px solid; width:75%"></p>
+<p><em>advantage</em><br />
+- glass-box model<br />
+- intuitive</p>
+<p>아래 식으로 주어진 RSS 를 최소로 하는 셜명변수 공간을 찾는 것이 목적</p>
+<p><span class="math display">\[\sum_{j=1}^J\sum_{i\in R_j}(y_i - \hat{y}_{R_j})^2\]</span></p>
+<p><span class="math inline">\(R_j\)</span>: jth 설명변수 공간<br />
+<span class="math inline">\(\hat{y}_{R_j}\)</span>: jth 설명변수 공간에 속한 훈련 관측치 반응변수들의 평균값</p>
+<p>그러나…. 설명변수 공간을 J개로 분할하는 모든 가능한 경우를 고려하는 것은 계산상 실현 불가능하다…</p>
+<p><strong>recursive binary splitting</strong><br />
+- top-down<br />
+- greedy</p>
+<p><img src="img/recursiveBinarySpliting.png" style="border: #A9A9A9 1px solid; width:75%"></p>
+<p><em>drawbacks</em><br />
+- greedy (short-sighted)<br />
+- prone to overfitting</p>
+<p><em>What “greedy” means?</em><br />
+Let’s say currency including 25c, 15c and 1c coins,<br />
+and develop an algorithm to make changes for 30c.<br />
+final goal: using the smallest number of coins possible<br />
+greedy algorithm: use the largest unit of coin<br />
+greedy algorithm solution: 25 + 1 + 1 + 1 + 1 + 1 = 30c, with 6 coins<br />
+optimal solution: 15 + 15 = 30c, with 2 coins</p>
+<p><strong>strategies to overcome drawbacks</strong><br />
+<em>pruning</em><br />
+: 트리빌딩 초기 쓸모 없어 보이는 분할 이후에 아주 좋은 분할이 올 수 있다. 따라서, 더 나은 전략은 아주 큰 트리를 만든 다음에 그것을 다시 prune하여 subtree 를 얻는 것이다.<br />
+그러나….<br />
+모든 가능한 subtree 에 대해 교차 검증(혹은 검증셋 기법)을 이용하여 검정오차율를 추청하는 것은 너무 번거롭다. 대신, 우리는 고려할 작은 subtree 집합을 선택한다.</p>
+<p><strong>cost complexity pruning (weakest link pruning)</strong><br />
+모든 가능한 subtree 를 고려하는 대신에 tuning parameter <span class="math inline">\(\alpha\)</span> (&gt;=0) 에 의해 색인된 일련의 tree 들을 고려.</p>
+<p>각 <span class="math inline">\(\alpha\)</span> 값에 대해, 아래 식이 최소가 되는 subtree T 를 구할 수 있다.</p>
+<p><span class="math display">\[\sum_{j=1}^J\sum_{i\in R_j}(y_i - \hat{y}_{R_j})^2 + \alpha T\]</span></p>
+<p>T: subtree T 의 number of terminal nodes<br />
+<span class="math inline">\(\alpha\)</span>: tuning parameter</p>
+<p><span class="math inline">\(\alpha = 0\)</span>일 때, subtree T = <span class="math inline">\(T_0\)</span><br />
+<span class="math inline">\(\alpha\)</span>가 증가함에 따라 많은 터미널 노드가 있는 트리의 경우 <span class="math inline">\(\alpha T\)</span> 항이 크게 증가할 것이므로 트리가 작을 때 위 식의 값이 최소로 되는 경향이 있다.<br />
+즉, tuning parameter <span class="math inline">\(\alpha\)</span> 는 서브트리의 복잡도와 훈련자료에 대한 적합 사이의 trade-off 를 제어한다.</p>
+<p>k-fold CV 을 이용해서 검정오차를 <span class="math inline">\(\alpha\)</span>의 함수로 평가하고, 평균 검정오차를 최소로 하는 <span class="math inline">\(\alpha\)</span>를 선택.</p>
+<p><img src="img/MSE_pruning.png" style="border: #A9A9A9 1px solid; width:75%"></p>
+<p>Linear model vs. Tree-based model</p>
+<p><img src="img/linearVsTree.png" style="border: #A9A9A9 1px solid; width:75%"></p>
+<p>load tree package</p>
+<pre class="r"><code>library(tree)</code></pre>
+<pre><code>## Warning: package &#39;tree&#39; was built under R version 3.4.4</code></pre>
+<p>load MASS package to use Boston dataset<br />
+make train dataset<br />
+fit decision tree model to train dataset</p>
+<pre class="r"><code>library(MASS)
+set.seed(1)
+train = sample(1:nrow(Boston), nrow(Boston)/2)
+tree.boston = tree(medv~., Boston, subset = train)
+summary(tree.boston) # deviance: residual sum of square  </code></pre>
+<pre><code>## 
+## Regression tree:
+## tree(formula = medv ~ ., data = Boston, subset = train)
+## Variables actually used in tree construction:
+## [1] &quot;lstat&quot; &quot;rm&quot;    &quot;dis&quot;  
+## Number of terminal nodes:  8 
+## Residual mean deviance:  12.65 = 3099 / 245 
+## Distribution of residuals:
+##      Min.   1st Qu.    Median      Mean   3rd Qu.      Max. 
+## -14.10000  -2.04200  -0.05357   0.00000   1.96000  12.60000</code></pre>
+<p>plot decision tree</p>
+<pre class="r"><code>plot(tree.boston)
+text(tree.boston)</code></pre>
+<p><img src="DataMedicine_Lecture7_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>what are the stopping criteria?</p>
+<pre class="r"><code>?tree</code></pre>
+<pre><code>## Help on topic &#39;tree&#39; was found in the following packages:
+## 
+##   Package               Library
+##   cli                   /Library/Frameworks/R.framework/Versions/3.4/Resources/library
+##   tree                  /Library/Frameworks/R.framework/Versions/3.4/Resources/library
+## 
+## 
+## Using the first match ...</code></pre>
+<pre class="r"><code>?tree.control</code></pre>
+<p>pruning and cross-validation to set the optimal size of tree</p>
+<pre class="r"><code>cv.boston = cv.tree(tree.boston) # default K=10, cost complexity pruning
+plot(cv.boston$size, cv.boston$dev, type = &quot;b&quot;)</code></pre>
+<p><img src="DataMedicine_Lecture7_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>if you want a specific size of tree by pruning</p>
+<pre class="r"><code>prune.boston = prune.tree(tree.boston, best = 5)
+plot(prune.boston)
+text(prune.boston)</code></pre>
+<p><img src="DataMedicine_Lecture7_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<pre class="r"><code>predicted = predict(tree.boston, newdata = Boston[-train,])
+observed = Boston[-train,]$medv
+plot(predicted, observed)
+abline(0,1)</code></pre>
+<p><img src="DataMedicine_Lecture7_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<pre class="r"><code>mean((predicted-observed)^2)</code></pre>
+<pre><code>## [1] 25.04559</code></pre>
+</div>
+<div id="decision-trees-classification" class="section level1">
+<h1>Decision trees: classification</h1>
+<p><span class="math inline">\(\hat{p}_{mk}\)</span>: m번째 설명변수 공간 내 k class에 속하는 훈련 관측치들의 비율<br />
+…이라고 할 때, 아래 분류오류율을 최소로 하는 것이 목적이다.</p>
+<p><span class="math display">\[E = 1 - \max(\hat{p}_{mk})\]</span></p>
+<p>binary split 과정에서 분류오류율을 사용할 수 있지만…<br />
+실제로는 node purity 에 더 민감한 아래 두 가지 척도를 주로 사용한다.</p>
+<ul>
+<li>지니 지수(Gini index)<br />
+</li>
+<li>교차엔트로피(cross-entropy)</li>
+</ul>
+<p>Gini index: node purity <span class="math display">\[G = \sum_{k=1}^{K} \hat{p}_{mk}(1-\hat{p}_{mk})\]</span></p>
+<p>Cross-entropy<br />
+<span class="math display">\[D = - \sum_{k=1}^{K} \hat{p}_{mk}log(\hat{p}_{mk})\]</span></p>
+<pre class="r"><code>library(ISLR)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;ISLR&#39;</code></pre>
+<pre><code>## The following object is masked _by_ &#39;.GlobalEnv&#39;:
+## 
+##     Auto</code></pre>
+<pre class="r"><code>attach(Carseats)
+High = ifelse(Sales&lt;=8, &quot;No&quot;, &quot;Yes&quot;)
+Carseats = data.frame(Carseats, High)</code></pre>
+<pre class="r"><code>set.seed(1)
+train = sample(1:nrow(Carseats), 200)
+test = Carseats[-train,]
+tree.carseats = tree(High~.-Sales, data = Carseats, subset = train)
+summary(tree.carseats)</code></pre>
+<pre><code>## 
+## Classification tree:
+## tree(formula = High ~ . - Sales, data = Carseats, subset = train)
+## Variables actually used in tree construction:
+## [1] &quot;ShelveLoc&quot;   &quot;Price&quot;       &quot;Age&quot;         &quot;CompPrice&quot;   &quot;Income&quot;     
+## [6] &quot;Advertising&quot; &quot;Education&quot;   &quot;US&quot;          &quot;Population&quot; 
+## Number of terminal nodes:  20 
+## Residual mean deviance:  0.4777 = 85.98 / 180 
+## Misclassification error rate: 0.09 = 18 / 200</code></pre>
+<pre class="r"><code>plot(tree.carseats)
+text(tree.carseats, pretty = 0)</code></pre>
+<p><img src="DataMedicine_Lecture7_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<pre class="r"><code>tree.carseats</code></pre>
+<pre><code>## node), split, n, deviance, yval, (yprob)
+##       * denotes terminal node
+## 
+##   1) root 200 269.200 No ( 0.60000 0.40000 )  
+##     2) ShelveLoc: Bad,Medium 164 206.400 No ( 0.67683 0.32317 )  
+##       4) Price &lt; 104.5 65  89.350 Yes ( 0.44615 0.55385 )  
+##         8) Age &lt; 64.5 40  47.050 Yes ( 0.27500 0.72500 )  
+##          16) CompPrice &lt; 118.5 23  31.490 Yes ( 0.43478 0.56522 )  
+##            32) Income &lt; 100.5 18  24.730 No ( 0.55556 0.44444 )  
+##              64) ShelveLoc: Bad 5   0.000 No ( 1.00000 0.00000 ) *
+##              65) ShelveLoc: Medium 13  17.320 Yes ( 0.38462 0.61538 )  
+##               130) Price &lt; 91.5 6   0.000 Yes ( 0.00000 1.00000 ) *
+##               131) Price &gt; 91.5 7   8.376 No ( 0.71429 0.28571 ) *
+##            33) Income &gt; 100.5 5   0.000 Yes ( 0.00000 1.00000 ) *
+##          17) CompPrice &gt; 118.5 17   7.606 Yes ( 0.05882 0.94118 ) *
+##         9) Age &gt; 64.5 25  29.650 No ( 0.72000 0.28000 )  
+##          18) Price &lt; 80 5   5.004 Yes ( 0.20000 0.80000 ) *
+##          19) Price &gt; 80 20  16.910 No ( 0.85000 0.15000 )  
+##            38) Income &lt; 67.5 9  11.460 No ( 0.66667 0.33333 ) *
+##            39) Income &gt; 67.5 11   0.000 No ( 1.00000 0.00000 ) *
+##       5) Price &gt; 104.5 99  90.800 No ( 0.82828 0.17172 )  
+##        10) Advertising &lt; 6.5 57  23.510 No ( 0.94737 0.05263 )  
+##          20) Age &lt; 50 21  17.220 No ( 0.85714 0.14286 )  
+##            40) Education &lt; 13.5 11  12.890 No ( 0.72727 0.27273 ) *
+##            41) Education &gt; 13.5 10   0.000 No ( 1.00000 0.00000 ) *
+##          21) Age &gt; 50 36   0.000 No ( 1.00000 0.00000 ) *
+##        11) Advertising &gt; 6.5 42  53.470 No ( 0.66667 0.33333 )  
+##          22) CompPrice &lt; 124.5 14   7.205 No ( 0.92857 0.07143 ) *
+##          23) CompPrice &gt; 124.5 28  38.670 No ( 0.53571 0.46429 )  
+##            46) CompPrice &lt; 128.5 6   0.000 Yes ( 0.00000 1.00000 ) *
+##            47) CompPrice &gt; 128.5 22  27.520 No ( 0.68182 0.31818 )  
+##              94) CompPrice &lt; 137.5 11   6.702 No ( 0.90909 0.09091 ) *
+##              95) CompPrice &gt; 137.5 11  15.160 Yes ( 0.45455 0.54545 )  
+##               190) Income &lt; 62 5   5.004 No ( 0.80000 0.20000 ) *
+##               191) Income &gt; 62 6   5.407 Yes ( 0.16667 0.83333 ) *
+##     3) ShelveLoc: Good 36  40.490 Yes ( 0.25000 0.75000 )  
+##       6) Price &lt; 121 15   0.000 Yes ( 0.00000 1.00000 ) *
+##       7) Price &gt; 121 21  28.680 Yes ( 0.42857 0.57143 )  
+##        14) US: No 7   5.742 No ( 0.85714 0.14286 ) *
+##        15) US: Yes 14  14.550 Yes ( 0.21429 0.78571 )  
+##          30) Population &lt; 299 8  10.590 Yes ( 0.37500 0.62500 ) *
+##          31) Population &gt; 299 6   0.000 Yes ( 0.00000 1.00000 ) *</code></pre>
+<pre class="r"><code>pred.class = predict(tree.carseats, newdata = test, type = &quot;class&quot;)
+table(pred.class, test$High)</code></pre>
+<pre><code>##           
+## pred.class No Yes
+##        No  98  28
+##        Yes 18  56</code></pre>
+<pre class="r"><code>mean(pred.class == test$High)</code></pre>
+<pre><code>## [1] 0.77</code></pre>
+<p>cost complexity pruning and 10-fold CV</p>
+<pre class="r"><code>set.seed(2)
+cv.carseats = cv.tree(tree.carseats, FUN = prune.misclass)</code></pre>
+<pre class="r"><code>plot(cv.carseats$size, cv.carseats$dev, type = &quot;b&quot;)</code></pre>
+<p><img src="DataMedicine_Lecture7_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<pre class="r"><code>prune.carseats = prune.misclass(tree.carseats, best = 5)
+plot(prune.carseats)
+text(prune.carseats, pretty = 0)</code></pre>
+<p><img src="DataMedicine_Lecture7_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<pre class="r"><code>tree.pred = predict(prune.carseats, test, type = &quot;class&quot;)
+table(tree.pred, test$High)</code></pre>
+<pre><code>##          
+## tree.pred No Yes
+##       No  92  28
+##       Yes 24  56</code></pre>
+<pre class="r"><code>mean(tree.pred == test$High)</code></pre>
+<pre><code>## [1] 0.74</code></pre>
+</div>
+<div id="bagging" class="section level1">
+<h1>Bagging</h1>
+<p>aka bootstrap aggregation<br />
+기계학습모델의 분산을 줄여 예측 정확도를 증가시키기 위한 범용 절차 (general-purpose procedure)</p>
+<p><span class="math display">\[\hat{f}_{bag}(x) = \frac{1}{B}\sum_{b=1}^{B}\hat{f}_b(x)\]</span> average for regression<br />
+majority rule for classification</p>
+<p><img src="img/bagging.png" style="border: #A9A9A9 1px solid; width:75%"></p>
+<p>배깅에 사용되지 않은 관측치들을 Out-of-bag (OOB) 관측치라고 함.<br />
+<strong>OOB 오차</strong><br />
+: i번째 관측치에 대해 그 관측치가 OOB 이었던 각각의 트리를 이용하여 반응변수 값을 예측할 수 있다.<br />
+: 교차검증 또는 검증셋 기법을 수행하기 힘든 규모가 큰 데이터셋에 대해 특히 편리함.</p>
+<p><strong>Variable importance</strong> 주어진 설명변수에 대한 분할로 RSS (or Gini index) 가 감소되는 총량을 모든 B개 트리에 대해 평균한 값이 크면 해당 설명변수가 중요하다고 할 수 있다.</p>
+</div>
+<div id="random-forest" class="section level1">
+<h1>Random Forest</h1>
+<p>배깅에서와 마찬가지로 bootstrap 에 의해 다수의 트리를 만든다. 그러나, 배깅과 달리 트리 내에서 split 이 고려될 때마다 p개 설명변수들의 전체 집합에서 랜덤하게 m개 설명변수가 선택된다. rule of thumb, <span class="math inline">\(m = \sqrt{p}\)</span></p>
+<p>결국, 트리들 간의 상관성을 줄여, 분산을 줄이는 방법임.</p>
+<p><img src="img/randomForest.png" style="border: #A9A9A9 1px solid; width:75%"></p>
+<pre class="r"><code>library(randomForest)</code></pre>
+<pre><code>## randomForest 4.6-12</code></pre>
+<pre><code>## Type rfNews() to see new features/changes/bug fixes.</code></pre>
+<pre><code>## 
+## Attaching package: &#39;randomForest&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:ggplot2&#39;:
+## 
+##     margin</code></pre>
+<pre><code>## The following object is masked from &#39;package:dplyr&#39;:
+## 
+##     combine</code></pre>
+<pre class="r"><code>set.seed(1)
+bag.boston = randomForest(medv ~., data=Boston, subset=train, ntree=500, mtry=13, importance=T)
+bag.boston</code></pre>
+<pre><code>## 
+## Call:
+##  randomForest(formula = medv ~ ., data = Boston, ntree = 500,      mtry = 13, importance = T, subset = train) 
+##                Type of random forest: regression
+##                      Number of trees: 500
+## No. of variables tried at each split: 13
+## 
+##           Mean of squared residuals: 17.8728
+##                     % Var explained: 79.63</code></pre>
+<p>test set 에서의 성능</p>
+<pre class="r"><code>predicted.bag = predict(bag.boston, newdata = Boston[-train,])
+plot(predicted.bag, Boston[-train,]$medv)
+abline(0,1)</code></pre>
+<p><img src="DataMedicine_Lecture7_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<pre class="r"><code>mean((predicted.bag - Boston[-train,]$medv)^2)</code></pre>
+<pre><code>## [1] 14.35499</code></pre>
+<pre class="r"><code>rf.boston = randomForest(medv ~., data=Boston, subset=train, ntree=500, mtry=6, importance=T)
+rf.boston</code></pre>
+<pre><code>## 
+## Call:
+##  randomForest(formula = medv ~ ., data = Boston, ntree = 500,      mtry = 6, importance = T, subset = train) 
+##                Type of random forest: regression
+##                      Number of trees: 500
+## No. of variables tried at each split: 6
+## 
+##           Mean of squared residuals: 17.37437
+##                     % Var explained: 80.2</code></pre>
+<pre class="r"><code>predicted.rf = predict(rf.boston, newdata = Boston[-train,])
+plot(predicted.rf, Boston[-train,]$medv)
+abline(0,1)</code></pre>
+<p><img src="DataMedicine_Lecture7_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
+<pre class="r"><code>mean((predicted.rf - Boston[-train,]$medv)^2)</code></pre>
+<pre><code>## [1] 15.56216</code></pre>
+<pre class="r"><code>importance(rf.boston)</code></pre>
+<pre><code>##           %IncMSE IncNodePurity
+## crim     8.928240     790.80812
+## zn       2.797142     140.71580
+## indus    8.536217     902.03854
+## chas     1.602182      76.16140
+## nox      6.526497     437.17242
+## rm      35.013173    6656.58973
+## age     10.310380     700.04369
+## dis     11.530780    1030.95370
+## rad      3.913138     130.41950
+## tax      8.092922     420.13113
+## ptratio 11.669960     874.09895
+## black    5.427635     233.42339
+## lstat   26.870479    4807.13895
+## age_gr   4.573095      63.03782</code></pre>
+<p>%IncMSE: 주어진 변수가 모델에서 제외될 때 OOB 에서 예측 정확도의 평균 감소량<br />
+IncNodePurity: 주어진 변수에 대한 분할로 인한 노드 purity 의 증가량(RSS의 감소량, deviance의 감소량)을 모든 트리에 대해 평균한 것</p>
+<pre class="r"><code>varImpPlot(rf.boston)</code></pre>
+<p><img src="DataMedicine_Lecture7_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
+</div>
+<div id="boosting" class="section level1">
+<h1>Boosting</h1>
+<p>여러개의 decision tree 를 만들어 결합하는데, 배깅과 달리 bootstrap 샘플링을 하지 않고, 대신…<br />
+모든 훈련셋 자료를 이용하여 순차적으로… 천천히… 학습한다.</p>
+<p>Regression decision tree boosting</p>
+<ol style="list-style-type: decimal">
+<li><p><span class="math inline">\(\hat{f}(x)\)</span> = 0 이라 하고, 훈련셋의 모든 i에 대해 <span class="math inline">\(r_i = y_i\)</span> 로 설정한다. (r: residuals)</p></li>
+<li><p>b = 1,2,…,B 에 대하여 다음을 반복한다.</p></li>
+</ol>
+<ul>
+<li><p>d개의 분할(d+1 터미널 노드)을 가진 트리 <span class="math inline">\(\hat{f}^b\)</span>를 훈련자료 (X,r)에 적합한다.</p></li>
+<li><p>새로운 트리의 수축 버전을 더하여 <span class="math inline">\(\hat{f}(x)\)</span> 를 업데이트한다.</p></li>
+</ul>
+<p><span class="math display">\[\hat{f}(x) \leftarrow \hat{f}(x) + \lambda \hat{f}^b(x)\]</span></p>
+<ul>
+<li>잔차들을 업데이트한다.</li>
+</ul>
+<p><span class="math display">\[r_i \leftarrow r_i - \lambda \hat{f}^b(x_i)\]</span></p>
+<ol start="3" style="list-style-type: decimal">
+<li>부스팅 모델을 출력한다.</li>
+</ol>
+<p><span class="math display">\[\hat{f}(x) = \sum_{b=1}^B \lambda \hat{f}^b(x)\]</span></p>
+<p>Boosting 의 tuning parameters<br />
+- B: number of trees - <span class="math inline">\(\lambda\)</span>: 수축 파라미터 (학습 속도를 제어)<br />
+- d: number of split in each tree (boosting 의 복잡도를 제어)</p>
+<p><img src="img/boosting.png" style="border: #A9A9A9 1px solid; width:75%"></p>
+<pre class="r"><code>library(gbm)</code></pre>
+<pre><code>## Loading required package: survival</code></pre>
+<pre><code>## 
+## Attaching package: &#39;survival&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:boot&#39;:
+## 
+##     aml</code></pre>
+<pre><code>## The following object is masked from &#39;package:caret&#39;:
+## 
+##     cluster</code></pre>
+<pre><code>## Loading required package: splines</code></pre>
+<pre><code>## Loading required package: parallel</code></pre>
+<pre><code>## Loaded gbm 2.1.3</code></pre>
+<pre class="r"><code>set.seed(1)
+boost.boston = gbm(medv~., data = Boston[train,], distribution = &quot;gaussian&quot;, n.trees = 5000, interaction.depth = 4) # shrinkage = 0.001</code></pre>
+<pre class="r"><code>summary(boost.boston)</code></pre>
+<p><img src="DataMedicine_Lecture7_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
+<pre><code>##             var     rel.inf
+## rm           rm 45.23474884
+## lstat     lstat 33.52900527
+## dis         dis  6.69068908
+## ptratio ptratio  3.12514893
+## crim       crim  2.66473787
+## tax         tax  2.29158273
+## nox         nox  1.88762798
+## age         age  1.59755003
+## black     black  1.08863987
+## indus     indus  0.82183606
+## chas       chas  0.50357916
+## rad         rad  0.47703757
+## zn           zn  0.06098551
+## age_gr   age_gr  0.02683109</code></pre>
+<p>partial dependence plot (PD plot)</p>
+<pre class="r"><code>par(mfrow=c(1,2))
+plot(boost.boston, i = &quot;rm&quot;)
+plot(boost.boston, i= &quot;lstat&quot;)</code></pre>
+<p><img src="DataMedicine_Lecture7_files/figure-html/unnamed-chunk-25-1.png" width="672" /></p>
+<pre class="r"><code>predicted.boost = predict(boost.boston, newdata = Boston[-train,], n.trees = 5000)
+mean((predicted.boost - Boston[-train,]$medv)^2)</code></pre>
+<pre><code>## [1] 15.32246</code></pre>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

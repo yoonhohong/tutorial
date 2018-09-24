@@ -1,5 +1,15 @@
 ---
-title: "Tutorials"
+title: "Tutorial"
 ---
 
+# Data Clinical Medicine  
+
 - [Lecture 1](DataMedicine_Lecture1.html)
+- [Lecture 2](DataMedicine_Lecture2.html)
+- [Lecture 3](DataMedicine_Lecture3.html)
+- [Lecture 4](DataMedicine_Lecture4.html)
+- [Lecture 5](DataMedicine_Lecture5.html)
+- [Lecture 6](DataMedicine_Lecture6.html)
+- [Lecture 7](DataMedicine_Lecture7.html)
+- [Lecture 8](DataMedicine_Lecture8.html)
+

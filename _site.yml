@@ -1,7 +1,7 @@
 name: "Yoon H. Hong"
 output_dir: "."
 navbar:
-  title: "Tutorials"
+  title: "Tutorial"
   left:
     - text: "by Yoon H. Hong"
       href: https://yoonhohong.github.io

@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Yoon-Ho Hong, MD, PhD" />
+
+
+<title>데이터 임상의학 w/ R (5)</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/paper.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.0.13/css/fa-svg-with-js.css" rel="stylesheet" />
+<script src="site_libs/font-awesome-5.0.13/js/fontawesome-all.min.js"></script>
+<script src="site_libs/font-awesome-5.0.13/js/fa-v4-shims.min.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="styles.css" type="text/css" />
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 64px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 69px;
+  margin-top: -69px;
+}
+
+.section h2 {
+  padding-top: 69px;
+  margin-top: -69px;
+}
+.section h3 {
+  padding-top: 69px;
+  margin-top: -69px;
+}
+.section h4 {
+  padding-top: 69px;
+  margin-top: -69px;
+}
+.section h5 {
+  padding-top: 69px;
+  margin-top: -69px;
+}
+.section h6 {
+  padding-top: 69px;
+  margin-top: -69px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Tutorial</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="https://yoonhohong.github.io">by Yoon H. Hong</a>
+</li>
+<li>
+  <a href="http://www.github.com/yoonhohong/tutorial">
+    <span class="fa fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">데이터 임상의학 w/ R (5)</h1>
+<h4 class="author"><em>Yoon-Ho Hong, MD, PhD</em></h4>
+<h4 class="date"><em>Aug 28, 2018</em></h4>
+
+</div>
+
+
+<div id="regression" class="section level1">
+<h1>회귀(regression)</h1>
+<p>fit a simple linear regression model, with medv as the response and lstat as the predictor.</p>
+<ul>
+<li>medv; median house value</li>
+<li>lstat; percent of households with low socioeconomic status <br></li>
+</ul>
+<div id="questions" class="section level2">
+<h2>Questions</h2>
+<div id="is-there-relationship-between-the-median-house-value-and-the-percent-of-households-with-low-socioeconomic-status" class="section level3">
+<h3>1. Is there relationship between the median house value and the percent of households with low socioeconomic status?</h3>
+<ol style="list-style-type: decimal">
+<li>fit a linear model</li>
+<li>test the hypothesis: <span class="math inline">\(\beta_x\)</span> = 0</li>
+</ol>
+<pre class="r"><code>library(MASS)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;MASS&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:dplyr&#39;:
+## 
+##     select</code></pre>
+<pre class="r"><code>attach(Boston)
+lm.fit = lm(medv ~ lstat)
+lm.fit</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = medv ~ lstat)
+## 
+## Coefficients:
+## (Intercept)        lstat  
+##       34.55        -0.95</code></pre>
+<pre class="r"><code>summary(lm.fit)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = medv ~ lstat)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -15.168  -3.990  -1.318   2.034  24.500 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) 34.55384    0.56263   61.41   &lt;2e-16 ***
+## lstat       -0.95005    0.03873  -24.53   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 6.216 on 504 degrees of freedom
+## Multiple R-squared:  0.5441, Adjusted R-squared:  0.5432 
+## F-statistic: 601.6 on 1 and 504 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p><br></p>
+<hr />
+<p><strong>Note</strong><br />
+1. How to calculate the estimates of parameters?<br />
+2. How large is the effect of percent of households with low socioeconomic status on median house value?</p>
+<hr />
+<pre class="r"><code>names(lm.fit)</code></pre>
+<pre><code>##  [1] &quot;coefficients&quot;  &quot;residuals&quot;     &quot;effects&quot;       &quot;rank&quot;         
+##  [5] &quot;fitted.values&quot; &quot;assign&quot;        &quot;qr&quot;            &quot;df.residual&quot;  
+##  [9] &quot;xlevels&quot;       &quot;call&quot;          &quot;terms&quot;         &quot;model&quot;</code></pre>
+<pre class="r"><code>coef(lm.fit)</code></pre>
+<pre><code>## (Intercept)       lstat 
+##  34.5538409  -0.9500494</code></pre>
+<pre class="r"><code>confint(lm.fit)</code></pre>
+<pre><code>##                 2.5 %     97.5 %
+## (Intercept) 33.448457 35.6592247
+## lstat       -1.026148 -0.8739505</code></pre>
+<p><br></p>
+</div>
+<div id="how-accurate-is-the-linear-model" class="section level3">
+<h3>2. How accurate is the linear model?</h3>
+<ol style="list-style-type: decimal">
+<li>R-squared (percentage of variability in the response that is explained by the predictors)</li>
+</ol>
+<p><span class="math display">\[R^2 = \frac{TSS - RSS}{TSS}\]</span></p>
+<ul>
+<li>TSS: Total sum of squares</li>
+<li>RSS: Residual sum of squares</li>
+</ul>
+<ol start="2" style="list-style-type: decimal">
+<li>Root mean squared error.</li>
+</ol>
+<pre class="r"><code>rmse = function(x){
+  sqrt(sum(residuals(x)^2)/df.residual(lm.fit))
+}</code></pre>
+<hr />
+<p><strong>Note</strong> <em>How different is the multiple R-squared from the Adjusted R-squared?</em><br />
+The adjusted R-squared is a modified version of R-squared that has been adjusted for the number of predictors in the model. The adjusted R-squared increases only if the new term improves the model more than would be expected by chance. It decreases when a predictor improves the model by less than expected by chance. It is always lower than the R-squared.</p>
+<hr />
+<p><br></p>
+</div>
+<div id="can-we-predict-future-house-values-how-accurately" class="section level3">
+<h3>3. Can we predict future house values? How accurately?</h3>
+<pre class="r"><code>predict(lm.fit, data.frame(lstat=(c(5,10,15))))</code></pre>
+<pre><code>##        1        2        3 
+## 29.80359 25.05335 20.30310</code></pre>
+<pre class="r"><code>predict(lm.fit, data.frame(lstat=(c(5,10,15))), interval =&quot;confidence&quot;)</code></pre>
+<pre><code>##        fit      lwr      upr
+## 1 29.80359 29.00741 30.59978
+## 2 25.05335 24.47413 25.63256
+## 3 20.30310 19.73159 20.87461</code></pre>
+<pre class="r"><code>predict(lm.fit, data.frame(lstat=(c(5,10,15))), interval =&quot;prediction&quot;)</code></pre>
+<pre><code>##        fit       lwr      upr
+## 1 29.80359 17.565675 42.04151
+## 2 25.05335 12.827626 37.27907
+## 3 20.30310  8.077742 32.52846</code></pre>
+<hr />
+<p><strong>Note</strong> <em>what’s difference between confidence interval vs. prediction interval?</em><br />
+the confidence interval tells you about the likely location of the true population parameter. the prediction interval tells you about the distribution of values, not the uncertainty in determining the population mean. Prediction intervals will always be wider than confidence intervals because they account for the uncertainty associated with ε, the irreducible error.</p>
+<hr />
+<p><br></p>
+</div>
+</div>
+<div id="potential-problems-in-linear-regression" class="section level2">
+<h2>Potential problems in linear regression</h2>
+<div id="non-linearity-of-the-data" class="section level3">
+<h3>1. Non-linearity of the data</h3>
+<p><br></p>
+<blockquote>
+<p>Is the relationship linear?</p>
+</blockquote>
+<pre class="r"><code>plot(lstat, medv)
+abline(lm.fit)</code></pre>
+<p><img src="DataMedicine_Lecture5_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<pre class="r"><code># diagnostic plots
+par(mfrow=c(2,2))
+plot(lm.fit)</code></pre>
+<p><img src="DataMedicine_Lecture5_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<pre class="r"><code># linearity
+# residual plots
+plot(predict(lm.fit), residuals(lm.fit))</code></pre>
+<p><img src="DataMedicine_Lecture5_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<pre class="r"><code>plot(predict(lm.fit), rstudent(lm.fit))
+abline(h=c(-3,3))</code></pre>
+<p><img src="DataMedicine_Lecture5_files/figure-html/unnamed-chunk-7-2.png" width="672" /></p>
+<hr />
+<p><strong>Note</strong><br />
+Residual plots are a useful graphical tool for identifying non-linearity. The standardized (or studentized) residuals, computed by dividing each residual by its estimated standard error. If the residual plot indicates that there are non-linear associations in the data, then a simple approach is to use non-linear transformations of the predictors, such as logX, √X, and X^2, in the regression model.</p>
+<hr />
+<blockquote>
+<p>How can we improve the model?</p>
+</blockquote>
+<ol style="list-style-type: decimal">
+<li>Polynomial<br />
+</li>
+<li>Multiple</li>
+</ol>
+<p>polynomial linear regression</p>
+<pre class="r"><code>lm.fit2 = lm(medv ~ lstat + I(lstat^2))
+summary(lm.fit2)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = medv ~ lstat + I(lstat^2))
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -15.2834  -3.8313  -0.5295   2.3095  25.4148 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) 42.862007   0.872084   49.15   &lt;2e-16 ***
+## lstat       -2.332821   0.123803  -18.84   &lt;2e-16 ***
+## I(lstat^2)   0.043547   0.003745   11.63   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 5.524 on 503 degrees of freedom
+## Multiple R-squared:  0.6407, Adjusted R-squared:  0.6393 
+## F-statistic: 448.5 on 2 and 503 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code>anova(lm.fit, lm.fit2)</code></pre>
+<pre><code>## Analysis of Variance Table
+## 
+## Model 1: medv ~ lstat
+## Model 2: medv ~ lstat + I(lstat^2)
+##   Res.Df   RSS Df Sum of Sq     F    Pr(&gt;F)    
+## 1    504 19472                                 
+## 2    503 15347  1    4125.1 135.2 &lt; 2.2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<pre class="r"><code># plot
+library(ggplot2)
+ggplot(Boston, aes(lstat, medv)) + geom_point() + 
+  stat_smooth(method = &quot;lm&quot;, col=&quot;blue&quot;) +
+  stat_smooth(method=&quot;lm&quot;, formula = y ~ poly(x, 2), col=&quot;red&quot;)</code></pre>
+<p><img src="DataMedicine_Lecture5_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>multipe linear regression</p>
+<pre class="r"><code>lm.fit3 = lm(medv ~ lstat + age, data = Boston)
+summary(lm.fit3)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = medv ~ lstat + age, data = Boston)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -15.981  -3.978  -1.283   1.968  23.158 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) 33.22276    0.73085  45.458  &lt; 2e-16 ***
+## lstat       -1.03207    0.04819 -21.416  &lt; 2e-16 ***
+## age          0.03454    0.01223   2.826  0.00491 ** 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 6.173 on 503 degrees of freedom
+## Multiple R-squared:  0.5513, Adjusted R-squared:  0.5495 
+## F-statistic:   309 on 2 and 503 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code>lm.fit4 = lm(medv ~ ., data = Boston)
+summary(lm.fit4)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = medv ~ ., data = Boston)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -15.595  -2.730  -0.518   1.777  26.199 
+## 
+## Coefficients:
+##               Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  3.646e+01  5.103e+00   7.144 3.28e-12 ***
+## crim        -1.080e-01  3.286e-02  -3.287 0.001087 ** 
+## zn           4.642e-02  1.373e-02   3.382 0.000778 ***
+## indus        2.056e-02  6.150e-02   0.334 0.738288    
+## chas         2.687e+00  8.616e-01   3.118 0.001925 ** 
+## nox         -1.777e+01  3.820e+00  -4.651 4.25e-06 ***
+## rm           3.810e+00  4.179e-01   9.116  &lt; 2e-16 ***
+## age          6.922e-04  1.321e-02   0.052 0.958229    
+## dis         -1.476e+00  1.995e-01  -7.398 6.01e-13 ***
+## rad          3.060e-01  6.635e-02   4.613 5.07e-06 ***
+## tax         -1.233e-02  3.760e-03  -3.280 0.001112 ** 
+## ptratio     -9.527e-01  1.308e-01  -7.283 1.31e-12 ***
+## black        9.312e-03  2.686e-03   3.467 0.000573 ***
+## lstat       -5.248e-01  5.072e-02 -10.347  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 4.745 on 492 degrees of freedom
+## Multiple R-squared:  0.7406, Adjusted R-squared:  0.7338 
+## F-statistic: 108.1 on 13 and 492 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+<div id="correlation-of-error-terms" class="section level3">
+<h3>2. Correlation of error terms</h3>
+<p><br> If in fact there is correlation among the error terms, then the estimated standard errors will tend to underestimate the true standard errors. Such correlations frequently occur in the context of time series data, which consists of observations for which measurements are obtained at discrete points in time. In many cases, observations that are obtained at adjacent time points will have positively correlated errors. Many methods have been developed to properly take account of correlations in the error terms in time series data.</p>
+</div>
+<div id="non-constant-variance-of-error-terms" class="section level3">
+<h3>3. Non-constant variance of error terms</h3>
+<p><br> One can identify non-constant variances in the errors, or heteroscedasticity, from the presence of a funnel shape in the residual plot. When faced with this problem, one possible solution is to trans- form the response Y using a concave function such as log Y or <span class="math inline">\(\sqrt{Y}\)</span> . Such a transformation results in a greater amount of shrinkage of the larger responses, leading to a reduction in heteroscedasticity.</p>
+</div>
+<div id="outliers" class="section level3">
+<h3>4. Outliers</h3>
+<p><br> If we believe that an outlier has occurred due to an error in data collection or recording, then one solution is to simply remove the observation. However, care should be taken, since an outlier may instead indicate a deficiency with the model, such as a missing predictor.</p>
+</div>
+<div id="high-leverage-points" class="section level3">
+<h3>5. High leverage points</h3>
+<p><br> Observations with high leverage have an unusual value for <span class="math inline">\(x_i\)</span></p>
+</div>
+<div id="collinearity" class="section level3">
+<h3>6. Collinearity</h3>
+<p><br> Collinearity refers to the situation in which two or more predictor variables are closely related to one another. The presence of collinearity can pose problems in the regression context, since it can be difficult to separate out the individual effects of collinear variables on the response. Since collinearity reduces the accuracy of the estimates of the regression coefficients, it causes the standard error for <span class="math inline">\(\hat{β}_j\)</span> to grow.</p>
+<hr />
+<p><strong>Note</strong><br />
+A simple way to detect collinearity is to look at the correlation matrix of the predictors. Instead of inspecting the correlation matrix, a better way to assess multi-collinearity is to compute the variance inflation factor (VIF).</p>
+<p><span class="math display">\[VIF = \frac{var(\hat{β}_j)_f}{var(\hat{β}_j)_u}\]</span>$ - f: full model<br />
+- u; univariate model</p>
+<p>As a rule of thumb, a VIF value that exceeds 5 or 10 indicates a problematic amount of collinearity.</p>
+<hr />
+<p><br></p>
+<pre class="r"><code>library(car)</code></pre>
+<pre><code>## Warning: package &#39;car&#39; was built under R version 3.4.4</code></pre>
+<pre><code>## Loading required package: carData</code></pre>
+<pre><code>## Warning: package &#39;carData&#39; was built under R version 3.4.4</code></pre>
+<pre><code>## 
+## Attaching package: &#39;car&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:dplyr&#39;:
+## 
+##     recode</code></pre>
+<pre class="r"><code>vif(lm.fit4) # variance inflation factor</code></pre>
+<pre><code>##     crim       zn    indus     chas      nox       rm      age      dis 
+## 1.792192 2.298758 3.991596 1.073995 4.393720 1.933744 3.100826 3.955945 
+##      rad      tax  ptratio    black    lstat 
+## 7.484496 9.008554 1.799084 1.348521 2.941491</code></pre>
+<pre class="r"><code># vif, cut-off for collinea rity
+# what would be the solution for collinearity problem? 
+lm.fit = update(lm.fit, ~. -age)
+summary(lm.fit)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = medv ~ lstat)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -15.168  -3.990  -1.318   2.034  24.500 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) 34.55384    0.56263   61.41   &lt;2e-16 ***
+## lstat       -0.95005    0.03873  -24.53   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 6.216 on 504 degrees of freedom
+## Multiple R-squared:  0.5441, Adjusted R-squared:  0.5432 
+## F-statistic: 601.6 on 1 and 504 DF,  p-value: &lt; 2.2e-16</code></pre>
+</div>
+</div>
+<div id="other-considerations" class="section level2">
+<h2>Other considerations</h2>
+<div id="interaction-terms" class="section level3">
+<h3>1. interaction terms</h3>
+<pre class="r"><code>lm.fit = lm(medv ~ lstat*age, data = Boston)
+ggplot(Boston, aes(lstat, medv, col = age)) + geom_point()</code></pre>
+<p><img src="DataMedicine_Lecture5_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
+<pre class="r"><code>Boston$age_gr = cut(Boston$age, breaks = c(0,40,80,100), include.lowest = T, right = F)
+levels(Boston$age_gr)</code></pre>
+<pre><code>## [1] &quot;[0,40)&quot;   &quot;[40,80)&quot;  &quot;[80,100]&quot;</code></pre>
+<pre class="r"><code>ggplot(Boston, aes(lstat, medv, col = age_gr)) + geom_point() + stat_smooth(method = &quot;lm&quot;, se = F)</code></pre>
+<p><img src="DataMedicine_Lecture5_files/figure-html/unnamed-chunk-11-2.png" width="672" /></p>
+</div>
+<div id="qualitative-predictors" class="section level3">
+<h3>2. Qualitative predictors</h3>
+<pre class="r"><code>Boston$chas = factor(Boston$chas)
+lm.fit5 = lm(medv~., data = Boston)
+summary(lm.fit5)</code></pre>
+<pre><code>## 
+## Call:
+## lm(formula = medv ~ ., data = Boston)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -15.6791  -2.8271  -0.5774   1.8556  25.7952 
+## 
+## Coefficients:
+##                  Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)     37.955262   5.223334   7.266 1.46e-12 ***
+## crim            -0.111893   0.032908  -3.400 0.000728 ***
+## zn               0.039370   0.014283   2.756 0.006062 ** 
+## indus            0.008729   0.061776   0.141 0.887695    
+## chas1            2.683814   0.861072   3.117 0.001935 ** 
+## nox            -18.906650   3.874477  -4.880 1.44e-06 ***
+## rm               3.781777   0.418028   9.047  &lt; 2e-16 ***
+## age              0.006595   0.025379   0.260 0.795089    
+## dis             -1.475989   0.199567  -7.396 6.13e-13 ***
+## rad              0.320796   0.066710   4.809 2.02e-06 ***
+## tax             -0.012863   0.003766  -3.416 0.000689 ***
+## ptratio         -0.958403   0.130767  -7.329 9.63e-13 ***
+## black            0.009295   0.002682   3.466 0.000575 ***
+## lstat           -0.532198   0.050794 -10.477  &lt; 2e-16 ***
+## age_gr[40,80)   -1.193963   1.077300  -1.108 0.268279    
+## age_gr[80,100]  -0.446585   1.725922  -0.259 0.795936    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 4.738 on 490 degrees of freedom
+## Multiple R-squared:  0.7425, Adjusted R-squared:  0.7346 
+## F-statistic: 94.19 on 15 and 490 DF,  p-value: &lt; 2.2e-16</code></pre>
+<pre class="r"><code>contrasts(Boston$chas) # dummy variables </code></pre>
+<pre><code>##   1
+## 0 0
+## 1 1</code></pre>
+</div>
+</div>
+</div>
+<div id="classification" class="section level1">
+<h1>분류(classification)</h1>
+<p>classifier: assign a probability to each class</p>
+<blockquote>
+<p>Examples of classification problem… 을 생각해보자…</p>
+</blockquote>
+<div id="logistic-regression" class="section level2">
+<h2>logistic regression</h2>
+<p>Logit function<br />
+<span class="math display">\[P(X) = \frac{e^{\beta_0+\beta_1X}}{1+e^{\beta_0+\beta_1X}}\]</span></p>
+<p>Odds<br />
+<span class="math display">\[\frac{P(X)}{1-P(X)} = e^{\beta_0+\beta_1X}\]</span> <strong>odds: P(event)/P(nonevent)</strong></p>
+<p>Logit <span class="math display">\[log(\frac{P(X)}{1-P(X)}) = \beta_0 + \beta_1X\]</span></p>
+<blockquote>
+<p>titanic survival classification</p>
+</blockquote>
+<pre class="r"><code>library(carData)
+head(TitanicSurvival)</code></pre>
+<pre><code>##                                 survived    sex     age passengerClass
+## Allen, Miss. Elisabeth Walton        yes female 29.0000            1st
+## Allison, Master. Hudson Trevor       yes   male  0.9167            1st
+## Allison, Miss. Helen Loraine          no female  2.0000            1st
+## Allison, Mr. Hudson Joshua Crei       no   male 30.0000            1st
+## Allison, Mrs. Hudson J C (Bessi       no female 25.0000            1st
+## Anderson, Mr. Harry                  yes   male 48.0000            1st</code></pre>
+<pre class="r"><code>str(TitanicSurvival)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    1309 obs. of  4 variables:
+##  $ survived      : Factor w/ 2 levels &quot;no&quot;,&quot;yes&quot;: 2 2 1 1 1 2 2 1 2 1 ...
+##  $ sex           : Factor w/ 2 levels &quot;female&quot;,&quot;male&quot;: 1 2 1 2 1 2 1 2 1 2 ...
+##  $ age           : num  29 0.917 2 30 25 ...
+##  $ passengerClass: Factor w/ 3 levels &quot;1st&quot;,&quot;2nd&quot;,&quot;3rd&quot;: 1 1 1 1 1 1 1 1 1 1 ...</code></pre>
+<pre class="r"><code>summary(TitanicSurvival)</code></pre>
+<pre><code>##  survived      sex           age          passengerClass
+##  no :809   female:466   Min.   : 0.1667   1st:323       
+##  yes:500   male  :843   1st Qu.:21.0000   2nd:277       
+##                         Median :28.0000   3rd:709       
+##                         Mean   :29.8811                 
+##                         3rd Qu.:39.0000                 
+##                         Max.   :80.0000                 
+##                         NA&#39;s   :263</code></pre>
+<pre class="r"><code>TitanicSurvival = TitanicSurvival[complete.cases(TitanicSurvival),]</code></pre>
+<p>fit logistic regression model</p>
+<pre class="r"><code>glm.fit = glm(survived ~., data = TitanicSurvival, family = &quot;binomial&quot;)</code></pre>
+<pre class="r"><code>summary(glm.fit)</code></pre>
+<pre><code>## 
+## Call:
+## glm(formula = survived ~ ., family = &quot;binomial&quot;, data = TitanicSurvival)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -2.6399  -0.6979  -0.4336   0.6688   2.3964  
+## 
+## Coefficients:
+##                    Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)        3.522074   0.326702  10.781  &lt; 2e-16 ***
+## sexmale           -2.497845   0.166037 -15.044  &lt; 2e-16 ***
+## age               -0.034393   0.006331  -5.433 5.56e-08 ***
+## passengerClass2nd -1.280570   0.225538  -5.678 1.36e-08 ***
+## passengerClass3rd -2.289661   0.225802 -10.140  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 1414.62  on 1045  degrees of freedom
+## Residual deviance:  982.45  on 1041  degrees of freedom
+## AIC: 992.45
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<pre class="r"><code>coef(glm.fit)</code></pre>
+<pre><code>##       (Intercept)           sexmale               age passengerClass2nd 
+##        3.52207401       -2.49784467       -0.03439323       -1.28056974 
+## passengerClass3rd 
+##       -2.28966056</code></pre>
+<p>odds</p>
+<pre class="r"><code>exp(coef(glm.fit)[2])</code></pre>
+<pre><code>##    sexmale 
+## 0.08226211</code></pre>
+<p>male 인 경우 female 에 비해서, 생존/죽음 odds가 0.08배 (즉, 훨씬 낮다, 10배 이상), Odds ratio 개념…</p>
+<p>dummy variables</p>
+<pre class="r"><code>contrasts(TitanicSurvival$survived)</code></pre>
+<pre><code>##     yes
+## no    0
+## yes   1</code></pre>
+<pre class="r"><code>contrasts(TitanicSurvival$passengerClass)</code></pre>
+<pre><code>##     2nd 3rd
+## 1st   0   0
+## 2nd   1   0
+## 3rd   0   1</code></pre>
+<p>prediction</p>
+<pre class="r"><code>glm.probs = predict(glm.fit, type = &quot;response&quot;)</code></pre>
+<p>confusion matrix<br />
+accuracy</p>
+<pre class="r"><code>glm.pred = rep(&quot;no&quot;, 1046)
+glm.pred[glm.probs&gt;0.5] = &quot;yes&quot;
+table(glm.pred, TitanicSurvival$survived)</code></pre>
+<pre><code>##         
+## glm.pred  no yes
+##      no  520 126
+##      yes  99 301</code></pre>
+<pre class="r"><code>mean(glm.pred == TitanicSurvival$survived)</code></pre>
+<pre><code>## [1] 0.7848948</code></pre>
+<p>test error rate</p>
+<pre class="r"><code>set.seed(1)
+index = sample(1:1046, round(1046/7), replace = F)
+train.glm = TitanicSurvival[index,]
+test.glm = TitanicSurvival[-index,]</code></pre>
+<p>fit the model wit training data, and predict in test data</p>
+<pre class="r"><code>glm.fit = glm(survived ~., data = train.glm, 
+              family = &quot;binomial&quot;)
+glm.probs = predict(glm.fit, test.glm, type = &quot;response&quot;)</code></pre>
+<p>confusion matrix<br />
+accuray</p>
+<pre class="r"><code>glm.pred = rep(&quot;no&quot;, 1046-round(1046/7))
+glm.pred[glm.probs&gt;0.5] = &quot;yes&quot;
+table(glm.pred, test.glm$survived)</code></pre>
+<pre><code>##         
+## glm.pred  no yes
+##      no  447 115
+##      yes  84 251</code></pre>
+<pre class="r"><code>mean(glm.pred == test.glm$survived)</code></pre>
+<pre><code>## [1] 0.7781494</code></pre>
+</div>
+<div id="linear-discrminant-analysis" class="section level2">
+<h2>linear discrminant analysis</h2>
+<p>Bayes theorem<br />
+<span class="math display">\[P(B|A) = \frac{P(A|B)\times P(B)}{P(A)}\]</span> Bayes classifier <span class="math display">\[P(Y=k|X=x) = \frac{P(X=x|Y=k) \times P(Y=k)}{\sum_{l=1}^k P(X=x|Y=l)} \]</span></p>
+<p>assume in LDA<br />
+- normal distribution of P(X|Y=k)<br />
+- common variance across different k class</p>
+<p>calculate posterior probability with…<br />
+- P(Y=k): proportion<br />
+- <span class="math inline">\(\mu_k: mean(X)\ in\ class\ k\)</span><br />
+- <span class="math inline">\(\sigma^2: variance\)</span></p>
+<p>다음 식이 최대가 되는 클래스에 관측치 X=x 를 할당한다.<br />
+<span class="math display">\[\hat{\delta_k} = x\times\frac{\hat{\mu_k}}{\hat{\sigma}^2}-\frac{\hat{\mu_k}^2}{2\hat{\sigma}^2}+log(\hat{\pi_k})\]</span></p>
+<p><strong>figure</strong> <img src="img/LDA.png" style="border: #A9A9A9 1px solid; width:75%"></p>
+<pre class="r"><code>library(MASS)
+lda.fit = lda(survived~., data = train.glm)
+lda.fit</code></pre>
+<pre><code>## Call:
+## lda(survived ~ ., data = train.glm)
+## 
+## Prior probabilities of groups:
+##       no      yes 
+## 0.590604 0.409396 
+## 
+## Group means:
+##       sexmale      age passengerClass2nd passengerClass3rd
+## no  0.8636364 29.67992         0.2954545         0.5909091
+## yes 0.2459016 31.13934         0.2622951         0.2950820
+## 
+## Coefficients of linear discriminants:
+##                            LD1
+## sexmale           -2.248264867
+## age               -0.008963284
+## passengerClass2nd -0.910193062
+## passengerClass3rd -1.186282087</code></pre>
+<pre class="r"><code>plot(lda.fit)</code></pre>
+<p><img src="DataMedicine_Lecture5_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
+<pre class="r"><code>lda.pred = predict(lda.fit, test.glm)
+names(lda.pred)</code></pre>
+<pre><code>## [1] &quot;class&quot;     &quot;posterior&quot; &quot;x&quot;</code></pre>
+<pre class="r"><code>table(lda.pred$class, test.glm$survived)</code></pre>
+<pre><code>##      
+##        no yes
+##   no  447 120
+##   yes  84 246</code></pre>
+<pre class="r"><code>mean(lda.pred$class == test.glm$survived)</code></pre>
+<pre><code>## [1] 0.7725753</code></pre>
+</div>
+<div id="k-nearest-neighbor" class="section level2">
+<h2>k-nearest neighbor</h2>
+<pre class="r"><code>library(class) # knn</code></pre>
+<p>dummy variables</p>
+<pre class="r"><code>library(dummies)</code></pre>
+<pre><code>## dummies-1.5.6 provided by Decision Patterns</code></pre>
+<pre class="r"><code>TitanicSurvival = cbind(TitanicSurvival, dummy(TitanicSurvival$sex), dummy(TitanicSurvival$passengerClass))
+TitanicSurvival.dummy = TitanicSurvival[,c(1,3,5:9)]</code></pre>
+<pre class="r"><code>train.knn = TitanicSurvival.dummy[index,]
+test.knn = TitanicSurvival.dummy[-index,]</code></pre>
+<pre class="r"><code>train.x = train.knn[,-1]
+train.y = train.knn[,1]
+test.x = test.knn[,-1]
+test.y = test.knn[,1]</code></pre>
+<pre class="r"><code>knn.pred = knn(train = train.x, test = test.x, cl = train.y, k=3)</code></pre>
+<pre class="r"><code>table(knn.pred, test.y)</code></pre>
+<pre><code>##         test.y
+## knn.pred  no yes
+##      no  398 173
+##      yes 133 193</code></pre>
+<pre class="r"><code>mean(knn.pred == test.y)</code></pre>
+<pre><code>## [1] 0.6588629</code></pre>
+</div>
+<div id="roc-curve" class="section level2">
+<h2>ROC curve</h2>
+<p><strong>figure</strong> <img src="img/ROC.png" style="border: #A9A9A9 1px solid; width:75%"></p>
+<pre class="r"><code>probs.glm = predict(glm.fit, test.glm, type = &quot;response&quot;)</code></pre>
+<p>Load the ROCR library</p>
+<pre class="r"><code>library(ROCR)</code></pre>
+<pre><code>## Loading required package: gplots</code></pre>
+<pre><code>## 
+## Attaching package: &#39;gplots&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:stats&#39;:
+## 
+##     lowess</code></pre>
+<p>Make a prediction object: pred</p>
+<pre class="r"><code>pred = prediction(probs.glm, test.glm$survived)</code></pre>
+<p>Make a performance object: perf</p>
+<pre class="r"><code>perf1 = performance(pred, &quot;tpr&quot;, &quot;fpr&quot;)</code></pre>
+<p>Plot ROC curve</p>
+<pre class="r"><code>plot(perf1)</code></pre>
+<p><img src="DataMedicine_Lecture5_files/figure-html/unnamed-chunk-37-1.png" width="672" /></p>
+<p>Print out the AUC</p>
+<pre class="r"><code>perf2 = performance(pred, &quot;auc&quot;)
+perf2@y.values[[1]]</code></pre>
+<pre><code>## [1] 0.8349027</code></pre>
+</div>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

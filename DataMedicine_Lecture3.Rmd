@@ -1,0 +1,334 @@
+---
+title: "데이터 임상의학 w/ R (3)"
+date: Aug 14, 2018
+author: "Yoon-Ho Hong, MD, PhD"
+output:
+  html_document:
+    toc: yes
+    toc_float: true
+---
+
+
+## 데이터 가공(Data processing)
+
+dplyr, gapminder 설치하기  
+
+설치한 패키지를 load 하기
+```{r message=FALSE, warning=TRUE}
+library(dplyr)
+library(gapminder)
+```
+<br>
+
+gapminder 데이터셋 둘러보기
+```{r echo=TRUE}
+head(gapminder)
+summary(gapminder)
+```
+
+### filter
+
+조건에 맞는 관측치만 골라내기
+```{r warning=FALSE}
+gapminder %>%
+  filter(year == 1957)
+```
+
+```{r}
+gapminder %>%
+  filter(country == "Korea, Rep.")
+```
+
+### arrange
+
+오름차순
+```{r}
+gapminder %>%
+  arrange(gdpPercap)
+```
+<br>
+
+내림차순
+```{r}
+gapminder %>%
+  arrange(desc(gdpPercap))
+```
+
+### mutate
+
+백만명단위로 인구수 변환
+```{r}
+gapminder %>%
+  mutate(pop = pop/1000000)
+```
+<br>
+
+총국민소득 구하기
+```{r}
+gapminder %>%
+  mutate(gdp = gdpPercap*pop)
+```
+
+## 데이터 요약(Summary)
+
+### summarize
+
+2007년의 평균 기대수명 
+```{r}
+gapminder %>%
+  filter(year == 2007) %>%
+  summarize(meanLifeExp = mean(lifeExp))
+```
+<br>
+
+2007년의 평균 기대수명과 총인구수 
+```{r}
+gapminder %>%
+  filter(year == 2007) %>%
+  summarise(meanLifeExp = mean(lifeExp), totPop = sum(as.numeric(pop))) # integer overflow, 2*10^9
+```
+
+### group_by
+
+년도별 평균 기대수명 
+```{r}
+gapminder %>%
+  group_by(year) %>%
+  summarise(meanLifeExp = mean(lifeExp))
+```
+<br>
+
+년도별 대륙별 평균 기대수명 
+```{r}
+gapminder %>%
+  group_by(continent, year) %>%
+  summarize(meanLifeExp = mean(lifeExp))
+```
+
+## 데이터 시각화(Data visualization)
+
+> "Visualization is any technique for creating images, diagrams, or animations to communicate a message" - Wikipedia 
+
+> "One picture is worth ten thousand words"
+
+> "백수이불여일화 百數以不如一畵"
+
+> “The simple graph has brought more information to the data analyst’s mind than any other device.” — John Tukey
+
+load ggplot2
+```{r message=FALSE}
+library(ggplot2)
+```
+<br>
+
+ggplot2  
+- by Hadley Wickham  
+- based on "Grammar of Graphics" (그래픽의 각 요소를 구분하여 취급)  
+- incremental method (기초 플롯을 생성한 후, 필요한 그래픽 요소들을 붙이는 방식)   
+
+### scatter plot
+
+scatter plot: gdpPercap vs. lifeExp in year 2007  
+2007년 1인당 국민소득과 기대수명의 관계를 산점도로 그리기  
+
+```{r}
+gapminder_2007 <- gapminder %>%
+  filter(year == 2007) 
+```
+
+```{r}
+ggplot(data = gapminder_2007, aes(x=gdpPercap, y=lifeExp)) + geom_point()
+```
+
+### additional aesthetics
+그래픽 요소(color, size)에 데이터를 매핑
+```{r}
+ggplot(data = gapminder_2007, aes(x=gdpPercap, y=lifeExp, color=continent, size=pop)) + geom_point()
+```
+
+### faceting 
+
+```{r}
+ggplot(data = gapminder_2007, aes(x=gdpPercap, y=lifeExp)) + 
+  geom_point() + 
+  facet_wrap(~continent)
+```
+
+
+
+### line plot
+
+대륙별로 평균 기대수명의 연도에 따른 변화를 보자. 
+```{r}
+year_continent = gapminder %>%
+  group_by(continent, year) %>%
+  summarize(meanLifeExp = mean(lifeExp))
+p = ggplot(data = year_continent, aes(x=year, y=meanLifeExp, color=continent)) + geom_point()
+p = p + geom_line()
+p
+p + expand_limits(y=0) 
+```
+
+2007년 1인당 국민소득과 기대 수명의 관계를 산점도로 그리고, 선형 회귀직선을 그려보자. 
+```{r}
+p <- ggplot(gapminder_2007, aes(gdpPercap, lifeExp)) + geom_point()
+p
+p = p + scale_x_log10() # scale 함수 
+p
+```
+
+```{r}
+gapminder_2007_coef = coef(lm(lifeExp ~ log10(gdpPercap), data = gapminder_2007))
+gapminder_2007_coef
+```
+
+```{r}
+p + geom_abline(intercept = gapminder_2007_coef["(Intercept)"], 
+                slope = gapminder_2007_coef["log10(gdpPercap)"], color = "red")
+```
+
+통계적 데이터의 변환 함수를 이용하자. 
+```{r}
+p
+p + stat_smooth(method = "lm", se=F, color = "red") 
+```
+
+### bar plot
+
+대륙별 평균 기대수명의 비교. (bar plot)
+```{r}
+by_continent = gapminder %>%
+  group_by(continent) %>%
+  summarise(meanLifeExp = mean(lifeExp))
+ggplot(by_continent, aes(x=continent, y=meanLifeExp)) + geom_col()
+```
+
+### histogram 
+
+기대수명의 분포 (histogram)
+```{r}
+ggplot(gapminder, aes(x=lifeExp)) + geom_histogram()
+```
+<br>
+
+5년 단위 구간(bins)
+```{r}
+ggplot(gapminder, aes(x=lifeExp)) + geom_histogram(binwidth = 5)
+```
+
+### box plot
+
+대륙별 기대수명의 분포 비교 (box plot)
+```{r}
+ggplot(gapminder, aes(x=continent, y=lifeExp)) + geom_boxplot()
+```
+<br>
+
+### ggplot2 plot 의 기본 성분과 구조
+
+ggplot2 plot의 기본 성분  
+- Data: 주로 data frame 객체 형태의 데이터
+- Aesthetic mappings: 데이터를 축, 색상, 점의 크기 등으로 매핑하는 방법
+- Geometric object: 점, 선, 도형과 같은 기하학적 객체
+- Scales: 
+- Coordinate system: 좌표계
+- Facetting: 조건부 플롯을 위해 패널을 분할하여 표현하는 방법
+- Statistical transformation: Binning, quantiles, smoothing 등의 통계 변환 
+- Position adjustment: 위치의 조정 
+
+```{r}
+p <- ggplot(data = gapminder_2007, aes(x=gdpPercap, y=lifeExp)) + geom_point()
+attributes(p)
+summary(p)
+```
+<br>
+
+ggplot2 plot 의 구조  
+- ggplot = layers + scales + coordinate system 
+- layers = data + mapping + geom + stat + position 
+
+
+### ggplot2 함수군
+
+- Plot creation: ggplot 클래스 객체를 생성하는 함수군
+- Geoms: graphic 의 geometric (기하학적인 형태)을 지정하는 함수군
+- Statistics: 데이터를 통계적인 관점으로 변환하는 함수군
+- Scales: 축의 스케일 변환과 라벨, 범례 등을 변경하는 함수군
+- Coordinate systems: 좌표계를 설정하는 함수군
+- Faceting: 그래픽 facet layout 을 정의하는 함수군
+- Position adjustment: geometric 의 위치를 지정하는 함수군
+- Others
+
+```{r}
+apropos("^geom_")
+```
+
+```{r}
+apropos("^stat_")
+```
+
+## 연습 문제
+
+proact_sample.txt 파일은 original PROACT dataset 에서 무작위로 20%  환자들의 데이터만을 추출한 것이다. Lab test 데이터 중에서는 일부 features 를 선별하였고, Adverse Event 와 Concomitant Medication form 은 제외하였다. 
+DataMedicine_Lecture3_Exercises.R   
+
+1. "proact_sample.txt" 파일을 읽어들이고, 몇 명의 환자들에 대한 데이터인지 확인하자. (read.table())
+<br>
+
+2. 각 column의 이름이 무엇을 의미하는지 파악해보자.
+<br>
+
+3. 몇 개의 form_name 이 있는지? 각 form_name 은 몇 개의 feature_name 으로 구성되어 있는지, feature_name 에는 어떤 것들이 있는지 알아보자. (droplevels())
+<br>
+
+4. 탐색적 데이터 분석을 진행하기 전에 연구의 목적이 무엇인지 최대한 구체적으로 기술해보자. 분석의 대상이 될 환자들을 어떻게 선정할지 생각해보자.
+<br>
+   
+5. Demographic form 데이터만 추출해서 complete demographic data 가 있는 환자들의 수는 얼마인지 알아보자. (어떤 환자들은 demographic data 가 전혀 없거나 일부 항목이 missing 되어 있을 수 있다.) (tidyr::spread(), complete.cases())
+<br>
+
+6. Extract only the data of subjects with complete demographic data
+<br>
+
+7. ALSFRS form 데이터에는 2번 이상 중복 혹은 불일치 기재된 feature_value 들이 있다. 이와 같은 경우가 발생한 환자들의 SubjectID 는 무엇인가? 이들을 어떻게 처리할 것인가? (duplicated(), which())
+<br>
+
+8. ALSFRS or ALSFRS-R records 가 적어도 한 번 이상 기록된 환자들은 모두 몇 명인가? ALSFRS or ALSFRS-R records 가 기록된 횟수의 분포는 어떠한가? (table())
+<br>
+
+9. ALSFRS 와 ALSFRS_R 의 차이는 무엇인가?
+<br> 
+
+10. ALSFRS 만 기록된 환자는 몇 명인가? ALSFRS_R 만 기록된 환자는 몇 명인가? 둘 다 기록된 환자는 몇 명인가? (gplots::venn())
+<br> 
+
+11. ALSFRS_Total 과 feature_delta 데이터가 모두 있는 환자들은 몇 명인가?
+<br> 
+
+12. feature_delta 와 ALSFRS_Total 의 관계를 산점도로 그려보자. feature_delta < 0 은 데이터 포인트를 찾아보자. 시간에 따른 ALSFRS_Total 의 변화를 line plot 으로 그려보자. feature_delta < 500 인 data points 만 line plot 으로 그려보자. (ggplot(), aes(), group, alpha)
+<br>
+
+13. onset site (Bulbar vs. Limb) 에 따라 ALSFRS_Total 의 변화(질환의 진행속도)가 다른지 살펴보자. 
+<br>
+
+14. Lab data 중 Creatinine 의 변화를 시각화해보자. Baseline Creatinine value 에 따라 질환의 진행속도가 다른지 살펴보자. 
+
+15. 계속해서 탐색적 데이터 분석과 시각화를 해보자. 예를 들면, 다음 변수값에 따라 질환의 진행속도가 다른지
+- age, sex, race  
+- onset to diagnosis (dianostic delay), onset to enrollment
+- uric acid (baseline)
+- BMI (baseline) 
+- FVC, SVC (baseline)
+- BP, PR (baseline)
+
+16. 3-12 개월 사이 ALSFRS_Total 점수의 변화율 (slope)을 구해보자. 
+  - ALSFRS slope, 3-12 mo 
+  - Slope ratio = [ALSFRS_Total(m2) - ALSFRS_Total(m1)] / (m2 - m1)
+  - m1 = the first visit after 3 mo
+  - m2 = the first visit after 12 mo or the last visit within 12 mo 
+
+
+
+
+
+

@@ -1,0 +1,432 @@
+---
+title: "데이터 임상의학 w/ R (8)"
+author: "Yoon-Ho Hong, MD, PhD"
+date: "Sept 18, 2018"
+output:
+  html_document:
+    toc: yes
+    toc_float: true
+---
+
+# Curse of dimensionality 
+
+in circumstances of p >> n   
+using all the features to predict response variable   
+will face two drawbacks in terms of ...   
+- interpretability  
+- increase of variance (overfitting)   
+</br>
+
+so, we do   
+feature selection   
+- subset selection   
+- shrinkage (regularization)   
+- dimension reduction   
+
+## Subset selection 
+
+가능한 경우의 수: $2^p$  
+stepwise selection: forward, backward   
+
+## Shrinkage 
+
+아래 식을 최소로 하는 $\beta$ 를 추정 (note: shrinkage penalty)     
+ridge regresssion  
+$$RSS + \lambda \sum_{j=1}^{p} \beta^2_j$$  
+$\lambda$: tuning parameter   
+
+lasso regression   
+$$RSS + \lambda \sum_{j=1}^{p} |\beta_j|$$   
+
+
+```{r include=FALSE}
+library(ISLR)
+?Hitters
+str(Hitters)
+summary(Hitters)
+Hitters = na.omit(Hitters)
+```
+
+```{r echo=TRUE}
+library(glmnet)
+x = model.matrix(Salary~., Hitters)[,-1] # create a matrix, convert factors to a set of dummy variables  
+y = Hitters$Salary
+```
+
+```{r}
+grid = 10^seq(10, -2, length = 100) # lambda 를 10^10 에서 10^-2 까지 값을 갖도록 설정 
+```
+
+```{r}
+ridge.mod = glmnet(x,y,alpha = 0, lambda = grid) # alpha = 0 for ridge regression, alpha = 1 for lasso regression 
+?glmnet # standardize = TRUE 
+```
+
+```{r}
+plot(ridge.mod)
+```
+
+L2 norm: $\sqrt{\sum_{j=1}^{p}\beta^2_j}$ 
+
+```{r echo=TRUE}
+coef(ridge.mod)
+```
+
+```{r}
+ridge.mod$lambda
+```
+
+```{r}
+ridge.mod$lambda[50]
+coef.50lambda = coef(ridge.mod)[-1,50] # at 50th lambda, coefficients
+sqrt(sum(coef.50lambda^2)) # L2 norm at 50th lambda 
+```
+
+```{r}
+set.seed(1)
+train = sample(nrow(x), nrow(x)/2)
+y.test = y[-train]
+```
+
+arbitrary set lamda = 4   
+```{r}
+ridge.mod = glmnet(x[train,], y[train], alpha = 0, lambda = grid)
+ridge.pred = predict(ridge.mod, s=4, newx = x[-train,])
+mean((ridge.pred-y.test)^2)
+```
+
+cv 를 통해 검정오차 추정치가 가장 낮은 lambda 값을 구함   
+```{r}
+set.seed(1)
+cv.out.ridge = cv.glmnet(x[train,], y[train], alpha = 0) # nfolds = 10 
+plot(cv.out.ridge)
+bestlambda.ridge = cv.out.ridge$lambda.min
+bestlambda.ridge
+```
+
+cv 검정오차 추정치가 가장 낮은 lambda 값을 이용하여 검정셋에서 검정오차를 구함  
+```{r}
+ridge.pred = predict(ridge.mod, s=bestlambda.ridge, newx = x[-train,])
+mean((ridge.pred - y.test)^2)
+```
+
+전체 데이터셋에서 ridge regression 모델을 만들고, 해당 coefficients 값을 구함   
+```{r}
+ridge.out = glmnet(x,y,alpha = 0)
+predict(ridge.out, type = "coefficients", s=bestlambda.ridge)
+```
+
+lasso  
+```{r}
+lasso.mod = glmnet(x[train,], y[train], alpha = 1, lambda = grid)
+plot(lasso.mod)
+```
+
+```{r}
+set.seed(1)
+cv.lasso.out = cv.glmnet(x[train,], y[train], alpha=1)
+plot(cv.lasso.out)
+bestlambda.lasso = cv.lasso.out$lambda.min
+lasso.pred = predict(lasso.mod, s=bestlambda.lasso, newx = x[-train,])
+mean((lasso.pred - y.test)^2)
+```
+
+```{r}
+lasso.out = glmnet(x,y,alpha = 1, lambda = grid)
+lasso.coef = predict(lasso.out, type = "coefficients", s=bestlambda.lasso)
+lasso.coef
+```
+
+linear regression 
+```{r}
+lm.fit = lm(Salary~., data = Hitters, subset = train)
+lm.pred = predict(lm.fit, newdata = Hitters[-train,])
+mean((lm.pred - y.test)^2)
+```
+
+
+## Dimension reduction
+- principal component regression (PCR)   
+- partial least square (PLS)   
+   
+   
+p개의 설명변수들을 m개의 (m<p) 새로운 변수로 변환하고, 변환된 변수들을 사용해 최소제곱모델을 적합하는 기법   
+
+PCA (-> PCR)
+: 설명변수들의 *정규화*된 선형결합  
+: 분산이 가장 큰 방향 (첫번째 주성분) 
+
+PLS
+: PCA의 supervised version 
+: 반응변수와 극대화된 상관관계를 갖도록 선형결합  
+
+
+```{r}
+library(pls)
+set.seed(2)
+pcr.fit = pcr(Salary~., data = Hitters, subset = train, scale = TRUE, validation = "CV")
+summary(pcr.fit)
+```
+
+```{r}
+validationplot(pcr.fit, val.type = "MSEP")
+```
+
+```{r}
+pcr.pred = predict(pcr.fit, x[-train,], ncomp = 2)
+mean((pcr.pred - y.test)^2)
+```
+
+```{r}
+pcr.fit = pcr(y~x, scale = TRUE, ncomp = 2)
+summary(pcr.fit)
+```
+
+PLS   
+```{r}
+set.seed(1)
+pls.fit = plsr(Salary~., data = Hitters, subset = train, scale = TRUE, validation = "CV")
+summary(pls.fit)
+```
+
+```{r}
+validationplot(pls.fit, val.type = "MSEP")
+```
+
+```{r}
+pls.pred = predict(pls.fit, x[-train,], ncomp = 2)
+mean((pls.pred-y.test)^2)
+```
+
+```{r}
+pls.fit=plsr(Salary~., data=Hitters, scale=TRUE, ncomp=2)
+summary(pls.fit)
+```
+
+# Unsupervised Learning 
+
+- Principal component analysis (PCA)  
+- K-mean clustering   
+- Hierchical clustering  
+
+not interested in prediction   
+then, for what?    
+
+PCA
+: data visualization and preprocessing for high-dimensional data   
+   
+   
+clustering
+: subgrouping of predictors or observations which may provide valuable insignts on the data   
+
+## PCA 
+
+the first principal component  
+: 변수들의 정규화된 (normalized) 선형결합 (가장 큰 분산을 가지는, 즉 관측치가 가장 많이 변화되는 변수공간의 방향) 
+
+$$Z_1 = \phi_{11}X_1 + \phi_{21}X_2 + ... + \phi_{p1}X_p$$ 
+
+$$\sum_{j=1}^p \phi^2_{j1} = 1$$
+
+loading vector (length=p)
+
+$$\phi_1 = (\phi_{11}, \phi_{21},,,\phi_{p1})^T$$
+
+principal component scores (length=n)
+
+$$(z_{11}, z_{21},,, z_{n1})$$  
+
+
+the second principal component  
+: 첫번째 주성분과 상관되지 않은 (uncorrelated, orthogonal) $X_1, X_2,,, X_p$ 의 모든 선형결합 중에서 분산을 최대로 하는 선형결합   
+  
+  
+변수 스케일링   
+: 스케일링되지 않은 변수에 PCA 를 수행하면 단순히 분산이 큰 변수에 의해 주성분벡터가 결정됨   
+
+```{r}
+states = row.names(USArrests)
+states
+```
+
+```{r}
+names(USArrests)
+```
+
+```{r}
+summary(USArrests)
+```
+
+```{r}
+apply(USArrests, 2, var)
+```
+
+```{r}
+pr.out = prcomp(USArrests, scale = TRUE)
+names(pr.out)
+pr.out$rotation # loading vectors 
+pr.out$x # pc scores
+```
+
+```{r}
+biplot(pr.out)
+pr.out$rotation = -pr.out$rotation # loading vectors 
+pr.out$x = -pr.out$x # pc scores
+biplot(pr.out, scale = 0)
+```
+
+```{r}
+pr.var = pr.out$sdev^2
+pr.var
+```
+
+```{r}
+pve = pr.var/sum(pr.var)
+pve
+```
+
+```{r}
+plot(pve, xlab = "Principal component", ylab = "Proportion of Variance Explained", type = "b") # scree plot 
+```
+
+
+```{r}
+library(ISLR)
+class(NCI60) # NCI60: 64개 암세포주에 대한 6830개의 유전자 발현 관측치 
+names(NCI60)
+nci.labs = NCI60$labs 
+nci.labs
+table(nci.labs) # 14개 유형 
+```
+
+```{r}
+nci.data = NCI60$data
+```
+
+```{r}
+pr.out = prcomp(nci.data, scale = TRUE) 
+```
+
+```{r}
+library(ggplot2)
+df = data.frame(pr.out$x[,c(1,2,3)], nci.labs)
+ggplot(data = df, aes(x=PC1, y=PC2, col = nci.labs)) + geom_point(size = 3)
+```
+
+```{r}
+summary(pr.out)
+```
+
+
+## K-means clustering 
+
+
+n개 관측치들을 K개 클러스터로 분할하는 방법: $K^n$
+모든 가능한 경우들 중에서 within cluster variation 을 가장 작게만드는 분할을 찾지 않고 (global optimum), 대신 국소 최적값(local optimum)을 제공하는 알고리즘을 사용한다.    
+
+즉,  
+
+1. 각 관측치에 1에서 K까지의 숫자를 랜덤하게 할당한다. 이것은 관측체에 대한 초기 클러스터 할당으로 작용한다. 
+
+2. 클러스터 할당이 변하지 않을 때까지 다음을 반복한다. 
+
+  + 2-1. K개 클러스터 각각에 대해 클러스터 무게중심을 계산한다 (p 변수 평균들의 벡터)  
+  + 2-2. 각 관측치를 그 무게 중심이 가장 가까운 클러스터에 할당한다. 
+
+
+
+## Hierachical clustering 
+
+bottom-up or agglomerative   
+dendrogram  
+
+distance measures... 
+- euclidean distance  
+$$d_{euc}(x,y) = \sqrt{\sum_{i=1}^n(x_i - y_i)^2}$$ 
+
+- manhattan distance   
+$$d_{man}(x,y) = \sum_{i=1}^n |{(x_i - y_i)|}$$  
+
+- pearson correlation distance   
+$$d_{cor}(x, y) = 1 - \frac{\sum\limits_{i=1}^n (x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum\limits_{i=1}^n(x_i - \bar{x})^2 \sum\limits_{i=1}^n(y_i -\bar{y})^2}}$$   
+
+스케일링   
+$$\frac{x_i - center(x)}{scale(x)}$$ 
+
+linkage    
+- complete linkage   
+- average linkage   
+- single linkage  
+- centroid linkage   
+
+```{r}
+sd.data = scale(nci.data) # scaling 
+```
+
+```{r}
+data.dist = dist(sd.data)
+hclust.complete = hclust(data.dist, method = "complete")
+plot(hclust.complete, labels = nci.labs, main = "complete linkage")
+hc.clusters = cutree(hclust.complete, 5)
+table(hc.clusters, nci.labs)
+abline(h=135, col="red")
+```
+
+```{r}
+set.seed(2)
+km.out = kmeans(sd.data, 5, nstart = 20)
+km.clusters = km.out$cluster
+table(km.clusters, hc.clusters)
+```
+
+```{r}
+pc.dist = dist(pr.out$x[,1:5])
+hc.out = hclust(pc.dist)
+plot(hc.out, labels = nci.labs, main = "Hier. Clust. on First Five Score Vectors")
+hc.clusters = cutree(hc.out, 4)
+table(hc.clusters, nci.labs)
+```
+
+
+```{r}
+set.seed(3)
+pc.scale = scale(pr.out$x[,1:5])
+km.out = kmeans(pc.scale, 4, nstart = 20)
+table(km.out$cluster, hc.clusters)
+```
+
+### Heatmap 
+
+```{r}
+df.scaled = scale(USArrests)
+df.dist = dist(df.scaled) # row-wise distance matrix 
+hc.out = hclust(df.dist, method = "complete")
+plot(hc.out)
+```
+
+```{r}
+hc.clusters = cutree(hc.out, 4)
+cluster.membership = hc.clusters 
+```
+
+load package
+```{r}
+library(pheatmap)
+```
+
+```{r}
+mat = as.matrix(t(df.scaled))
+apply(mat, 1, sd)
+```
+```{r}
+pheatmap(mat, 
+         cluster_rows = T,
+         # cellheight = 20,
+         annotation_col = data.frame(cluster.membership))
+```
+
+
+
+
+
+

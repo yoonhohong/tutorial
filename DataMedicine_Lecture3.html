@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Yoon-Ho Hong, MD, PhD" />
+
+
+<title>데이터 임상의학 w/ R (3)</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/paper.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.0.13/css/fa-svg-with-js.css" rel="stylesheet" />
+<script src="site_libs/font-awesome-5.0.13/js/fontawesome-all.min.js"></script>
+<script src="site_libs/font-awesome-5.0.13/js/fa-v4-shims.min.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="styles.css" type="text/css" />
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 64px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 69px;
+  margin-top: -69px;
+}
+
+.section h2 {
+  padding-top: 69px;
+  margin-top: -69px;
+}
+.section h3 {
+  padding-top: 69px;
+  margin-top: -69px;
+}
+.section h4 {
+  padding-top: 69px;
+  margin-top: -69px;
+}
+.section h5 {
+  padding-top: 69px;
+  margin-top: -69px;
+}
+.section h6 {
+  padding-top: 69px;
+  margin-top: -69px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Tutorial</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="https://yoonhohong.github.io">by Yoon H. Hong</a>
+</li>
+<li>
+  <a href="http://www.github.com/yoonhohong/tutorial">
+    <span class="fa fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">데이터 임상의학 w/ R (3)</h1>
+<h4 class="author"><em>Yoon-Ho Hong, MD, PhD</em></h4>
+<h4 class="date"><em>Aug 14, 2018</em></h4>
+
+</div>
+
+
+<div id="-data-processing" class="section level2">
+<h2>데이터 가공(Data processing)</h2>
+<p>dplyr, gapminder 설치하기</p>
+<p>설치한 패키지를 load 하기</p>
+<pre class="r"><code>library(dplyr)
+library(gapminder)</code></pre>
+<p><br></p>
+<p>gapminder 데이터셋 둘러보기</p>
+<pre class="r"><code>head(gapminder)</code></pre>
+<pre><code>## # A tibble: 6 x 6
+##   country     continent  year lifeExp      pop gdpPercap
+##   &lt;fct&gt;       &lt;fct&gt;     &lt;int&gt;   &lt;dbl&gt;    &lt;int&gt;     &lt;dbl&gt;
+## 1 Afghanistan Asia       1952    28.8  8425333       779
+## 2 Afghanistan Asia       1957    30.3  9240934       821
+## 3 Afghanistan Asia       1962    32.0 10267083       853
+## 4 Afghanistan Asia       1967    34.0 11537966       836
+## 5 Afghanistan Asia       1972    36.1 13079460       740
+## 6 Afghanistan Asia       1977    38.4 14880372       786</code></pre>
+<pre class="r"><code>summary(gapminder)</code></pre>
+<pre><code>##         country        continent        year         lifeExp     
+##  Afghanistan:  12   Africa  :624   Min.   :1952   Min.   :23.60  
+##  Albania    :  12   Americas:300   1st Qu.:1966   1st Qu.:48.20  
+##  Algeria    :  12   Asia    :396   Median :1980   Median :60.71  
+##  Angola     :  12   Europe  :360   Mean   :1980   Mean   :59.47  
+##  Argentina  :  12   Oceania : 24   3rd Qu.:1993   3rd Qu.:70.85  
+##  Australia  :  12                  Max.   :2007   Max.   :82.60  
+##  (Other)    :1632                                                
+##       pop              gdpPercap       
+##  Min.   :6.001e+04   Min.   :   241.2  
+##  1st Qu.:2.794e+06   1st Qu.:  1202.1  
+##  Median :7.024e+06   Median :  3531.8  
+##  Mean   :2.960e+07   Mean   :  7215.3  
+##  3rd Qu.:1.959e+07   3rd Qu.:  9325.5  
+##  Max.   :1.319e+09   Max.   :113523.1  
+## </code></pre>
+<div id="filter" class="section level3">
+<h3>filter</h3>
+<p>조건에 맞는 관측치만 골라내기</p>
+<pre class="r"><code>gapminder %&gt;%
+  filter(year == 1957)</code></pre>
+<pre><code>## # A tibble: 142 x 6
+##    country     continent  year lifeExp      pop gdpPercap
+##    &lt;fct&gt;       &lt;fct&gt;     &lt;int&gt;   &lt;dbl&gt;    &lt;int&gt;     &lt;dbl&gt;
+##  1 Afghanistan Asia       1957    30.3  9240934       821
+##  2 Albania     Europe     1957    59.3  1476505      1942
+##  3 Algeria     Africa     1957    45.7 10270856      3014
+##  4 Angola      Africa     1957    32.0  4561361      3828
+##  5 Argentina   Americas   1957    64.4 19610538      6857
+##  6 Australia   Oceania    1957    70.3  9712569     10950
+##  7 Austria     Europe     1957    67.5  6965860      8843
+##  8 Bahrain     Asia       1957    53.8   138655     11636
+##  9 Bangladesh  Asia       1957    39.3 51365468       662
+## 10 Belgium     Europe     1957    69.2  8989111      9715
+## # ... with 132 more rows</code></pre>
+<pre class="r"><code>gapminder %&gt;%
+  filter(country == &quot;Korea, Rep.&quot;)</code></pre>
+<pre><code>## # A tibble: 12 x 6
+##    country     continent  year lifeExp      pop gdpPercap
+##    &lt;fct&gt;       &lt;fct&gt;     &lt;int&gt;   &lt;dbl&gt;    &lt;int&gt;     &lt;dbl&gt;
+##  1 Korea, Rep. Asia       1952    47.5 20947571      1031
+##  2 Korea, Rep. Asia       1957    52.7 22611552      1488
+##  3 Korea, Rep. Asia       1962    55.3 26420307      1536
+##  4 Korea, Rep. Asia       1967    57.7 30131000      2029
+##  5 Korea, Rep. Asia       1972    62.6 33505000      3031
+##  6 Korea, Rep. Asia       1977    64.8 36436000      4657
+##  7 Korea, Rep. Asia       1982    67.1 39326000      5623
+##  8 Korea, Rep. Asia       1987    69.8 41622000      8533
+##  9 Korea, Rep. Asia       1992    72.2 43805450     12104
+## 10 Korea, Rep. Asia       1997    74.6 46173816     15994
+## 11 Korea, Rep. Asia       2002    77.0 47969150     19234
+## 12 Korea, Rep. Asia       2007    78.6 49044790     23348</code></pre>
+</div>
+<div id="arrange" class="section level3">
+<h3>arrange</h3>
+<p>오름차순</p>
+<pre class="r"><code>gapminder %&gt;%
+  arrange(gdpPercap)</code></pre>
+<pre><code>## # A tibble: 1,704 x 6
+##    country          continent  year lifeExp      pop gdpPercap
+##    &lt;fct&gt;            &lt;fct&gt;     &lt;int&gt;   &lt;dbl&gt;    &lt;int&gt;     &lt;dbl&gt;
+##  1 Congo, Dem. Rep. Africa     2002    45.0 55379852       241
+##  2 Congo, Dem. Rep. Africa     2007    46.5 64606759       278
+##  3 Lesotho          Africa     1952    42.1   748747       299
+##  4 Guinea-Bissau    Africa     1952    32.5   580653       300
+##  5 Congo, Dem. Rep. Africa     1997    42.6 47798986       312
+##  6 Eritrea          Africa     1952    35.9  1438760       329
+##  7 Myanmar          Asia       1952    36.3 20092996       331
+##  8 Lesotho          Africa     1957    45.0   813338       336
+##  9 Burundi          Africa     1952    39.0  2445618       339
+## 10 Eritrea          Africa     1957    38.0  1542611       344
+## # ... with 1,694 more rows</code></pre>
+<p><br></p>
+<p>내림차순</p>
+<pre class="r"><code>gapminder %&gt;%
+  arrange(desc(gdpPercap))</code></pre>
+<pre><code>## # A tibble: 1,704 x 6
+##    country   continent  year lifeExp     pop gdpPercap
+##    &lt;fct&gt;     &lt;fct&gt;     &lt;int&gt;   &lt;dbl&gt;   &lt;int&gt;     &lt;dbl&gt;
+##  1 Kuwait    Asia       1957    58.0  212846    113523
+##  2 Kuwait    Asia       1972    67.7  841934    109348
+##  3 Kuwait    Asia       1952    55.6  160000    108382
+##  4 Kuwait    Asia       1962    60.5  358266     95458
+##  5 Kuwait    Asia       1967    64.6  575003     80895
+##  6 Kuwait    Asia       1977    69.3 1140357     59265
+##  7 Norway    Europe     2007    80.2 4627926     49357
+##  8 Kuwait    Asia       2007    77.6 2505559     47307
+##  9 Singapore Asia       2007    80.0 4553009     47143
+## 10 Norway    Europe     2002    79.0 4535591     44684
+## # ... with 1,694 more rows</code></pre>
+</div>
+<div id="mutate" class="section level3">
+<h3>mutate</h3>
+<p>백만명단위로 인구수 변환</p>
+<pre class="r"><code>gapminder %&gt;%
+  mutate(pop = pop/1000000)</code></pre>
+<pre><code>## # A tibble: 1,704 x 6
+##    country     continent  year lifeExp   pop gdpPercap
+##    &lt;fct&gt;       &lt;fct&gt;     &lt;int&gt;   &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;
+##  1 Afghanistan Asia       1952    28.8  8.43       779
+##  2 Afghanistan Asia       1957    30.3  9.24       821
+##  3 Afghanistan Asia       1962    32.0 10.3        853
+##  4 Afghanistan Asia       1967    34.0 11.5        836
+##  5 Afghanistan Asia       1972    36.1 13.1        740
+##  6 Afghanistan Asia       1977    38.4 14.9        786
+##  7 Afghanistan Asia       1982    39.9 12.9        978
+##  8 Afghanistan Asia       1987    40.8 13.9        852
+##  9 Afghanistan Asia       1992    41.7 16.3        649
+## 10 Afghanistan Asia       1997    41.8 22.2        635
+## # ... with 1,694 more rows</code></pre>
+<p><br></p>
+<p>총국민소득 구하기</p>
+<pre class="r"><code>gapminder %&gt;%
+  mutate(gdp = gdpPercap*pop)</code></pre>
+<pre><code>## # A tibble: 1,704 x 7
+##    country     continent  year lifeExp      pop gdpPercap         gdp
+##    &lt;fct&gt;       &lt;fct&gt;     &lt;int&gt;   &lt;dbl&gt;    &lt;int&gt;     &lt;dbl&gt;       &lt;dbl&gt;
+##  1 Afghanistan Asia       1952    28.8  8425333       779  6567086330
+##  2 Afghanistan Asia       1957    30.3  9240934       821  7585448670
+##  3 Afghanistan Asia       1962    32.0 10267083       853  8758855797
+##  4 Afghanistan Asia       1967    34.0 11537966       836  9648014150
+##  5 Afghanistan Asia       1972    36.1 13079460       740  9678553274
+##  6 Afghanistan Asia       1977    38.4 14880372       786 11697659231
+##  7 Afghanistan Asia       1982    39.9 12881816       978 12598563401
+##  8 Afghanistan Asia       1987    40.8 13867957       852 11820990309
+##  9 Afghanistan Asia       1992    41.7 16317921       649 10595901589
+## 10 Afghanistan Asia       1997    41.8 22227415       635 14121995875
+## # ... with 1,694 more rows</code></pre>
+</div>
+</div>
+<div id="-summary" class="section level2">
+<h2>데이터 요약(Summary)</h2>
+<div id="summarize" class="section level3">
+<h3>summarize</h3>
+<p>2007년의 평균 기대수명</p>
+<pre class="r"><code>gapminder %&gt;%
+  filter(year == 2007) %&gt;%
+  summarize(meanLifeExp = mean(lifeExp))</code></pre>
+<pre><code>## # A tibble: 1 x 1
+##   meanLifeExp
+##         &lt;dbl&gt;
+## 1        67.0</code></pre>
+<p><br></p>
+<p>2007년의 평균 기대수명과 총인구수</p>
+<pre class="r"><code>gapminder %&gt;%
+  filter(year == 2007) %&gt;%
+  summarise(meanLifeExp = mean(lifeExp), totPop = sum(as.numeric(pop))) # integer overflow, 2*10^9</code></pre>
+<pre><code>## # A tibble: 1 x 2
+##   meanLifeExp     totPop
+##         &lt;dbl&gt;      &lt;dbl&gt;
+## 1        67.0 6251013179</code></pre>
+</div>
+<div id="group_by" class="section level3">
+<h3>group_by</h3>
+<p>년도별 평균 기대수명</p>
+<pre class="r"><code>gapminder %&gt;%
+  group_by(year) %&gt;%
+  summarise(meanLifeExp = mean(lifeExp))</code></pre>
+<pre><code>## # A tibble: 12 x 2
+##     year meanLifeExp
+##    &lt;int&gt;       &lt;dbl&gt;
+##  1  1952        49.1
+##  2  1957        51.5
+##  3  1962        53.6
+##  4  1967        55.7
+##  5  1972        57.6
+##  6  1977        59.6
+##  7  1982        61.5
+##  8  1987        63.2
+##  9  1992        64.2
+## 10  1997        65.0
+## 11  2002        65.7
+## 12  2007        67.0</code></pre>
+<p><br></p>
+<p>년도별 대륙별 평균 기대수명</p>
+<pre class="r"><code>gapminder %&gt;%
+  group_by(continent, year) %&gt;%
+  summarize(meanLifeExp = mean(lifeExp))</code></pre>
+<pre><code>## # A tibble: 60 x 3
+## # Groups:   continent [?]
+##    continent  year meanLifeExp
+##    &lt;fct&gt;     &lt;int&gt;       &lt;dbl&gt;
+##  1 Africa     1952        39.1
+##  2 Africa     1957        41.3
+##  3 Africa     1962        43.3
+##  4 Africa     1967        45.3
+##  5 Africa     1972        47.5
+##  6 Africa     1977        49.6
+##  7 Africa     1982        51.6
+##  8 Africa     1987        53.3
+##  9 Africa     1992        53.6
+## 10 Africa     1997        53.6
+## # ... with 50 more rows</code></pre>
+</div>
+</div>
+<div id="-data-visualization" class="section level2">
+<h2>데이터 시각화(Data visualization)</h2>
+<blockquote>
+<p>“Visualization is any technique for creating images, diagrams, or animations to communicate a message” - Wikipedia</p>
+</blockquote>
+<blockquote>
+<p>“One picture is worth ten thousand words”</p>
+</blockquote>
+<blockquote>
+<p>“백수이불여일화 百數以不如一畵”</p>
+</blockquote>
+<blockquote>
+<p>“The simple graph has brought more information to the data analyst’s mind than any other device.” — John Tukey</p>
+</blockquote>
+<p>load ggplot2</p>
+<pre class="r"><code>library(ggplot2)</code></pre>
+<p><br></p>
+<p>ggplot2<br />
+- by Hadley Wickham<br />
+- based on “Grammar of Graphics” (그래픽의 각 요소를 구분하여 취급)<br />
+- incremental method (기초 플롯을 생성한 후, 필요한 그래픽 요소들을 붙이는 방식)</p>
+<div id="scatter-plot" class="section level3">
+<h3>scatter plot</h3>
+<p>scatter plot: gdpPercap vs. lifeExp in year 2007<br />
+2007년 1인당 국민소득과 기대수명의 관계를 산점도로 그리기</p>
+<pre class="r"><code>gapminder_2007 &lt;- gapminder %&gt;%
+  filter(year == 2007) </code></pre>
+<pre class="r"><code>ggplot(data = gapminder_2007, aes(x=gdpPercap, y=lifeExp)) + geom_point()</code></pre>
+<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+</div>
+<div id="additional-aesthetics" class="section level3">
+<h3>additional aesthetics</h3>
+<p>그래픽 요소(color, size)에 데이터를 매핑</p>
+<pre class="r"><code>ggplot(data = gapminder_2007, aes(x=gdpPercap, y=lifeExp, color=continent, size=pop)) + geom_point()</code></pre>
+<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+</div>
+<div id="faceting" class="section level3">
+<h3>faceting</h3>
+<pre class="r"><code>ggplot(data = gapminder_2007, aes(x=gdpPercap, y=lifeExp)) + 
+  geom_point() + 
+  facet_wrap(~continent)</code></pre>
+<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+</div>
+<div id="line-plot" class="section level3">
+<h3>line plot</h3>
+<p>대륙별로 평균 기대수명의 연도에 따른 변화를 보자.</p>
+<pre class="r"><code>year_continent = gapminder %&gt;%
+  group_by(continent, year) %&gt;%
+  summarize(meanLifeExp = mean(lifeExp))
+p = ggplot(data = year_continent, aes(x=year, y=meanLifeExp, color=continent)) + geom_point()
+p = p + geom_line()
+p</code></pre>
+<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<pre class="r"><code>p + expand_limits(y=0) </code></pre>
+<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-18-2.png" width="672" /></p>
+<p>2007년 1인당 국민소득과 기대 수명의 관계를 산점도로 그리고, 선형 회귀직선을 그려보자.</p>
+<pre class="r"><code>p &lt;- ggplot(gapminder_2007, aes(gdpPercap, lifeExp)) + geom_point()
+p</code></pre>
+<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<pre class="r"><code>p = p + scale_x_log10() # scale 함수 
+p</code></pre>
+<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-19-2.png" width="672" /></p>
+<pre class="r"><code>gapminder_2007_coef = coef(lm(lifeExp ~ log10(gdpPercap), data = gapminder_2007))
+gapminder_2007_coef</code></pre>
+<pre><code>##      (Intercept) log10(gdpPercap) 
+##         4.949612        16.585064</code></pre>
+<pre class="r"><code>p + geom_abline(intercept = gapminder_2007_coef[&quot;(Intercept)&quot;], 
+                slope = gapminder_2007_coef[&quot;log10(gdpPercap)&quot;], color = &quot;red&quot;)</code></pre>
+<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+<p>통계적 데이터의 변환 함수를 이용하자.</p>
+<pre class="r"><code>p</code></pre>
+<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
+<pre class="r"><code>p + stat_smooth(method = &quot;lm&quot;, se=F, color = &quot;red&quot;) </code></pre>
+<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-22-2.png" width="672" /></p>
+</div>
+<div id="bar-plot" class="section level3">
+<h3>bar plot</h3>
+<p>대륙별 평균 기대수명의 비교. (bar plot)</p>
+<pre class="r"><code>by_continent = gapminder %&gt;%
+  group_by(continent) %&gt;%
+  summarise(meanLifeExp = mean(lifeExp))
+ggplot(by_continent, aes(x=continent, y=meanLifeExp)) + geom_col()</code></pre>
+<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
+</div>
+<div id="histogram" class="section level3">
+<h3>histogram</h3>
+<p>기대수명의 분포 (histogram)</p>
+<pre class="r"><code>ggplot(gapminder, aes(x=lifeExp)) + geom_histogram()</code></pre>
+<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-24-1.png" width="672" /> <br></p>
+<p>5년 단위 구간(bins)</p>
+<pre class="r"><code>ggplot(gapminder, aes(x=lifeExp)) + geom_histogram(binwidth = 5)</code></pre>
+<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-25-1.png" width="672" /></p>
+</div>
+<div id="box-plot" class="section level3">
+<h3>box plot</h3>
+<p>대륙별 기대수명의 분포 비교 (box plot)</p>
+<pre class="r"><code>ggplot(gapminder, aes(x=continent, y=lifeExp)) + geom_boxplot()</code></pre>
+<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-26-1.png" width="672" /> <br></p>
+</div>
+<div id="ggplot2-plot----" class="section level3">
+<h3>ggplot2 plot 의 기본 성분과 구조</h3>
+<p>ggplot2 plot의 기본 성분<br />
+- Data: 주로 data frame 객체 형태의 데이터 - Aesthetic mappings: 데이터를 축, 색상, 점의 크기 등으로 매핑하는 방법 - Geometric object: 점, 선, 도형과 같은 기하학적 객체 - Scales: - Coordinate system: 좌표계 - Facetting: 조건부 플롯을 위해 패널을 분할하여 표현하는 방법 - Statistical transformation: Binning, quantiles, smoothing 등의 통계 변환 - Position adjustment: 위치의 조정</p>
+<pre class="r"><code>p &lt;- ggplot(data = gapminder_2007, aes(x=gdpPercap, y=lifeExp)) + geom_point()
+attributes(p)</code></pre>
+<pre><code>## $names
+## [1] &quot;data&quot;        &quot;layers&quot;      &quot;scales&quot;      &quot;mapping&quot;     &quot;theme&quot;      
+## [6] &quot;coordinates&quot; &quot;facet&quot;       &quot;plot_env&quot;    &quot;labels&quot;     
+## 
+## $class
+## [1] &quot;gg&quot;     &quot;ggplot&quot;</code></pre>
+<pre class="r"><code>summary(p)</code></pre>
+<pre><code>## data: country, continent, year, lifeExp, pop, gdpPercap [142x6]
+## mapping:  x = gdpPercap, y = lifeExp
+## faceting: &lt;ggproto object: Class FacetNull, Facet&gt;
+##     compute_layout: function
+##     draw_back: function
+##     draw_front: function
+##     draw_labels: function
+##     draw_panels: function
+##     finish_data: function
+##     init_scales: function
+##     map: function
+##     map_data: function
+##     params: list
+##     render_back: function
+##     render_front: function
+##     render_panels: function
+##     setup_data: function
+##     setup_params: function
+##     shrink: TRUE
+##     train: function
+##     train_positions: function
+##     train_scales: function
+##     vars: function
+##     super:  &lt;ggproto object: Class FacetNull, Facet&gt;
+## -----------------------------------
+## geom_point: na.rm = FALSE
+## stat_identity: na.rm = FALSE
+## position_identity</code></pre>
+<p><br></p>
+<p>ggplot2 plot 의 구조<br />
+- ggplot = layers + scales + coordinate system - layers = data + mapping + geom + stat + position</p>
+</div>
+<div id="ggplot2-" class="section level3">
+<h3>ggplot2 함수군</h3>
+<ul>
+<li>Plot creation: ggplot 클래스 객체를 생성하는 함수군</li>
+<li>Geoms: graphic 의 geometric (기하학적인 형태)을 지정하는 함수군</li>
+<li>Statistics: 데이터를 통계적인 관점으로 변환하는 함수군</li>
+<li>Scales: 축의 스케일 변환과 라벨, 범례 등을 변경하는 함수군</li>
+<li>Coordinate systems: 좌표계를 설정하는 함수군</li>
+<li>Faceting: 그래픽 facet layout 을 정의하는 함수군</li>
+<li>Position adjustment: geometric 의 위치를 지정하는 함수군</li>
+<li>Others</li>
+</ul>
+<pre class="r"><code>apropos(&quot;^geom_&quot;)</code></pre>
+<pre><code>##  [1] &quot;geom_abline&quot;     &quot;geom_area&quot;       &quot;geom_bar&quot;       
+##  [4] &quot;geom_bin2d&quot;      &quot;geom_blank&quot;      &quot;geom_boxplot&quot;   
+##  [7] &quot;geom_col&quot;        &quot;geom_contour&quot;    &quot;geom_count&quot;     
+## [10] &quot;geom_crossbar&quot;   &quot;geom_curve&quot;      &quot;geom_density&quot;   
+## [13] &quot;geom_density_2d&quot; &quot;geom_density2d&quot;  &quot;geom_dotplot&quot;   
+## [16] &quot;geom_errorbar&quot;   &quot;geom_errorbarh&quot;  &quot;geom_freqpoly&quot;  
+## [19] &quot;geom_hex&quot;        &quot;geom_histogram&quot;  &quot;geom_hline&quot;     
+## [22] &quot;geom_jitter&quot;     &quot;geom_label&quot;      &quot;geom_line&quot;      
+## [25] &quot;geom_linerange&quot;  &quot;geom_map&quot;        &quot;geom_path&quot;      
+## [28] &quot;geom_point&quot;      &quot;geom_pointrange&quot; &quot;geom_polygon&quot;   
+## [31] &quot;geom_qq&quot;         &quot;geom_quantile&quot;   &quot;geom_raster&quot;    
+## [34] &quot;geom_rect&quot;       &quot;geom_ribbon&quot;     &quot;geom_rug&quot;       
+## [37] &quot;geom_segment&quot;    &quot;geom_smooth&quot;     &quot;geom_spoke&quot;     
+## [40] &quot;geom_step&quot;       &quot;geom_text&quot;       &quot;geom_tile&quot;      
+## [43] &quot;geom_violin&quot;     &quot;geom_vline&quot;</code></pre>
+<pre class="r"><code>apropos(&quot;^stat_&quot;)</code></pre>
+<pre><code>##  [1] &quot;stat_bin&quot;         &quot;stat_bin_2d&quot;      &quot;stat_bin_hex&quot;    
+##  [4] &quot;stat_bin2d&quot;       &quot;stat_binhex&quot;      &quot;stat_boxplot&quot;    
+##  [7] &quot;stat_contour&quot;     &quot;stat_count&quot;       &quot;stat_density&quot;    
+## [10] &quot;stat_density_2d&quot;  &quot;stat_density2d&quot;   &quot;stat_ecdf&quot;       
+## [13] &quot;stat_ellipse&quot;     &quot;stat_function&quot;    &quot;stat_identity&quot;   
+## [16] &quot;stat_qq&quot;          &quot;stat_quantile&quot;    &quot;stat_smooth&quot;     
+## [19] &quot;stat_spoke&quot;       &quot;stat_sum&quot;         &quot;stat_summary&quot;    
+## [22] &quot;stat_summary_2d&quot;  &quot;stat_summary_bin&quot; &quot;stat_summary_hex&quot;
+## [25] &quot;stat_summary2d&quot;   &quot;stat_unique&quot;      &quot;stat_ydensity&quot;</code></pre>
+</div>
+</div>
+<div id="-" class="section level2">
+<h2>연습 문제</h2>
+<p>proact_sample.txt 파일은 original PROACT dataset 에서 무작위로 20% 환자들의 데이터만을 추출한 것이다. Lab test 데이터 중에서는 일부 features 를 선별하였고, Adverse Event 와 Concomitant Medication form 은 제외하였다. DataMedicine_Lecture3_Exercises.R</p>
+<ol style="list-style-type: decimal">
+<li><p>“proact_sample.txt” 파일을 읽어들이고, 몇 명의 환자들에 대한 데이터인지 확인하자. (read.table()) <br></p></li>
+<li><p>각 column의 이름이 무엇을 의미하는지 파악해보자. <br></p></li>
+<li><p>몇 개의 form_name 이 있는지? 각 form_name 은 몇 개의 feature_name 으로 구성되어 있는지, feature_name 에는 어떤 것들이 있는지 알아보자. (droplevels()) <br></p></li>
+<li><p>탐색적 데이터 분석을 진행하기 전에 연구의 목적이 무엇인지 최대한 구체적으로 기술해보자. 분석의 대상이 될 환자들을 어떻게 선정할지 생각해보자. <br></p></li>
+<li><p>Demographic form 데이터만 추출해서 complete demographic data 가 있는 환자들의 수는 얼마인지 알아보자. (어떤 환자들은 demographic data 가 전혀 없거나 일부 항목이 missing 되어 있을 수 있다.) (tidyr::spread(), complete.cases()) <br></p></li>
+<li><p>Extract only the data of subjects with complete demographic data <br></p></li>
+<li><p>ALSFRS form 데이터에는 2번 이상 중복 혹은 불일치 기재된 feature_value 들이 있다. 이와 같은 경우가 발생한 환자들의 SubjectID 는 무엇인가? 이들을 어떻게 처리할 것인가? (duplicated(), which()) <br></p></li>
+<li><p>ALSFRS or ALSFRS-R records 가 적어도 한 번 이상 기록된 환자들은 모두 몇 명인가? ALSFRS or ALSFRS-R records 가 기록된 횟수의 분포는 어떠한가? (table()) <br></p></li>
+<li><p>ALSFRS 와 ALSFRS_R 의 차이는 무엇인가? <br></p></li>
+<li><p>ALSFRS 만 기록된 환자는 몇 명인가? ALSFRS_R 만 기록된 환자는 몇 명인가? 둘 다 기록된 환자는 몇 명인가? (gplots::venn()) <br></p></li>
+<li><p>ALSFRS_Total 과 feature_delta 데이터가 모두 있는 환자들은 몇 명인가? <br></p></li>
+<li><p>feature_delta 와 ALSFRS_Total 의 관계를 산점도로 그려보자. feature_delta &lt; 0 은 데이터 포인트를 찾아보자. 시간에 따른 ALSFRS_Total 의 변화를 line plot 으로 그려보자. feature_delta &lt; 500 인 data points 만 line plot 으로 그려보자. (ggplot(), aes(), group, alpha) <br></p></li>
+<li><p>onset site (Bulbar vs. Limb) 에 따라 ALSFRS_Total 의 변화(질환의 진행속도)가 다른지 살펴보자. <br></p></li>
+<li><p>Lab data 중 Creatinine 의 변화를 시각화해보자. Baseline Creatinine value 에 따라 질환의 진행속도가 다른지 살펴보자.</p></li>
+<li>계속해서 탐색적 데이터 분석과 시각화를 해보자. 예를 들면, 다음 변수값에 따라 질환의 진행속도가 다른지</li>
+</ol>
+<ul>
+<li>age, sex, race<br />
+</li>
+<li>onset to diagnosis (dianostic delay), onset to enrollment</li>
+<li>uric acid (baseline)</li>
+<li>BMI (baseline)</li>
+<li>FVC, SVC (baseline)</li>
+<li>BP, PR (baseline)</li>
+</ul>
+<ol start="16" style="list-style-type: decimal">
+<li>3-12 개월 사이 ALSFRS_Total 점수의 변화율 (slope)을 구해보자.</li>
+</ol>
+<ul>
+<li>ALSFRS slope, 3-12 mo</li>
+<li>Slope ratio = [ALSFRS_Total(m2) - ALSFRS_Total(m1)] / (m2 - m1)</li>
+<li>m1 = the first visit after 3 mo</li>
+<li>m2 = the first visit after 12 mo or the last visit within 12 mo</li>
+</ul>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

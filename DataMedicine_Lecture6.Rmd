@@ -1,0 +1,182 @@
+---
+title: "데이터 임상의학 w/ R (6)"
+date: Sept 4, 2018
+author: "Yoon-Ho Hong, MD, PhD"
+output:
+  html_document:
+    toc: yes
+    toc_float: true
+---
+
+resampling 은 무엇인가?   
+왜 필요한가?   
+어떤 방법들이 있는가?   
+
+# Cross validation 
+모델의 성능 평가(model assessment)   
+적절한 수준의 flexibility 를 선택(model selection)하는 데 사용   
+
+Validation set approach  
+: test error 에 대한 추정치와 추정치의 변동성이 크다 (즉, bias와 variance가 모두 크다)  
+
+LOOCV (Leave-one-out cross-validation)   
+: test error 에 대한 추정치와 추정치의 변동성이 훨씬 작다 (즉, bias와 variance가 모두 작다)
+
+k-fold CV 
+: test error 에 대한 추정치의 정확성, 즉 bias는 validation set approach와 LOOCV의 중간에 해당   
+: test error 추정치는 LOOCV의 추정치보다 변동성이 작은 경향이 있다.   
+**rule of thumb: k=5 or 10 (bias-variance trade-off)**
+
+```{r}
+Auto = read.csv("Auto.csv")
+str(Auto)
+Auto$horsepower = as.numeric(as.character(Auto$horsepower))
+Auto = Auto[complete.cases(Auto),]
+summary(Auto)
+```
+
+validation set approach
+```{r}
+set.seed(1)
+train = sample(392, 196)
+lm.fit = lm(mpg ~ horsepower, data = Auto, subset = train)
+pred = predict(lm.fit, Auto[-train,])
+obs = Auto[-train,]$mpg
+mse = mean((pred - obs)^2)
+mse
+```
+
+
+validation set approach
+: 평균제곱오차의 추정치를 구해보자.   
+```{r}
+mse = c()
+for (i in 1:10){
+  train = sample(392, 196)
+  lm.fit = lm(mpg ~ horsepower, data = Auto, subset = train)
+  pred = predict(lm.fit, Auto[-train,])
+  obs = Auto[-train,]$mpg
+  mse[i] = mean((pred - obs)^2)
+}
+mean(mse)
+sd(mse)
+```
+
+LOOCV   
+: 평균제곱오차의 추정치를 구해보자.   
+```{r}
+mse.loocv = c()
+for (i in 1:392){
+  lm.fit = lm(mpg ~ horsepower, data = Auto[-i,])
+  pred = predict(lm.fit, Auto[i,])
+  obs = Auto$mpg[i]
+  mse.loocv[i] = (pred - obs)^2
+}
+mean(mse.loocv)
+sd(mse.loocv)
+```
+
+K-fold CV 
+: MSE 추정치   
+```{r}
+library(caret)
+folds = createFolds(1:392, k=10)
+mse.kcv = c()
+for (i in 1:10){
+  lm.fit = lm(mpg ~ horsepower, data = Auto[-folds[[i]],])
+  pred = predict(lm.fit, Auto[folds[[i]],])
+  obs = Auto[folds[[i]],]$mpg
+  mse.kcv[i] = mean((pred - obs)^2)
+}
+mean(mse.kcv)
+sd(mse.kcv)
+```
+
+
+# Bootstrap 
+추정치(parameter estimation)의 정확도(변동성) 평가  
+
+표본평균에서 모평균을 추정하는 문제... 
+먼저, remind...what you learned in high school...
+```{r}
+# population 
+population = rnorm(1000, 0, 10) # number=1000, mean=0, sd=10
+mean(population)
+sd(population)
+```
+
+
+```{r}
+# sample 
+spl = sample(population, 100, replace = F) 
+```
+
+suppose that we don't know the population mean and sd,   
+estimate the population mean  
+using the sample data   
+
+중심극한정리에 따르면... 
+$$\mu = mean(\bar{X})$$
+$\mu: population\ mean$   
+$\bar{X}: sample\ mean$  
+
+standard error (of mean) = standard deviation of estimated population mean
+$$SE=\frac{\sigma}{n}$$  
+
+$\sigma = standard\ deviation\ of\ population$
+$n = sample\ size$
+
+95% confidence interval of population mean
+$$\bar{X}-1.96\times\frac{\sigma}{\sqrt{n}} < \mu < \bar{X}+1.96\times\frac{\sigma}{\sqrt{n}}$$    
+
+we can replace $\sigma$ with $\hat{\sigma}$  
+$$\hat{\sigma} = s$$
+$s = standard\ deviation\ of\ sample$
+
+We can calculate standard deviation of sample as following:   
+$$s^2 = \frac{\sum(X_i-\bar{X})^2}{n-1}$$
+**note: n-1 instead of n** 
+
+표본평균에서 모평균을 추정하는 문제로 돌아가서...    
+Calculate sample mean and sd -> Estimate population mean
+```{r}
+x_bar = mean(spl)
+x_bar
+n = length(spl)
+s = sqrt((sd(spl)^2)*n/(n-1))
+se = s/sqrt(n)
+se
+CI = c(x_bar - 1.96*s/sqrt(n), x_bar + 1.96*s/sqrt(n))
+```
+
+We can estimate population mean, using bootstrapping  
+We need two  
+- function   
+- number of repeats
+
+first, function   
+```{r}
+fn = function(z, index){
+  mean(z[index])
+} # function need two arguments, the second one should be index
+```
+
+
+```{r}
+fn(spl, sample(1:100, 100, replace = T))
+```
+
+second, number of repeats    
+```{r}
+# boot 
+library(boot)
+boot(spl, fn, R=1000) 
+```
+cf> x_bar, se
+
+
+
+
+
+
+

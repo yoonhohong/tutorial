@@ -1,0 +1,288 @@
+---
+title: "데이터 임상의학 w/ R (2)"
+date: Aug 11, 2018
+author: "Yoon-Ho Hong, MD, PhD"
+output:
+  html_document:
+    toc: yes
+    toc_float: true
+---
+
+## R & Rstudio 설치하기  
+The R Project for Statistical Computing https://www.r-project.org/  
+An integrated development environment (IDE) for R https://www.rstudio.com/
+
+## rstudio.cloud (alpha)
+Rstudio server cloud https://rstudio.cloud/  
+
+
+## Getting Help  
+?mean  
+??"weighted mean"
+
+## Using Packages   
+install.packages("dplyr")  
+library(dplyr)  
+
+## Working directory
+getwd()  
+setwd()
+
+## Vectors  
+
+Creating vectors  
+```{r}
+c(2, 4, 6)  
+2:6  
+seq(2, 10, by=0.5)  
+rep(1:3, times=3)
+rep(1:3, each=3)
+```
+<br>
+
+Vector functions
+```{r}
+x <- c(10:20, 1, 3, 10, 12) # variable assignment 
+sort(x)
+sort(x, decreasing = TRUE) # argument 
+rev(x)
+length(x)
+range(x)
+unique(x) # see unique values
+table(x) # see vounts of values
+```
+<br>
+
+Selecting vector elements (by position)
+```{r}
+a = c("apple", "banana", "melon", "grape")
+a[4]
+a[-4]
+a[2:4]
+a[-(2:4)]
+a[c(1,3)]
+```
+<br>
+
+Selecting vector elements (by value)
+```{r}
+x[x == 10]
+x[x < 10]
+x[x %in% c(1, 2, 5)]
+```
+
+## Programming   
+for loop 
+```{r}
+# summation 1 to 10
+j = 0
+for (i in 1:10){
+  j = i + j
+}
+j
+```
+<br>
+
+while loop
+```{r}
+i = 0; j = 0
+while (i < 10){
+  i = i + 1
+  j = j + i
+}
+i; j
+```
+<br>
+
+if... else statements 
+```{r}
+if (i > 3){
+  print("i larger than 3")
+} else {
+  print("i less than 3")
+}
+```
+<br>
+
+functions 
+```{r}
+square = function(x){
+  squared = x*x
+  return(squared)
+}
+square(4)
+```
+
+## Math functions 
+```{r}
+sum(x)
+mean(x)
+median(x)
+max(x)
+min(x)
+sd(x)
+var(x)
+quantile(x)
+round(1.8734, 2)
+exp(x)
+log(x)
+x^2
+```
+
+## Environment
+```{r}
+ls()
+rm(i)
+```
+
+## R objects
+
+When you create a `variable` you reserve some space in memory. The variables are assigned with R `objects`. There are many types of R objects which includes... 
+
+- vector
+- list
+- matrix
+- data frame
+- factor
+
+Data types of atomic vectors includes...
+
+- numeric
+- logical (boolean)
+- character
+
+## Data type conversion 
+```{r}
+tc = c(0,1,1,0);class(tc)  
+tc.logic = as.logical(tc)
+tc.num = as.numeric(tc.logic)
+tc.char1 = as.character(tc.num)
+tc.char2 = as.character(tc.logic)
+```
+
+## Matrix 
+```{r}
+# create a matrix from x
+mat = matrix(x, ncol = 3)
+# select rows/columns/elements
+mat[1,]
+mat[,3]
+mat[3,2]
+t(mat) # transpose 
+mat %*% t(mat) # matrix multiplication
+```
+
+## List
+```{r}
+lst <- list(x = 1:5, y = c('a', 'b'))
+lst[[2]]
+lst$y
+lst[2]
+lst["y"]
+```
+
+## Data frames
+```{r}
+df <- data.frame(n = 1:3, s = c('a', 'b', 'c'))
+df[1,]
+df[3,2]
+str(df)
+dim(df)
+nrow(df);ncol(df)
+```
+
+## Factor 
+```{r}
+char = c("a", "b", "c", "b", "c", "d")
+fac = factor(char)
+levels(fac)
+```
+
+## 데이터 불러오기
+
+Read a comma separated value (csv) file
+```{r}
+demograph = read.csv("Demographic.csv")
+head(demograph)
+```
+<br>
+
+Read a delimited text file  
+```{r}
+proact = read.delim("proact_sample.txt", sep="|") 
+# random 1/20 sample of the PROACT dataset
+```
+
+## 데이터 쓰기
+
+```{r}
+demograph$Age = round(demograph$Age)
+write.csv(demograph, file = "demograph_roundage.csv", row.names = F, quote = F)
+write.table(demograph, file = "demograph_roundage.txt", quote = F, row.names = F)
+```
+
+## 그래프 
+
+Scatter plot  
+```{r}
+attach(mtcars)
+plot(wt, mpg, pch=19)
+pairs(mtcars)
+pairs(mtcars[c("disp", "hp", "wt", "qsec")])
+```
+<br>
+
+Histogram
+```{r}
+hist(mtcars$mpg)
+hist(mtcars$mpg, freq = F)
+lines(density(mtcars$mpg))
+plot(density(mtcars$mpg))
+```
+<br>
+
+Bar Plot 
+```{r}
+counts <- table(mtcars$gear)
+barplot(counts, main="Car Distribution", 
+  	xlab="Number of Gears")
+```
+<br>
+
+Grouped Bar Plot
+```{r}
+counts <- table(mtcars$am, mtcars$gear)
+barplot(counts)
+barplot(counts, col=c("blue","red"),
+ 	legend = rownames(counts))
+barplot(counts, col=c("blue","red"),
+ 	legend = rownames(counts), beside=TRUE)
+```
+
+Boxplot  
+```{r}
+boxplot(mpg~cyl,data=mtcars, main="Car Milage Data", 
+  	xlab="Number of Cylinders", ylab="Miles Per Gallon")
+```
+
+
+Saving graph  
+: Export -> Save As...
+: You can also save the graph via code using one of the following functions...
+
+- pdf("mygraph.pdf")	
+- png("mygraph.png")
+- jpeg("mygraph.jpg")	
+- bmp("mygraph.bmp")
+- postscript("mygraph.ps")	 
+
+## 연습 문제
+
+Slack #textbook 채널에 가서 ISLR pdf 파일을 열어 Chapter 2, Page 54-57 의 연습문제 8-10 을 풀어보자. 
+
+https://rstudio.cloud 에 가서 sign up 한후, 아래 link 에 접속하여, https://rstudio.cloud/spaces/2905/join?access_code=QuMv1uIYqUTizsyRrXX8JjK8eoRpk5vJO%2BoiiqgZ
+Data medicine 101 스페이스의 Basics 프로젝트를 copy 한 후 R script 를 작성한다. 
+
+
+
+

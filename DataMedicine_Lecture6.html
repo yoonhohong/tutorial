@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+<meta name="author" content="Yoon-Ho Hong, MD, PhD" />
+
+
+<title>데이터 임상의학 w/ R (6)</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/paper.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.0.13/css/fa-svg-with-js.css" rel="stylesheet" />
+<script src="site_libs/font-awesome-5.0.13/js/fontawesome-all.min.js"></script>
+<script src="site_libs/font-awesome-5.0.13/js/fa-v4-shims.min.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="styles.css" type="text/css" />
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 64px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 69px;
+  margin-top: -69px;
+}
+
+.section h2 {
+  padding-top: 69px;
+  margin-top: -69px;
+}
+.section h3 {
+  padding-top: 69px;
+  margin-top: -69px;
+}
+.section h4 {
+  padding-top: 69px;
+  margin-top: -69px;
+}
+.section h5 {
+  padding-top: 69px;
+  margin-top: -69px;
+}
+.section h6 {
+  padding-top: 69px;
+  margin-top: -69px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Tutorial</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="https://yoonhohong.github.io">by Yoon H. Hong</a>
+</li>
+<li>
+  <a href="http://www.github.com/yoonhohong/tutorial">
+    <span class="fa fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">데이터 임상의학 w/ R (6)</h1>
+<h4 class="author"><em>Yoon-Ho Hong, MD, PhD</em></h4>
+<h4 class="date"><em>Sept 4, 2018</em></h4>
+
+</div>
+
+
+<p>resampling 은 무엇인가?<br />
+왜 필요한가?<br />
+어떤 방법들이 있는가?</p>
+<div id="cross-validation" class="section level1">
+<h1>Cross validation</h1>
+<p>모델의 성능 평가(model assessment)<br />
+적절한 수준의 flexibility 를 선택(model selection)하는 데 사용</p>
+<dl>
+<dt>Validation set approach</dt>
+<dd>test error 에 대한 추정치와 추정치의 변동성이 크다 (즉, bias와 variance가 모두 크다)
+</dd>
+<dt>LOOCV (Leave-one-out cross-validation)</dt>
+<dd>test error 에 대한 추정치와 추정치의 변동성이 훨씬 작다 (즉, bias와 variance가 모두 작다)
+</dd>
+<dt>k-fold CV</dt>
+<dd>test error 에 대한 추정치의 정확성, 즉 bias는 validation set approach와 LOOCV의 중간에 해당
+</dd>
+<dd>test error 추정치는 LOOCV의 추정치보다 변동성이 작은 경향이 있다.<br />
+<strong>rule of thumb: k=5 or 10 (bias-variance trade-off)</strong>
+</dd>
+</dl>
+<pre class="r"><code>Auto = read.csv(&quot;Auto.csv&quot;)
+str(Auto)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    397 obs. of  9 variables:
+##  $ mpg         : num  18 15 18 16 17 15 14 14 14 15 ...
+##  $ cylinders   : int  8 8 8 8 8 8 8 8 8 8 ...
+##  $ displacement: num  307 350 318 304 302 429 454 440 455 390 ...
+##  $ horsepower  : Factor w/ 94 levels &quot;?&quot;,&quot;100&quot;,&quot;102&quot;,..: 17 35 29 29 24 42 47 46 48 40 ...
+##  $ weight      : int  3504 3693 3436 3433 3449 4341 4354 4312 4425 3850 ...
+##  $ acceleration: num  12 11.5 11 12 10.5 10 9 8.5 10 8.5 ...
+##  $ year        : int  70 70 70 70 70 70 70 70 70 70 ...
+##  $ origin      : int  1 1 1 1 1 1 1 1 1 1 ...
+##  $ name        : Factor w/ 304 levels &quot;amc ambassador brougham&quot;,..: 49 36 231 14 161 141 54 223 241 2 ...</code></pre>
+<pre class="r"><code>Auto$horsepower = as.numeric(as.character(Auto$horsepower))</code></pre>
+<pre><code>## Warning: NAs introduced by coercion</code></pre>
+<pre class="r"><code>Auto = Auto[complete.cases(Auto),]
+summary(Auto)</code></pre>
+<pre><code>##       mpg          cylinders      displacement     horsepower   
+##  Min.   : 9.00   Min.   :3.000   Min.   : 68.0   Min.   : 46.0  
+##  1st Qu.:17.00   1st Qu.:4.000   1st Qu.:105.0   1st Qu.: 75.0  
+##  Median :22.75   Median :4.000   Median :151.0   Median : 93.5  
+##  Mean   :23.45   Mean   :5.472   Mean   :194.4   Mean   :104.5  
+##  3rd Qu.:29.00   3rd Qu.:8.000   3rd Qu.:275.8   3rd Qu.:126.0  
+##  Max.   :46.60   Max.   :8.000   Max.   :455.0   Max.   :230.0  
+##                                                                 
+##      weight      acceleration        year           origin     
+##  Min.   :1613   Min.   : 8.00   Min.   :70.00   Min.   :1.000  
+##  1st Qu.:2225   1st Qu.:13.78   1st Qu.:73.00   1st Qu.:1.000  
+##  Median :2804   Median :15.50   Median :76.00   Median :1.000  
+##  Mean   :2978   Mean   :15.54   Mean   :75.98   Mean   :1.577  
+##  3rd Qu.:3615   3rd Qu.:17.02   3rd Qu.:79.00   3rd Qu.:2.000  
+##  Max.   :5140   Max.   :24.80   Max.   :82.00   Max.   :3.000  
+##                                                                
+##                  name    
+##  amc matador       :  5  
+##  ford pinto        :  5  
+##  toyota corolla    :  5  
+##  amc gremlin       :  4  
+##  amc hornet        :  4  
+##  chevrolet chevette:  4  
+##  (Other)           :365</code></pre>
+<p>validation set approach</p>
+<pre class="r"><code>set.seed(1)
+train = sample(392, 196)
+lm.fit = lm(mpg ~ horsepower, data = Auto, subset = train)
+pred = predict(lm.fit, Auto[-train,])
+obs = Auto[-train,]$mpg
+mse = mean((pred - obs)^2)
+mse</code></pre>
+<pre><code>## [1] 26.14142</code></pre>
+<dl>
+<dt>validation set approach</dt>
+<dd>평균제곱오차의 추정치를 구해보자.
+</dd>
+</dl>
+<pre class="r"><code>mse = c()
+for (i in 1:10){
+  train = sample(392, 196)
+  lm.fit = lm(mpg ~ horsepower, data = Auto, subset = train)
+  pred = predict(lm.fit, Auto[-train,])
+  obs = Auto[-train,]$mpg
+  mse[i] = mean((pred - obs)^2)
+}
+mean(mse)</code></pre>
+<pre><code>## [1] 23.22124</code></pre>
+<pre class="r"><code>sd(mse)</code></pre>
+<pre><code>## [1] 1.185793</code></pre>
+<dl>
+<dt>LOOCV</dt>
+<dd>평균제곱오차의 추정치를 구해보자.
+</dd>
+</dl>
+<pre class="r"><code>mse.loocv = c()
+for (i in 1:392){
+  lm.fit = lm(mpg ~ horsepower, data = Auto[-i,])
+  pred = predict(lm.fit, Auto[i,])
+  obs = Auto$mpg[i]
+  mse.loocv[i] = (pred - obs)^2
+}
+mean(mse.loocv)</code></pre>
+<pre><code>## [1] 24.23151</code></pre>
+<pre class="r"><code>sd(mse.loocv)</code></pre>
+<pre><code>## [1] 36.84434</code></pre>
+<dl>
+<dt>K-fold CV</dt>
+<dd>MSE 추정치
+</dd>
+</dl>
+<pre class="r"><code>library(caret)</code></pre>
+<pre><code>## Loading required package: lattice</code></pre>
+<pre class="r"><code>folds = createFolds(1:392, k=10)
+mse.kcv = c()
+for (i in 1:10){
+  lm.fit = lm(mpg ~ horsepower, data = Auto[-folds[[i]],])
+  pred = predict(lm.fit, Auto[folds[[i]],])
+  obs = Auto[folds[[i]],]$mpg
+  mse.kcv[i] = mean((pred - obs)^2)
+}
+mean(mse.kcv)</code></pre>
+<pre><code>## [1] 24.17933</code></pre>
+<pre class="r"><code>sd(mse.kcv)</code></pre>
+<pre><code>## [1] 6.531803</code></pre>
+</div>
+<div id="bootstrap" class="section level1">
+<h1>Bootstrap</h1>
+<p>추정치(parameter estimation)의 정확도(변동성) 평가</p>
+<p>표본평균에서 모평균을 추정하는 문제… 먼저, remind…what you learned in high school…</p>
+<pre class="r"><code># population 
+population = rnorm(1000, 0, 10) # number=1000, mean=0, sd=10
+mean(population)</code></pre>
+<pre><code>## [1] -0.2908895</code></pre>
+<pre class="r"><code>sd(population)</code></pre>
+<pre><code>## [1] 10.46025</code></pre>
+<pre class="r"><code># sample 
+spl = sample(population, 100, replace = F) </code></pre>
+<p>suppose that we don’t know the population mean and sd,<br />
+estimate the population mean<br />
+using the sample data</p>
+<p>중심극한정리에 따르면… <span class="math display">\[\mu = mean(\bar{X})\]</span> <span class="math inline">\(\mu: population\ mean\)</span><br />
+<span class="math inline">\(\bar{X}: sample\ mean\)</span></p>
+<p>standard error (of mean) = standard deviation of estimated population mean <span class="math display">\[SE=\frac{\sigma}{n}\]</span></p>
+<p><span class="math inline">\(\sigma = standard\ deviation\ of\ population\)</span> <span class="math inline">\(n = sample\ size\)</span></p>
+<p>95% confidence interval of population mean <span class="math display">\[\bar{X}-1.96\times\frac{\sigma}{\sqrt{n}} &lt; \mu &lt; \bar{X}+1.96\times\frac{\sigma}{\sqrt{n}}\]</span></p>
+<p>we can replace <span class="math inline">\(\sigma\)</span> with <span class="math inline">\(\hat{\sigma}\)</span><br />
+<span class="math display">\[\hat{\sigma} = s\]</span> <span class="math inline">\(s = standard\ deviation\ of\ sample\)</span></p>
+<p>We can calculate standard deviation of sample as following:<br />
+<span class="math display">\[s^2 = \frac{\sum(X_i-\bar{X})^2}{n-1}\]</span> <strong>note: n-1 instead of n</strong></p>
+<p>표본평균에서 모평균을 추정하는 문제로 돌아가서…<br />
+Calculate sample mean and sd -&gt; Estimate population mean</p>
+<pre class="r"><code>x_bar = mean(spl)
+x_bar</code></pre>
+<pre><code>## [1] -0.3538677</code></pre>
+<pre class="r"><code>n = length(spl)
+s = sqrt((sd(spl)^2)*n/(n-1))
+se = s/sqrt(n)
+se</code></pre>
+<pre><code>## [1] 0.9665073</code></pre>
+<pre class="r"><code>CI = c(x_bar - 1.96*s/sqrt(n), x_bar + 1.96*s/sqrt(n))</code></pre>
+<p>We can estimate population mean, using bootstrapping<br />
+We need two<br />
+- function<br />
+- number of repeats</p>
+<p>first, function</p>
+<pre class="r"><code>fn = function(z, index){
+  mean(z[index])
+} # function need two arguments, the second one should be index</code></pre>
+<pre class="r"><code>fn(spl, sample(1:100, 100, replace = T))</code></pre>
+<pre><code>## [1] 0.4933099</code></pre>
+<p>second, number of repeats</p>
+<pre class="r"><code># boot 
+library(boot)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;boot&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:lattice&#39;:
+## 
+##     melanoma</code></pre>
+<pre><code>## The following object is masked from &#39;package:car&#39;:
+## 
+##     logit</code></pre>
+<pre class="r"><code>boot(spl, fn, R=1000) </code></pre>
+<pre><code>## 
+## ORDINARY NONPARAMETRIC BOOTSTRAP
+## 
+## 
+## Call:
+## boot(data = spl, statistic = fn, R = 1000)
+## 
+## 
+## Bootstrap Statistics :
+##       original      bias    std. error
+## t1* -0.3538677 -0.08676985   0.9617525</code></pre>
+<p>cf&gt; x_bar, se</p>
+</div>
+
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
