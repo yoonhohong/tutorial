@@ -1,77 +1,242 @@
 ---
-title: "데이터 임상의학 w/ R (2)"
-date: Aug 11, 2018
-author: "Yoon-Ho Hong, MD, PhD"
+title: "데이터 의학 w/ R (2)"
 output:
   html_document:
     toc: yes
     toc_float: true
+editor_options: 
+  chunk_output_type: console
 ---
 
+```{r, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE)
+```
+
+## R & Rstudio  
+
+우선 R이 뭔지 알아야겠죠? 다음 웹사이트를 방문해 알아봅시다.   
+https://www.r-project.org/about.html
+
+Rstudio에 대해서도 알아봅시다.  
+https://www.rstudio.com/products/rstudio/
+
+[Note]   
+R은 "통계와 그래픽을 위한 프로그래밍 언어와 환경" 정도로 이해하고, Rstudio는 R을 효과적으로 사용하게 해주는 통합개발환경(integrated development environment, IDE) - 쉽게 도구 - 라고 이해하시면 좋겠습니다. 
+
 ## R & Rstudio 설치하기  
-The R Project for Statistical Computing https://www.r-project.org/  
-An integrated development environment (IDE) for R https://www.rstudio.com/
 
-## rstudio.cloud (alpha)
-Rstudio server cloud https://rstudio.cloud/  
+R을 설치하는 것은 어렵지 않아요. 다음 웹사이트에 가서 R을 다운로드하고 설치합시다.  
+The R Project for Statistical Computing https://www.r-project.org/    
+
+Rstudio 설치도 간단합니다. 다음 웹사이트에 가서 Rstudio를 다운로드하고 설치합시다.   
+An integrated development environment (IDE) for R https://www.rstudio.com/  
+
+## R GUI
+
+R을 설치했으니, 다음으로 R (R GUI 프로그램)을 실행해봅시다.   
+다음과 같은 화면이 나타날거예요. 
+
+<img src="img/R_console.png" style="border: #A9A9A9 1px solid; width:75%">
+  
+  
+R은 간단한 계산기로 사용될 수 있습니다. 다음 산술 연산자를 사용해보세요.  
+
+* Addition:+
+* Subtraction:-
+* Multiplication:*
+* Division:/
+* Exponentiation:^
+* Modulo:%%
+
+<img src="img/Arithmetic_R.png" style="border: #A9A9A9 1px solid; width:75%">
 
 
-## Getting Help  
-?mean  
-??"weighted mean"
+## 변수 
+(통계) 프로그래밍의 기본 개념 중에 *변수(variable)*라는 것이 있습니다. 변수를 사용하여 값(Value) 또는 객체(Object)를 저장할 수 있습니다. 아직은 "객체"라는 것이 무엇인지 잘 모를텐데, 우선은 R에서 사용되는 모든 유형의 데이터 구조(data structure)를 지칭한다고 이해하시면 좋겠습니다 (이에 대해서는 아래에서 다시 설명합니다), 아무튼 여기서 중요한 것은 `변수`를 만든다는 것은 메모리의 일부 공간을 확보한다는 것입니다. 나중에 이 변수의 이름을 사용하여 이 변수에 저장된 값이나 객체에 접근할 수 있습니다.   
 
-## Using Packages   
-install.packages("dplyr")  
-library(dplyr)  
+다음 명령을 사용하여 변수 my_var에 값 4를 할당할 수 있습니다. 
 
-## Working directory
-getwd()  
-setwd()
+```{r}
+my_var <- 4 # <- 대신에 = 를 사용할 수도 있습니다.   
+my_var
+```
 
+동영상  
+[Basics of R](https://www.youtube.com/watch?v=SWxoJqTqo08&list=PLjgj6kdf_snYBkIsWQYcYtUZiDpam7ygg&index=1)
+
+## R의 기본 데이터 유형 (Basic data types)
+R의 기본 data type은 다음과 같습니다. 
+
+* Numerics (숫자)
+* Integers (정수)
+* Booleans (논리값, ex. TRUE or FALSE)
+* Characters (문자, 문자열) 
+
+동영상  
+[The basic data types in R](https://www.youtube.com/watch?v=hxlHQ2AtLUk&list=PLjgj6kdf_snYBkIsWQYcYtUZiDpam7ygg&index=2)
+
+## 객체(Objects)
+앞에서 객체에 대해 잠깐 언급하였는데, R에서 사용되는 객체, 즉 데이터 구조에는 다음과 같은 유형들이 있습니다. 이중에서 가장 기본적인 것이 Vector 입니다.  
+
+* Vectors 
+* Factors 
+* Matrix
+* Data frame 
+* List
+
+[Note]  
+참고로 array 라는 것이 있는데, matrix 는 2차원 array 를, vector 는 1차원 array 를 지칭합니다.    
+ 
 ## Vectors  
 
-Creating vectors  
+### Create vectors
+Vector 를 만드는 방법 중에 대표적인 것은 combine 함수 [c()](http://www.rdocumentation.org/packages/base/functions/c)를 사용하는 것입니다. 괄호 사이에 쉼표로 구분된 벡터 요소를 배치합니다. 다음 예를 봅시다.   
 ```{r}
-c(2, 4, 6)  
-2:6  
+my_vec1 = c(2, 4, 6, 8)  
+```
+
+한 벡터 내의 요소들의 데이터 유형은 항상 같아야 합니다. 다음은 character vector 와 boolean vector 의 예입니다. 
+```{r}
+my_vec2 = c("apple", "orange", "banana", "grape")
+my_vec3 = c(TRUE, FALSE, TRUE, FALSE)
+```
+
+동영상  
+[How to create and name vectors](https://www.youtube.com/watch?v=w5dOALbZ9HE&list=PLjgj6kdf_snYBkIsWQYcYtUZiDpam7ygg&index=3)
+
+### Selecting vector elements (by position)
+Vector 를 구성하는 elements의 position 을 index 라고 합니다.첫번째 요소의 index 는 1 입니다. index 를 이용해서 특정 elements 만 선택할 수 있습니다. 다음 예를 봅시다.  
+```{r}
+my_vec2[2] 
+my_vec2[-2] # the second from the last 
+my_vec2[c(1,3)]
+my_vec2[2:4] # from the second through to the 4th element
+my_vec2[-c(2,4)] # exclude the 2nd and 4th elements 
+```
+
+### Selecting vector elements (by value)
+square bracket 내에 boolean vector 를 사용해서 조건을 만족하는 elements 만을 선택할 수 있습니다. 다음 예를 봅시다. 
+```{r}
+my_vec1[my_vec1 == 6] # equal 
+my_vec1[my_vec1 < 10] # less than 
+my_vec1[my_vec1 %in% c(1, 2, 5)] # membership  
+```
+
+## 함수(Functions)
+Vector 외의 다른 자료 구조에 대해 다루기 전에 먼저 함수에 대해 알아보겠습니다.  
+프로그래밍을 하다보면 반복적으로 하게 되는 작업이 있습니다. 함수를 사용하면 이러한 작업을 위해 매번 같은 코드를 작성할 필요가 없어집니다.  
+먼저 R에는 기본적으로 자주 사용되는 함수들이 내장되어 있습니다. 다음은 몇 가지 내장 함수들의 예입니다.  
+
+```{r}
+# create vectors
 seq(2, 10, by=0.5)  
-rep(1:3, times=3)
-rep(1:3, each=3)
-```
-<br>
-
-Vector functions
-```{r}
-x <- c(10:20, 1, 3, 10, 12) # variable assignment 
-sort(x)
-sort(x, decreasing = TRUE) # argument 
+rep(1:3, times=3); rep(1:3, each=3)
+x <- c(10:20, 1, 3, 10, 12) # c() 도 함수입니다. 
+# sorting 
+sort(x); sort(x, decreasing = TRUE) # argument 
 rev(x)
-length(x)
-range(x)
-unique(x) # see unique values
-table(x) # see vounts of values
+# summary
+length(x); range(x)
+table(x) # vounts of values
+# subset
+unique(x) # unique values
+# Math functions 
+sum(x)
+mean(x); median(x)
+max(x); min(x)
+round(1.8734, 2)
+exp(x)
 ```
-<br>
 
-Selecting vector elements (by position)
+### 사용자 정의 함수 만들기(User-defined functions) 
+필요에 따라 함수를 새로 만들어서 사용하기도 합니다. 다음은 어떤 값의 제곱값을 계산하는 함수를 만드는 예입니다.   
 ```{r}
-a = c("apple", "banana", "melon", "grape")
-a[4]
-a[-4]
-a[2:4]
-a[-(2:4)]
-a[c(1,3)]
+square = function(x){
+  squared = x*x
+  return(squared)
+}
+square(4)
+4^2 # 물론 이렇게 하면 됩니다. ^^ 
 ```
-<br>
 
-Selecting vector elements (by value)
+## Factor 
+Factor는 vector의 한 형태인데, 제한된 수의 다른 값을 요소로 취하는 R의 변수(객체)입니다. 따라서, factor는 범주형 변수입니다.   
 ```{r}
-x[x == 10]
-x[x < 10]
-x[x %in% c(1, 2, 5)]
+vec = c(1,2,3,1,1,2,2,3,2,3)
+fvec1 = factor(vec)
+fvec1 
 ```
 
-## Programming   
+factor 함수의 labels 라는 argument 를 사용해서 범주(levels)의 이름을 변경할 수 있습니다.  
+
+factor 함수는 기본적으로(default) numeric 에 대해서는 오름차순으로, character 에 대해서는 alphabet 순으로 levels를 정렬합니다. 따라서, character 에서 levels 의 순서를 새로 정의해주어야 할 필요가 있습니다. 
+```{r}
+fvec2 = factor(vec, labels = c("I", "II", "III"))
+fvec2 
+levels(fvec1) = c("I", "II", "III")
+fvec1
+mon = c("Jan", "Feb", "Jan", "Mar", "Feb", "Jan")
+fmon1 = factor(mon) 
+fmon1
+fmon2 = factor(mon, levels = c("Jan", "Feb", "Mar")) 
+fmon2
+```
+
+## Matrix 
+Matrix 는 2차원 array 입니다. 다음은 matrix 를 만드는 방법, 특정 행이나 열, 요소를 선택하는 방법, matrix의 전치(transpose) 함수와 곱(multiplication) 연산자(%*%)의 사용예입니다. 
+```{r}
+# create a matrix from x
+mat = matrix(x, ncol = 3)
+# select rows/columns/elements
+mat[1,]
+mat[,3]
+mat[3,2]
+t(mat) # transpose 
+mat %*% t(mat) # matrix multiplication
+```
+
+## List
+List는 벡터, matrix, 혹은 다른 list 등 여러 유형의 요소가 포함될 수 있는 일반 벡터형 객체입니다. list() 함수로 생성합니다. 다음 예는 숫자형 벡터와 문자 벡터를 원소로 갖는 list 객체입니다. 
+```{r}
+lst <- list(1:5, c('a', 'b'))
+names(lst) <- c("x", "y") # name list elements (vector 에서 element naming 과 동일합니다.)
+```
+
+List에서 특정 elements는 다음과 같이 selection 합니다. Return 값이 list 라는 것에 주의해야 합니다. 
+```{r}
+lst[1] # select elements by position (indexing)
+lst["x"] # select elements by name
+```
+
+만약, list 가 아닌 해당 elements의 데이터 구조로 접근하고자 한다면 다음과 같이 double square brackets 를 사용하거나 $ 연산자를 사용합니다.  
+```{r}
+lst[[1]]  
+lst$x
+```
+
+## Data frame
+다음 datacamp의 동영상을 시청합시다. 
+[Using the data frame in R](https://www.google.com/search?q=data+frame+in+r&oq=data+frame+in+r&aqs=chrome..69i57j69i60j0l4.4660j0j7&sourceid=chrome&ie=UTF-8#kpvalbx=1)
+
+```{r}
+name = c("Kim", "Park", "Lee")
+age = c(30, 38, 42)
+child = c(TRUE, FALSE, TRUE)
+df <- data.frame(name, age, child)
+df
+```
+
+
+```{r}
+df[1,]
+df[3,2]
+str(df)
+dim(df)
+```
+
+## Programming  
+
+
 for loop 
 ```{r}
 # summation 1 to 10
@@ -104,30 +269,7 @@ if (i > 3){
 ```
 <br>
 
-functions 
-```{r}
-square = function(x){
-  squared = x*x
-  return(squared)
-}
-square(4)
-```
 
-## Math functions 
-```{r}
-sum(x)
-mean(x)
-median(x)
-max(x)
-min(x)
-sd(x)
-var(x)
-quantile(x)
-round(1.8734, 2)
-exp(x)
-log(x)
-x^2
-```
 
 ## Environment
 ```{r}
@@ -137,66 +279,7 @@ rm(i)
 
 ## R objects
 
-When you create a `variable` you reserve some space in memory. The variables are assigned with R `objects`. There are many types of R objects which includes... 
 
-- vector
-- list
-- matrix
-- data frame
-- factor
-
-Data types of atomic vectors includes...
-
-- numeric
-- logical (boolean)
-- character
-
-## Data type conversion 
-```{r}
-tc = c(0,1,1,0);class(tc)  
-tc.logic = as.logical(tc)
-tc.num = as.numeric(tc.logic)
-tc.char1 = as.character(tc.num)
-tc.char2 = as.character(tc.logic)
-```
-
-## Matrix 
-```{r}
-# create a matrix from x
-mat = matrix(x, ncol = 3)
-# select rows/columns/elements
-mat[1,]
-mat[,3]
-mat[3,2]
-t(mat) # transpose 
-mat %*% t(mat) # matrix multiplication
-```
-
-## List
-```{r}
-lst <- list(x = 1:5, y = c('a', 'b'))
-lst[[2]]
-lst$y
-lst[2]
-lst["y"]
-```
-
-## Data frames
-```{r}
-df <- data.frame(n = 1:3, s = c('a', 'b', 'c'))
-df[1,]
-df[3,2]
-str(df)
-dim(df)
-nrow(df);ncol(df)
-```
-
-## Factor 
-```{r}
-char = c("a", "b", "c", "b", "c", "d")
-fac = factor(char)
-levels(fac)
-```
 
 ## 데이터 불러오기
 
@@ -275,6 +358,22 @@ Saving graph
 - jpeg("mygraph.jpg")	
 - bmp("mygraph.bmp")
 - postscript("mygraph.ps")	 
+
+
+## Getting Help  
+?mean  
+??"weighted mean"
+
+## Using Packages   
+install.packages("dplyr")  
+library(dplyr)  
+
+## Working directory
+getwd()  
+setwd()
+
+
+
 
 ## 연습 문제
 

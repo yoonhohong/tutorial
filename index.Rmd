@@ -1,16 +1,15 @@
 ---
-title: "Tutorial"
+title: "Data Medicine"
 ---
 
-## Data Clinical Medicine  
-
-**개요**  
-인공지능의 시대에 의학 연구 및 의료 현장에서 기계학습을 이용한 데이터 분석 역량이 중요시되고 있다. 본 과정에서는 전세계적으로 가장 널리 사용되는 오픈소스 프로그램인 R을 이용해 데이터 가공과 시각화, 통계적 모델링과 기계학습기법을 학습한다. 실제 임상 데이터를 이용하여 프로그래밍을 직접 수행하며, 데이터 의학에 필요한 기본적인 데이터 분석능력을 갖추는 것을 목적으로 한다.
+**머리말**  
+본 과정에서는 R을 이용해 의학 데이터의 정제와 가공, 탐색과 시각화, 통계적 모델링과 기계학습 기법을 학습한다.   
 
 **목표**  
-1. 의학/의료 데이터의 종류와 구조를 이해하고, 데이터 의학의 개념과 전망을 설명할 수 있다.
-2. R의 기본 문법을 이해하고, 주요 패키지를 활용해 탐색적 데이터 분석과 통계적 모델링을 할 수 있다. 
-3. 기계학습의 기본 개념과 작업 과정, 주요 알고리즘을 이해하고, 데이터 분석에 활용할 수 있다.
+1. 데이터 의학의 개념과 전망을 설명할 수 있다.
+2. R의 기본 문법을 이해하고, 데이터 정제와 가공, 탐색적 데이터 분석과 시각화를 할 수 있다. 
+3. R을 이용해 기본적인 통계 분석을 할 수 있다. 
+4. 기계학습의 기본 개념과 작업 과정, 주요 알고리즘을 이해하고, 데이터 분석에 활용할 수 있다.
 
 **교재**  
 [An Introduction to Statistical Learning (with Applications in R), Springer 
@@ -19,12 +18,14 @@ title: "Tutorial"
 **강의록**    
 - [Lecture 1](DataMedicine_Lecture1.html) 데이터 의학이란?  
 - [Lecture 2](DataMedicine_Lecture2.html) R 프로그래밍의 기초   
-- [Lecture 3](DataMedicine_Lecture3.html) 탐색적 데이터 분석: 데이터 가공과 시각화   
-- [Lecture 4](DataMedicine_Lecture4.html) 기계학습의 개요 및 기초      
-- [Lecture 5](DataMedicine_Lecture5.html) 통계적 모델링: 회귀와 분류  
-- [Lecture 6](DataMedicine_Lecture6.html) Resampling: Cross validation & Bootstrap  
-- [Lecture 7](DataMedicine_Lecture7.html) Decision tree & bagging/random forest/ boosting  
-- [Lecture 8](DataMedicine_Lecture8.html) 정규화(Ridge/Lasso)와 차원축소, 비지도 기계학습(clustering)   
+- [Lecture 3](DataMedicine_Lecture3.html) 탐색적 데이터 분석과 시각화
+- [Lecture 4](DataMedicine_Lecture3_2.html) 통계 분석   
+- [Lecture 4](DataMedicine_Lecture4.html) 기계학습의 기초      
+- [Lecture 5](DataMedicine_Lecture5.html) 회귀와 분류  
+- [Lecture 6](DataMedicine_Lecture6.html) 교차검증과 부트스트랩  
+- [Lecture 7](DataMedicine_Lecture7.html) 의사결정나무와 배깅, 부스팅  
+- [Lecture 8](DataMedicine_Lecture8.html) 정규화와 차원축소
+- [Lecture 9](DataMedicine_Lecture9.html) 비지도 기계학습   
 
-
-
+**로그**
+- 서울대학교 의과대학 2학년 선택교과4 (8주, 매주 3시간 강의 및 실습), 2018년 (시작), 2019년 (개정)  
