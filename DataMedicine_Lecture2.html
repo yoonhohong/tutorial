@@ -339,6 +339,9 @@ An integrated development environment (IDE) for R <a href="https://www.rstudio.c
 <li>Modulo: %%</li>
 </ul>
 <p><img src="img/Arithmetic_R.png" style="border: #A9A9A9 1px solid; width:75%"></p>
+<p>[조교]<br />
+다음 동영상을 봅시다.<br />
+<a href="https://www.youtube.com/watch?v=SWxoJqTqo08&amp;list=PLjgj6kdf_snYBkIsWQYcYtUZiDpam7ygg&amp;index=1">Basics of R</a></p>
 </div>
 <div class="section level2">
 <h2>변수</h2>
@@ -347,8 +350,6 @@ An integrated development environment (IDE) for R <a href="https://www.rstudio.c
 <pre class="r"><code>my_var &lt;- 4 # &lt;- 대신에 = 를 사용할 수도 있습니다.   
 my_var
 ## [1] 4</code></pre>
-<p>동영상<br />
-<a href="https://www.youtube.com/watch?v=SWxoJqTqo08&amp;list=PLjgj6kdf_snYBkIsWQYcYtUZiDpam7ygg&amp;index=1">Basics of R</a></p>
 </div>
 <div id="r----basic-data-types" class="section level2">
 <h2>R의 기본 데이터 유형 (Basic data types)</h2>
@@ -359,15 +360,15 @@ my_var
 <li>Booleans (논리값, ex. TRUE or FALSE)</li>
 <li>Characters (문자, 문자열)</li>
 </ul>
-<p>동영상<br />
+<p>[조교] 다음 동영상을 봅시다.<br />
 <a href="https://www.youtube.com/watch?v=hxlHQ2AtLUk&amp;list=PLjgj6kdf_snYBkIsWQYcYtUZiDpam7ygg&amp;index=2">The basic data types in R</a></p>
 </div>
 <div id="objects" class="section level2">
 <h2>객체(Objects)</h2>
 <p>앞에서 객체에 대해 잠깐 언급하였는데, R에서 사용되는 객체, 즉 데이터 구조에는 다음과 같은 유형들이 있습니다. 이중에서 가장 기본적인 것이 Vector 입니다.</p>
 <ul>
-<li>Vectors</li>
-<li>Factors</li>
+<li>Vector</li>
+<li>Factor</li>
 <li>Matrix</li>
 <li>Data frame</li>
 <li>List</li>
@@ -375,34 +376,34 @@ my_var
 <p>[Note]<br />
 참고로 array 라는 것이 있는데, matrix 는 2차원 array 를, vector 는 1차원 array 를 지칭합니다.</p>
 </div>
-<div id="vectors" class="section level2">
-<h2>Vectors</h2>
-<div id="create-vectors" class="section level3">
-<h3>Create vectors</h3>
-<p>Vector 를 만드는 방법 중에 대표적인 것은 combine 함수 <a href="http://www.rdocumentation.org/packages/base/functions/c">c()</a>를 사용하는 것입니다. 괄호 사이에 쉼표로 구분된 벡터 요소를 배치합니다. 다음 예를 봅시다.</p>
+<div id="vector" class="section level2">
+<h2>Vector</h2>
+<div id="create-vector" class="section level3">
+<h3>Create vector</h3>
+<p>Vector 를 만드는 방법 중에 대표적인 것은 combine 함수 <a href="http://www.rdocumentation.org/packages/base/functions/c">c()</a>를 사용하는 것입니다. 괄호 사이에 쉼표로 구분된 벡터 요소(elements)를 배치합니다. 다음 예를 봅시다.</p>
 <pre class="r"><code>my_vec1 = c(2, 4, 6, 8)  </code></pre>
 <p>한 벡터 내의 요소들의 데이터 유형은 항상 같아야 합니다. 다음은 character vector 와 boolean vector 의 예입니다.</p>
 <pre class="r"><code>my_vec2 = c(&quot;apple&quot;, &quot;orange&quot;, &quot;banana&quot;, &quot;grape&quot;)
 my_vec3 = c(TRUE, FALSE, TRUE, FALSE)</code></pre>
-<p>동영상<br />
+<p>[조교] 다음 동영상을 봅시다.<br />
 <a href="https://www.youtube.com/watch?v=w5dOALbZ9HE&amp;list=PLjgj6kdf_snYBkIsWQYcYtUZiDpam7ygg&amp;index=3">How to create and name vectors</a></p>
 </div>
-<div id="selecting-vector-elements-by-position" class="section level3">
-<h3>Selecting vector elements (by position)</h3>
+<div id="selecting-vector-elements-i" class="section level3">
+<h3>Selecting vector elements (I)</h3>
 <p>Vector 를 구성하는 elements의 position 을 index 라고 합니다.첫번째 요소의 index 는 1 입니다. index 를 이용해서 특정 elements 만 선택할 수 있습니다. 다음 예를 봅시다.</p>
 <pre class="r"><code>my_vec2[2] 
 ## [1] &quot;orange&quot;
 my_vec2[-2] # the second from the last 
 ## [1] &quot;apple&quot;  &quot;banana&quot; &quot;grape&quot;
-my_vec2[c(1,3)]
+my_vec2[c(1,3)] 
 ## [1] &quot;apple&quot;  &quot;banana&quot;
 my_vec2[2:4] # from the second through to the 4th element
 ## [1] &quot;orange&quot; &quot;banana&quot; &quot;grape&quot;
 my_vec2[-c(2,4)] # exclude the 2nd and 4th elements 
 ## [1] &quot;apple&quot;  &quot;banana&quot;</code></pre>
 </div>
-<div id="selecting-vector-elements-by-value" class="section level3">
-<h3>Selecting vector elements (by value)</h3>
+<div id="selecting-vector-elements-ii" class="section level3">
+<h3>Selecting vector elements (II)</h3>
 <p>square bracket 내에 boolean vector 를 사용해서 조건을 만족하는 elements 만을 선택할 수 있습니다. 다음 예를 봅시다.</p>
 <pre class="r"><code>my_vec1[my_vec1 == 6] # equal 
 ## [1] 6
@@ -412,21 +413,184 @@ my_vec1[my_vec1 %in% c(1, 2, 5)] # membership
 ## [1] 2</code></pre>
 </div>
 </div>
+<div id="factor" class="section level2">
+<h2>Factor</h2>
+<p>Factor는 vector의 한 형태인데, 제한된 수의 값을 요소로 취하는 R의 변수(객체)입니다. 따라서, factor는 범주형 변수입니다.</p>
+<pre class="r"><code>vec = c(1,2,3,1,1,2,2,3,2,3)
+fvec1 = factor(vec) # convert numeric vector to factor  
+fvec1 
+##  [1] 1 2 3 1 1 2 2 3 2 3
+## Levels: 1 2 3</code></pre>
+<p>factor 함수의 labels 라는 argument 를 사용해서 범주(levels)의 이름을 변경할 수 있습니다.</p>
+<pre class="r"><code>fvec2 = factor(vec, labels = c(&quot;mild&quot;, &quot;moderate&quot;, &quot;severe&quot;))
+fvec2 
+##  [1] mild     moderate severe   mild     mild     moderate moderate
+##  [8] severe   moderate severe  
+## Levels: mild moderate severe</code></pre>
+<p>levels() 함수를 이용해서 범주의 이름을 변경할 수도 있습니다.</p>
+<pre class="r"><code>levels(fvec1) = c(&quot;I&quot;, &quot;II&quot;, &quot;III&quot;)
+fvec1
+##  [1] I   II  III I   I   II  II  III II  III
+## Levels: I II III</code></pre>
+<p>factor 함수는 기본적으로(default) numeric 에 대해서는 오름차순으로, character 에 대해서는 alphabet 순으로 levels를 정렬합니다. 상황에 따라 levels 의 순서를 새로 정의해주어야 할 필요가 생기는데, 다음 예를 봅시다.</p>
+<pre class="r"><code>mon = c(&quot;Jan&quot;, &quot;Feb&quot;, &quot;Jan&quot;, &quot;Mar&quot;, &quot;Feb&quot;, &quot;Jan&quot;, &quot;Jul&quot;, &quot;Aug&quot;, &quot;Nov&quot;, &quot;Dec&quot;, &quot;Apr&quot;, &quot;May&quot;, &quot;Jun&quot;, &quot;Oct&quot;, &quot;Sep&quot;)
+fmon1 = factor(mon) 
+fmon1
+##  [1] Jan Feb Jan Mar Feb Jan Jul Aug Nov Dec Apr May Jun Oct Sep
+## Levels: Apr Aug Dec Feb Jan Jul Jun Mar May Nov Oct Sep</code></pre>
+<p>levels argument 를 이용해서 순서를 정해줄 수 있습니다.</p>
+<pre class="r"><code>fmon2 = factor(mon, levels = c(&quot;Jan&quot;, &quot;Feb&quot;, &quot;Mar&quot;, &quot;Apr&quot;, &quot;May&quot;, &quot;Jun&quot;, &quot;Jul&quot;, &quot;Aug&quot;, &quot;Sep&quot;, &quot;Oct&quot;, &quot;Nov&quot;, &quot;Dec&quot;)) 
+fmon2
+##  [1] Jan Feb Jan Mar Feb Jan Jul Aug Nov Dec Apr May Jun Oct Sep
+## Levels: Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec</code></pre>
+<p>서로 다른 범주를 묶어서 새로운 범주로 조직할 수도 있습니다.</p>
+<pre class="r"><code>levels(fmon2) = list(Spring = c(&quot;Mar&quot;, &quot;Apr&quot;, &quot;May&quot;), 
+                     Summer = c(&quot;Jun&quot;, &quot;Jul&quot;, &quot;Aug&quot;),
+                     Autumn = c(&quot;Sep&quot;, &quot;Oct&quot;, &quot;Nov&quot;),
+                     Winter = c(&quot;Dec&quot;, &quot;Jan&quot;, &quot;Feb&quot;)) # list 에 대해서는 아래에서 다룹니다. 
+fmon2
+##  [1] Winter Winter Winter Spring Winter Winter Summer Summer Autumn Winter
+## [11] Spring Spring Summer Autumn Autumn
+## Levels: Spring Summer Autumn Winter</code></pre>
+<p>[조교][Using factors in R](<a href="https://www.youtube.com/watch?v=xkRBfy8_2MU" class="uri">https://www.youtube.com/watch?v=xkRBfy8_2MU</a>)</p>
+</div>
+<div id="matrix" class="section level2">
+<h2>Matrix</h2>
+<p>Matrix 는 2차원 array 입니다. 다음은 matrix 를 만드는 방법, 특정 행(row)이나 열(column), 요소(element)를 선별하는 방법, matrix의 전치(transpose)와 곱(multiplication) 연산자들의 사용예입니다.</p>
+<pre class="r"><code># create a matrix from x
+x = 1:12
+mat = matrix(x, ncol = 3)
+# select rows/columns/elements
+mat[1,]
+## [1] 1 5 9
+mat[,3]
+## [1]  9 10 11 12
+mat[3,2]
+## [1] 7
+t(mat) # transpose 
+##      [,1] [,2] [,3] [,4]
+## [1,]    1    2    3    4
+## [2,]    5    6    7    8
+## [3,]    9   10   11   12
+mat %*% t(mat) # matrix multiplication
+##      [,1] [,2] [,3] [,4]
+## [1,]  107  122  137  152
+## [2,]  122  140  158  176
+## [3,]  137  158  179  200
+## [4,]  152  176  200  224</code></pre>
+<p>[조교] - <a href="https://www.youtube.com/watch?v=O7KL17QZNqg">How to create and name matrices in R</a><br />
+- <a href="https://www.youtube.com/watch?v=GuZQZDCz4hA">Matrix arithmetic in R</a></p>
+</div>
+<div id="list" class="section level2">
+<h2>List</h2>
+<p>List는 일반 벡터형 객체입니다. 요소로 여러 유형의 데이터구조 - 즉 벡터, matrix, 혹은 다른 list 등 - 를 포함할 수 있습니다.<br />
+List 객체는 list() 함수로 생성합니다.<br />
+다음 예는 숫자형 벡터와 문자 벡터를 각각 첫번째와 두번째 요소로 갖는 list 객체를 만드는 예입니다.</p>
+<pre class="r"><code>lst &lt;- list(1:5, c(&#39;a&#39;, &#39;b&#39;))
+names(lst) &lt;- c(&quot;x&quot;, &quot;y&quot;) # name list elements (vector에서의 element naming 방식과 동일합니다.)</code></pre>
+<p>List에서 특정 elements를 selection하는 방법은 아래와 같습니다. Return 값이 list라는 것에 주의해야 합니다.</p>
+<pre class="r"><code>lst[1] # select elements by position (indexing)
+## $x
+## [1] 1 2 3 4 5
+lst[&quot;y&quot;] # select elements by name
+## $y
+## [1] &quot;a&quot; &quot;b&quot;</code></pre>
+<p>만약, return 값을 list가 아닌 해당 elements의 데이터구조로 받고자 한다면, 다음과 같이 double square brackets[[]]를 사용하거나 $ 연산자를 사용해야 합니다.</p>
+<pre class="r"><code>lst[[1]]  
+## [1] 1 2 3 4 5
+lst$x
+## [1] 1 2 3 4 5</code></pre>
+<p>[조교][How to create and name lists in R](<a href="https://www.youtube.com/watch?v=Px9VNWHja4M" class="uri">https://www.youtube.com/watch?v=Px9VNWHja4M</a>)</p>
+</div>
+<div id="data-frame" class="section level2">
+<h2>Data frame</h2>
+<p>[조교] 우선 다음 동영상을 봅시다. <a href="https://www.google.com/search?q=data+frame+in+r&amp;oq=data+frame+in+r&amp;aqs=chrome..69i57j69i60j0l4.4660j0j7&amp;sourceid=chrome&amp;ie=UTF-8#kpvalbx=1">Using the data frame in R</a></p>
+<p>data frame은 기본적으로 list의 elements를 column-wise 조직한 데이터구조입니다. list와 다른 점은 matrix와 같은 배열 구조를 가지고 있다는 것과, 각 elements(data frame에서는 columns)의 길이가 같아야 한다는 것입니다.<br />
+data.frame() 함수를 이용해서 생성합니다.</p>
+<pre class="r"><code>name = c(&quot;Kim&quot;, &quot;Park&quot;, &quot;Lee&quot;)
+age = c(30, 38, 42)
+child = c(TRUE, FALSE, TRUE)
+df &lt;- data.frame(name, age, child)
+df
+##   name age child
+## 1  Kim  30  TRUE
+## 2 Park  38 FALSE
+## 3  Lee  42  TRUE</code></pre>
+<p>data frame의 행(row), 열(column), 특정 원소를 selection하는 방법은 아래와 같습니다.</p>
+<pre class="r"><code>df[1,]
+##   name age child
+## 1  Kim  30  TRUE
+df[3,2]
+## [1] 42
+df[,1:2]
+##   name age
+## 1  Kim  30
+## 2 Park  38
+## 3  Lee  42</code></pre>
+<p>다음은 data frame의 구조, 크기, 요약 함수입니다.</p>
+<pre class="r"><code>str(df)
+## &#39;data.frame&#39;:    3 obs. of  3 variables:
+##  $ name : Factor w/ 3 levels &quot;Kim&quot;,&quot;Lee&quot;,&quot;Park&quot;: 1 3 2
+##  $ age  : num  30 38 42
+##  $ child: logi  TRUE FALSE TRUE
+dim(df)
+## [1] 3 3
+summary(df)
+##    name        age          child        
+##  Kim :1   Min.   :30.00   Mode :logical  
+##  Lee :1   1st Qu.:34.00   FALSE:1        
+##  Park:1   Median :38.00   TRUE :2        
+##           Mean   :36.67                  
+##           3rd Qu.:40.00                  
+##           Max.   :42.00</code></pre>
+</div>
+<div id="programming" class="section level2">
+<h2>Programming</h2>
+<p>프로그래밍은 기본적으로 순차진행, 반복문, 조건문으로 이루어집니다. 다음은 반복문과 조건문을 작성하기 위한 R의 문법입니다.</p>
+<p>반복문 for loop</p>
+<pre class="r"><code># summation 1 to 10
+j = 0
+for (i in 1:10){
+  j = i + j
+}
+j
+## [1] 55</code></pre>
+<p>[조교] [Working with for loops in R](<a href="https://www.youtube.com/watch?v=gSliFLjH3OI" class="uri">https://www.youtube.com/watch?v=gSliFLjH3OI</a>)</p>
+<p>반복문 while loop</p>
+<pre class="r"><code>i = 0; j = 0
+while (i &lt; 10){
+  i = i + 1
+  j = j + i
+}
+i; j
+## [1] 10
+## [1] 55</code></pre>
+<p>[Note] for loop vs. while loop<br />
+차이점이 보이시나요?<br />
+for: execute a loop a fixed number of times while: execute a loop while a condition is true</p>
+<p>조건문<br />
+if… else…</p>
+<pre class="r"><code>if (i &gt; 3){
+  print(&quot;i larger than 3&quot;)
+} else {
+  print(&quot;i less than 3&quot;)
+}
+## [1] &quot;i larger than 3&quot;</code></pre>
+</div>
 <div id="functions" class="section level2">
 <h2>함수(Functions)</h2>
-<p>Vector 외의 다른 자료 구조에 대해 다루기 전에 먼저 함수에 대해 알아보겠습니다.<br />
-프로그래밍을 하다보면 반복적으로 하게 되는 작업이 있습니다. 함수를 사용하면 이러한 작업을 위해 매번 같은 코드를 작성할 필요가 없어집니다.<br />
+<p>프로그래밍을 하다보면 반복적으로 하게 되는 작업이 있습니다. 함수를 사용하면 이러한 작업을 위해 매번 같은 코드를 작성할 필요가 없어집니다.<br />
 먼저 R에는 기본적으로 자주 사용되는 함수들이 내장되어 있습니다. 다음은 몇 가지 내장 함수들의 예입니다.</p>
 <pre class="r"><code># create vectors
 seq(2, 10, by=0.5)  
 ##  [1]  2.0  2.5  3.0  3.5  4.0  4.5  5.0  5.5  6.0  6.5  7.0  7.5  8.0  8.5
 ## [15]  9.0  9.5 10.0
-rep(1:3, times=3); rep(1:3, each=3)
+rep(1:3, times=3); rep(1:3, each=3) 
 ## [1] 1 2 3 1 2 3 1 2 3
 ## [1] 1 1 1 2 2 2 3 3 3
 x &lt;- c(10:20, 1, 3, 10, 12) # c() 도 함수입니다. 
 # sorting 
-sort(x); sort(x, decreasing = TRUE) # argument 
+sort(x); sort(x, decreasing = TRUE) # argument, 함수의 실행 방식을 특정하는 변수(parameter) 값이라고 알아둡시다.   
 ##  [1]  1  3 10 10 11 12 12 13 14 15 16 17 18 19 20
 ##  [1] 20 19 18 17 16 15 14 13 12 12 11 10 10  3  1
 rev(x)
@@ -457,8 +621,8 @@ exp(x)
 ##  [1] 2.202647e+04 5.987414e+04 1.627548e+05 4.424134e+05 1.202604e+06
 ##  [6] 3.269017e+06 8.886111e+06 2.415495e+07 6.565997e+07 1.784823e+08
 ## [11] 4.851652e+08 2.718282e+00 2.008554e+01 2.202647e+04 1.627548e+05</code></pre>
-<div id="---user-defined-functions" class="section level3">
-<h3>사용자 정의 함수 만들기(User-defined functions)</h3>
+<div id="---user-defined-function" class="section level3">
+<h3>사용자 정의 함수 만들기(User-defined function)</h3>
 <p>필요에 따라 함수를 새로 만들어서 사용하기도 합니다. 다음은 어떤 값의 제곱값을 계산하는 함수를 만드는 예입니다.</p>
 <pre class="r"><code>square = function(x){
   squared = x*x
@@ -468,150 +632,27 @@ square(4)
 ## [1] 16
 4^2 # 물론 이렇게 하면 됩니다. ^^ 
 ## [1] 16</code></pre>
+<p>[조교] 다음 동영상을 봅시다. <a href="https://www.youtube.com/watch?v=M4fMccWy5lU">Writing functions in R</a></p>
 </div>
-</div>
-<div id="factor" class="section level2">
-<h2>Factor</h2>
-<p>Factor는 vector의 한 형태인데, 제한된 수의 다른 값을 요소로 취하는 R의 변수(객체)입니다. 따라서, factor는 범주형 변수입니다.</p>
-<pre class="r"><code>vec = c(1,2,3,1,1,2,2,3,2,3)
-fvec1 = factor(vec)
-fvec1 
-##  [1] 1 2 3 1 1 2 2 3 2 3
-## Levels: 1 2 3</code></pre>
-<p>factor 함수의 labels 라는 argument 를 사용해서 범주(levels)의 이름을 변경할 수 있습니다.</p>
-<p>factor 함수는 기본적으로(default) numeric 에 대해서는 오름차순으로, character 에 대해서는 alphabet 순으로 levels를 정렬합니다. 따라서, character 에서 levels 의 순서를 새로 정의해주어야 할 필요가 있습니다.</p>
-<pre class="r"><code>fvec2 = factor(vec, labels = c(&quot;I&quot;, &quot;II&quot;, &quot;III&quot;))
-fvec2 
-##  [1] I   II  III I   I   II  II  III II  III
-## Levels: I II III
-levels(fvec1) = c(&quot;I&quot;, &quot;II&quot;, &quot;III&quot;)
-fvec1
-##  [1] I   II  III I   I   II  II  III II  III
-## Levels: I II III
-mon = c(&quot;Jan&quot;, &quot;Feb&quot;, &quot;Jan&quot;, &quot;Mar&quot;, &quot;Feb&quot;, &quot;Jan&quot;)
-fmon1 = factor(mon) 
-fmon1
-## [1] Jan Feb Jan Mar Feb Jan
-## Levels: Feb Jan Mar
-fmon2 = factor(mon, levels = c(&quot;Jan&quot;, &quot;Feb&quot;, &quot;Mar&quot;)) 
-fmon2
-## [1] Jan Feb Jan Mar Feb Jan
-## Levels: Jan Feb Mar</code></pre>
-</div>
-<div id="matrix" class="section level2">
-<h2>Matrix</h2>
-<p>Matrix 는 2차원 array 입니다. 다음은 matrix 를 만드는 방법, 특정 행이나 열, 요소를 선택하는 방법, matrix의 전치(transpose) 함수와 곱(multiplication) 연산자(%*%)의 사용예입니다.</p>
-<pre class="r"><code># create a matrix from x
-mat = matrix(x, ncol = 3)
-# select rows/columns/elements
-mat[1,]
-## [1] 10 15 20
-mat[,3]
-## [1] 20  1  3 10 12
-mat[3,2]
-## [1] 17
-t(mat) # transpose 
-##      [,1] [,2] [,3] [,4] [,5]
-## [1,]   10   11   12   13   14
-## [2,]   15   16   17   18   19
-## [3,]   20    1    3   10   12
-mat %*% t(mat) # matrix multiplication
-##      [,1] [,2] [,3] [,4] [,5]
-## [1,]  725  370  435  600  665
-## [2,]  370  378  407  441  470
-## [3,]  435  407  442  492  527
-## [4,]  600  441  492  593  644
-## [5,]  665  470  527  644  701</code></pre>
-</div>
-<div id="list" class="section level2">
-<h2>List</h2>
-<p>List는 벡터, matrix, 혹은 다른 list 등 여러 유형의 요소가 포함될 수 있는 일반 벡터형 객체입니다. list() 함수로 생성합니다. 다음 예는 숫자형 벡터와 문자 벡터를 원소로 갖는 list 객체입니다.</p>
-<pre class="r"><code>lst &lt;- list(1:5, c(&#39;a&#39;, &#39;b&#39;))
-names(lst) &lt;- c(&quot;x&quot;, &quot;y&quot;) # name list elements (vector 에서 element naming 과 동일합니다.)</code></pre>
-<p>List에서 특정 elements는 다음과 같이 selection 합니다. Return 값이 list 라는 것에 주의해야 합니다.</p>
-<pre class="r"><code>lst[1] # select elements by position (indexing)
-## $x
-## [1] 1 2 3 4 5
-lst[&quot;x&quot;] # select elements by name
-## $x
-## [1] 1 2 3 4 5</code></pre>
-<p>만약, list 가 아닌 해당 elements의 데이터 구조로 접근하고자 한다면 다음과 같이 double square brackets 를 사용하거나 $ 연산자를 사용합니다.</p>
-<pre class="r"><code>lst[[1]]  
-## [1] 1 2 3 4 5
-lst$x
-## [1] 1 2 3 4 5</code></pre>
-</div>
-<div id="data-frame" class="section level2">
-<h2>Data frame</h2>
-<p>다음 datacamp의 동영상을 시청합시다. <a href="https://www.google.com/search?q=data+frame+in+r&amp;oq=data+frame+in+r&amp;aqs=chrome..69i57j69i60j0l4.4660j0j7&amp;sourceid=chrome&amp;ie=UTF-8#kpvalbx=1">Using the data frame in R</a></p>
-<pre class="r"><code>name = c(&quot;Kim&quot;, &quot;Park&quot;, &quot;Lee&quot;)
-age = c(30, 38, 42)
-child = c(TRUE, FALSE, TRUE)
-df &lt;- data.frame(name, age, child)
-df
-##   name age child
-## 1  Kim  30  TRUE
-## 2 Park  38 FALSE
-## 3  Lee  42  TRUE</code></pre>
-<pre class="r"><code>df[1,]
-##   name age child
-## 1  Kim  30  TRUE
-df[3,2]
-## [1] 42
-str(df)
-## &#39;data.frame&#39;:    3 obs. of  3 variables:
-##  $ name : Factor w/ 3 levels &quot;Kim&quot;,&quot;Lee&quot;,&quot;Park&quot;: 1 3 2
-##  $ age  : num  30 38 42
-##  $ child: logi  TRUE FALSE TRUE
-dim(df)
-## [1] 3 3</code></pre>
-</div>
-<div id="programming" class="section level2">
-<h2>Programming</h2>
-<p>for loop</p>
-<pre class="r"><code># summation 1 to 10
-j = 0
-for (i in 1:10){
-  j = i + j
-}
-j
-## [1] 55</code></pre>
-<p><br></p>
-<p>while loop</p>
-<pre class="r"><code>i = 0; j = 0
-while (i &lt; 10){
-  i = i + 1
-  j = j + i
-}
-i; j
-## [1] 10
-## [1] 55</code></pre>
-<p><br></p>
-<p>if… else statements</p>
-<pre class="r"><code>if (i &gt; 3){
-  print(&quot;i larger than 3&quot;)
-} else {
-  print(&quot;i less than 3&quot;)
-}
-## [1] &quot;i larger than 3&quot;</code></pre>
-<p><br></p>
 </div>
 <div id="environment" class="section level2">
 <h2>Environment</h2>
-<pre class="r"><code>ls()
+<p>다음은 작업공간(working directory) 설정, R 객체의 조회와 제거, 도움말에 대한 함수입니다.</p>
+<pre class="r"><code>getwd() # setwd() 
+## [1] &quot;/Users/mac/GitHub/tutorial&quot;
+ls() # list R objects
 ##  [1] &quot;age&quot;     &quot;child&quot;   &quot;df&quot;      &quot;fmon1&quot;   &quot;fmon2&quot;   &quot;fvec1&quot;   &quot;fvec2&quot;  
 ##  [8] &quot;i&quot;       &quot;j&quot;       &quot;lst&quot;     &quot;mat&quot;     &quot;mon&quot;     &quot;my_var&quot;  &quot;my_vec1&quot;
 ## [15] &quot;my_vec2&quot; &quot;my_vec3&quot; &quot;name&quot;    &quot;square&quot;  &quot;vec&quot;     &quot;x&quot;
-rm(i)</code></pre>
-</div>
-<div id="r-objects" class="section level2">
-<h2>R objects</h2>
+rm(i) # remove R objects
+?ls</code></pre>
 </div>
 <div id="-" class="section level2">
 <h2>데이터 불러오기</h2>
-<p>Read a comma separated value (csv) file</p>
-<pre class="r"><code>demograph = read.csv(&quot;Demographic.csv&quot;)
-head(demograph)
+<p>데이터 가공, 통계, 그래픽 등 작업을 위해 외부 데이터를 불러들이는 방법에 대해서 알아봅니다.</p>
+<pre class="r"><code># read a comma separated value (csv) file
+demograph = read.csv(&quot;Demographic.csv&quot;) # csv 파일을 data frame 으로 불러들입니다. 
+head(demograph) # show the first 6 rows
 ##   SubjectID      Age Gender  Race
 ## 1    100256 53.00000      M White
 ## 2    100272 62.32877      M White
@@ -619,90 +660,49 @@ head(demograph)
 ## 4    100603 56.86849      M White
 ## 5    100626 58.00000      M White
 ## 6    100806 66.00000      M White</code></pre>
-<p><br></p>
-<p>Read a delimited text file</p>
-<pre class="r"><code>proact = read.delim(&quot;proact_sample.txt&quot;, sep=&quot;|&quot;) 
-# random 1/20 sample of the PROACT dataset</code></pre>
+<p>다음은 일반 text 파일을 불러들이는 함수입니다.</p>
+<pre class="r"><code># read a delimited text file 
+proact = read.delim(&quot;proact_sample.txt&quot;, sep=&quot;|&quot;) # sep은 delimiter를 가리키는 argument 입니다.  
+# proact_sample.txt: random 1/20 sample of the PROACT dataset
+str(proact)
+## &#39;data.frame&#39;:    401372 obs. of  6 variables:
+##  $ SubjectID    : int  917600 917600 917600 917600 917600 917600 917600 917600 917600 917600 ...
+##  $ form_name    : Factor w/ 10 levels &quot;ALSFRS&quot;,&quot;ALSHX&quot;,..: 6 6 6 6 6 6 6 6 6 6 ...
+##  $ feature_name : Factor w/ 63 levels &quot;Absolute Band Neutrophil Count&quot;,..: 13 31 33 14 31 13 13 14 33 33 ...
+##  $ feature_value: Factor w/ 20834 levels &quot;&quot;,&quot;-&quot;,&quot;-1&quot;,&quot;-10&quot;,..: 14933 8245 10180 9823 7937 19350 13377 9823 11938 12623 ...
+##  $ feature_unit : Factor w/ 11 levels &quot;# per minitue&quot;,..: 10 2 2 11 2 10 10 11 2 2 ...
+##  $ feature_delta: int  313 133 313 201 0 201 0 313 133 0 ...</code></pre>
 </div>
 <div id="-" class="section level2">
 <h2>데이터 쓰기</h2>
-<pre class="r"><code>demograph$Age = round(demograph$Age)
-write.csv(demograph, file = &quot;demograph_roundage.csv&quot;, row.names = F, quote = F)
+<p>R에서 생성하거나 가공한 data frame 등의 데이터구조 객체를 파일로 외부에 저장하는 방법입니다.</p>
+<pre class="r"><code>demograph$Age = round(demograph$Age) # demograph 데이터프레임에서 Age 변수(column name) 값을 소수점 반올림합니다. 
+write.csv(demograph, file = &quot;demograph_roundage.csv&quot;, row.names = F, quote = F) 
 write.table(demograph, file = &quot;demograph_roundage.txt&quot;, quote = F, row.names = F)</code></pre>
 </div>
 <div class="section level2">
 <h2>그래프</h2>
 <p>Scatter plot</p>
-<pre class="r"><code>attach(mtcars)
-plot(wt, mpg, pch=19)</code></pre>
-<p><img src="DataMedicine_Lecture2_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
-<pre class="r"><code>pairs(mtcars)</code></pre>
-<p><img src="DataMedicine_Lecture2_files/figure-html/unnamed-chunk-24-2.png" width="672" /></p>
-<pre class="r"><code>pairs(mtcars[c(&quot;disp&quot;, &quot;hp&quot;, &quot;wt&quot;, &quot;qsec&quot;)])</code></pre>
-<p><img src="DataMedicine_Lecture2_files/figure-html/unnamed-chunk-24-3.png" width="672" /> <br></p>
+<pre class="r"><code>alsfrs = read.csv(&quot;ALSFRS.csv&quot;)
+attach(alsfrs)
+plot(alsfrs.slope.before3mo, alsfrs.slope.after3mo)</code></pre>
+<p><img src="DataMedicine_Lecture2_files/figure-html/unnamed-chunk-29-1.png" width="672" /></p>
 <p>Histogram</p>
-<pre class="r"><code>hist(mtcars$mpg)</code></pre>
-<p><img src="DataMedicine_Lecture2_files/figure-html/unnamed-chunk-25-1.png" width="672" /></p>
-<pre class="r"><code>hist(mtcars$mpg, freq = F)
-lines(density(mtcars$mpg))</code></pre>
-<p><img src="DataMedicine_Lecture2_files/figure-html/unnamed-chunk-25-2.png" width="672" /></p>
-<pre class="r"><code>plot(density(mtcars$mpg))</code></pre>
-<p><img src="DataMedicine_Lecture2_files/figure-html/unnamed-chunk-25-3.png" width="672" /> <br></p>
+<pre class="r"><code>hist(demograph$Age)</code></pre>
+<p><img src="DataMedicine_Lecture2_files/figure-html/unnamed-chunk-30-1.png" width="672" /></p>
+<pre class="r"><code>hist(demograph$Age, freq = F)</code></pre>
+<p><img src="DataMedicine_Lecture2_files/figure-html/unnamed-chunk-30-2.png" width="672" /></p>
+<pre class="r"><code>plot(density(demograph$Age))</code></pre>
+<p><img src="DataMedicine_Lecture2_files/figure-html/unnamed-chunk-30-3.png" width="672" /></p>
 <p>Bar Plot</p>
-<pre class="r"><code>counts &lt;- table(mtcars$gear)
-barplot(counts, main=&quot;Car Distribution&quot;, 
-    xlab=&quot;Number of Gears&quot;)</code></pre>
-<p><img src="DataMedicine_Lecture2_files/figure-html/unnamed-chunk-26-1.png" width="672" /> <br></p>
-<p>Grouped Bar Plot</p>
-<pre class="r"><code>counts &lt;- table(mtcars$am, mtcars$gear)
-barplot(counts)</code></pre>
-<p><img src="DataMedicine_Lecture2_files/figure-html/unnamed-chunk-27-1.png" width="672" /></p>
-<pre class="r"><code>barplot(counts, col=c(&quot;blue&quot;,&quot;red&quot;),
-    legend = rownames(counts))</code></pre>
-<p><img src="DataMedicine_Lecture2_files/figure-html/unnamed-chunk-27-2.png" width="672" /></p>
-<pre class="r"><code>barplot(counts, col=c(&quot;blue&quot;,&quot;red&quot;),
-    legend = rownames(counts), beside=TRUE)</code></pre>
-<p><img src="DataMedicine_Lecture2_files/figure-html/unnamed-chunk-27-3.png" width="672" /></p>
+<pre class="r"><code>counts &lt;- table(demograph$Gender)
+barplot(counts, main=&quot;Gender&quot;, 
+    xlab=&quot;Number of patients&quot;)</code></pre>
+<p><img src="DataMedicine_Lecture2_files/figure-html/unnamed-chunk-31-1.png" width="672" /></p>
 <p>Boxplot</p>
-<pre class="r"><code>boxplot(mpg~cyl,data=mtcars, main=&quot;Car Milage Data&quot;, 
-    xlab=&quot;Number of Cylinders&quot;, ylab=&quot;Miles Per Gallon&quot;)</code></pre>
-<p><img src="DataMedicine_Lecture2_files/figure-html/unnamed-chunk-28-1.png" width="672" /></p>
-<dl>
-<dt>Saving graph</dt>
-<dd>Export -&gt; Save As…
-</dd>
-<dd>You can also save the graph via code using one of the following functions…
-</dd>
-</dl>
-<ul>
-<li>pdf(“mygraph.pdf”)<br />
-</li>
-<li>png(“mygraph.png”)</li>
-<li>jpeg(“mygraph.jpg”)<br />
-</li>
-<li>bmp(“mygraph.bmp”)</li>
-<li>postscript(“mygraph.ps”)</li>
-</ul>
-</div>
-<div id="getting-help" class="section level2">
-<h2>Getting Help</h2>
-<p>?mean<br />
-??“weighted mean”</p>
-</div>
-<div id="using-packages" class="section level2">
-<h2>Using Packages</h2>
-<p>install.packages(“dplyr”)<br />
-library(dplyr)</p>
-</div>
-<div id="working-directory" class="section level2">
-<h2>Working directory</h2>
-<p>getwd()<br />
-setwd()</p>
-</div>
-<div id="-" class="section level2">
-<h2>연습 문제</h2>
-<p>Slack #textbook 채널에 가서 ISLR pdf 파일을 열어 Chapter 2, Page 54-57 의 연습문제 8-10 을 풀어보자.</p>
-<p><a href="https://rstudio.cloud" class="uri">https://rstudio.cloud</a> 에 가서 sign up 한후, 아래 link 에 접속하여, <a href="https://rstudio.cloud/spaces/2905/join?access_code=QuMv1uIYqUTizsyRrXX8JjK8eoRpk5vJO%2BoiiqgZ">https://rstudio.cloud/spaces/2905/join?access_code=QuMv1uIYqUTizsyRrXX8JjK8eoRpk5vJO%2BoiiqgZ</a> Data medicine 101 스페이스의 Basics 프로젝트를 copy 한 후 R script 를 작성한다.</p>
+<pre class="r"><code>boxplot(Age~Gender,data=demograph)</code></pre>
+<p><img src="DataMedicine_Lecture2_files/figure-html/unnamed-chunk-32-1.png" width="672" /></p>
+<p>[조교] - <a href="https://www.youtube.com/watch?v=UXeJ1bNYCos">Making basic graphics in R</a> - <a href="https://www.youtube.com/watch?v=Z3V4Pbxeahg">How to plot multiple graphs in R</a> - <a href="https://www.youtube.com/watch?v=0MrYVzPxBIc">Customizing your plots in R</a></p>
 </div>
 
 

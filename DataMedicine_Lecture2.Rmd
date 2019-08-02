@@ -50,6 +50,9 @@ R은 간단한 계산기로 사용될 수 있습니다. 다음 산술 연산자�
 
 <img src="img/Arithmetic_R.png" style="border: #A9A9A9 1px solid; width:75%">
 
+[조교]  
+다음 동영상을 봅시다.     
+[Basics of R](https://www.youtube.com/watch?v=SWxoJqTqo08&list=PLjgj6kdf_snYBkIsWQYcYtUZiDpam7ygg&index=1)
 
 ## 변수 
 (통계) 프로그래밍의 기본 개념 중에 **변수(variable)**라는 것이 있습니다. 변수를 사용하여 값(Value) 또는 객체(Object)를 저장할 수 있습니다. 아직은 "객체"라는 것이 무엇인지 잘 모를텐데, 우선은 R에서 사용되는 모든 유형의 데이터 구조(data structure)를 지칭한다고 이해하시면 좋겠습니다 (이에 대해서는 아래에서 다시 설명합니다), 아무튼 여기서 중요한 것은 `변수`를 만든다는 것은 메모리의 일부 공간을 확보한다는 것입니다. 나중에 이 변수의 이름을 사용하여 이 변수에 저장된 값이나 객체에 접근할 수 있습니다.   
@@ -61,9 +64,6 @@ my_var <- 4 # <- 대신에 = 를 사용할 수도 있습니다.
 my_var
 ```
 
-동영상  
-[Basics of R](https://www.youtube.com/watch?v=SWxoJqTqo08&list=PLjgj6kdf_snYBkIsWQYcYtUZiDpam7ygg&index=1)
-
 ## R의 기본 데이터 유형 (Basic data types)
 R의 기본 data type은 다음과 같습니다. 
 
@@ -72,14 +72,15 @@ R의 기본 data type은 다음과 같습니다.
 * Booleans (논리값, ex. TRUE or FALSE)
 * Characters (문자, 문자열) 
 
-동영상  
+[조교]
+다음 동영상을 봅시다.    
 [The basic data types in R](https://www.youtube.com/watch?v=hxlHQ2AtLUk&list=PLjgj6kdf_snYBkIsWQYcYtUZiDpam7ygg&index=2)
 
 ## 객체(Objects)
 앞에서 객체에 대해 잠깐 언급하였는데, R에서 사용되는 객체, 즉 데이터 구조에는 다음과 같은 유형들이 있습니다. 이중에서 가장 기본적인 것이 Vector 입니다.  
 
-* Vectors 
-* Factors 
+* Vector 
+* Factor 
 * Matrix
 * Data frame 
 * List
@@ -87,10 +88,10 @@ R의 기본 data type은 다음과 같습니다.
 [Note]  
 참고로 array 라는 것이 있는데, matrix 는 2차원 array 를, vector 는 1차원 array 를 지칭합니다.    
  
-## Vectors  
+## Vector  
 
-### Create vectors
-Vector 를 만드는 방법 중에 대표적인 것은 combine 함수 [c()](http://www.rdocumentation.org/packages/base/functions/c)를 사용하는 것입니다. 괄호 사이에 쉼표로 구분된 벡터 요소를 배치합니다. 다음 예를 봅시다.   
+### Create vector
+Vector 를 만드는 방법 중에 대표적인 것은 combine 함수 [c()](http://www.rdocumentation.org/packages/base/functions/c)를 사용하는 것입니다. 괄호 사이에 쉼표로 구분된 벡터 요소(elements)를 배치합니다. 다음 예를 봅시다.   
 ```{r}
 my_vec1 = c(2, 4, 6, 8)  
 ```
@@ -101,20 +102,21 @@ my_vec2 = c("apple", "orange", "banana", "grape")
 my_vec3 = c(TRUE, FALSE, TRUE, FALSE)
 ```
 
-동영상  
+[조교]
+다음 동영상을 봅시다.    
 [How to create and name vectors](https://www.youtube.com/watch?v=w5dOALbZ9HE&list=PLjgj6kdf_snYBkIsWQYcYtUZiDpam7ygg&index=3)
 
-### Selecting vector elements (by position)
+### Selecting vector elements (I)   
 Vector 를 구성하는 elements의 position 을 index 라고 합니다.첫번째 요소의 index 는 1 입니다. index 를 이용해서 특정 elements 만 선택할 수 있습니다. 다음 예를 봅시다.  
 ```{r}
 my_vec2[2] 
 my_vec2[-2] # the second from the last 
-my_vec2[c(1,3)]
+my_vec2[c(1,3)] 
 my_vec2[2:4] # from the second through to the 4th element
 my_vec2[-c(2,4)] # exclude the 2nd and 4th elements 
 ```
 
-### Selecting vector elements (by value)
+### Selecting vector elements (II)   
 square bracket 내에 boolean vector 를 사용해서 조건을 만족하는 elements 만을 선택할 수 있습니다. 다음 예를 봅시다. 
 ```{r}
 my_vec1[my_vec1 == 6] # equal 
@@ -122,18 +124,178 @@ my_vec1[my_vec1 < 10] # less than
 my_vec1[my_vec1 %in% c(1, 2, 5)] # membership  
 ```
 
+
+## Factor 
+Factor는 vector의 한 형태인데, 제한된 수의 값을 요소로 취하는 R의 변수(객체)입니다. 따라서, factor는 범주형 변수입니다.   
+```{r}
+vec = c(1,2,3,1,1,2,2,3,2,3)
+fvec1 = factor(vec) # convert numeric vector to factor  
+fvec1 
+```
+
+factor 함수의 labels 라는 argument 를 사용해서 범주(levels)의 이름을 변경할 수 있습니다.  
+
+```{r}
+fvec2 = factor(vec, labels = c("mild", "moderate", "severe"))
+fvec2 
+```
+
+levels() 함수를 이용해서 범주의 이름을 변경할 수도 있습니다. 
+```{r}
+levels(fvec1) = c("I", "II", "III")
+fvec1
+```
+
+factor 함수는 기본적으로(default) numeric 에 대해서는 오름차순으로, character 에 대해서는 alphabet 순으로 levels를 정렬합니다. 상황에 따라 levels 의 순서를 새로 정의해주어야 할 필요가 생기는데, 다음 예를 봅시다. 
+```{r}
+mon = c("Jan", "Feb", "Jan", "Mar", "Feb", "Jan", "Jul", "Aug", "Nov", "Dec", "Apr", "May", "Jun", "Oct", "Sep")
+fmon1 = factor(mon) 
+fmon1
+```
+
+levels argument 를 이용해서 순서를 정해줄 수 있습니다. 
+```{r}
+fmon2 = factor(mon, levels = c("Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")) 
+fmon2
+```
+
+서로 다른 범주를 묶어서 새로운 범주로 조직할 수도 있습니다. 
+```{r}
+levels(fmon2) = list(Spring = c("Mar", "Apr", "May"), 
+                     Summer = c("Jun", "Jul", "Aug"),
+                     Autumn = c("Sep", "Oct", "Nov"),
+                     Winter = c("Dec", "Jan", "Feb")) # list 에 대해서는 아래에서 다룹니다. 
+fmon2
+```
+
+[조교]
+[Using factors in R](https://www.youtube.com/watch?v=xkRBfy8_2MU)
+
+## Matrix 
+Matrix 는 2차원 array 입니다. 다음은 matrix 를 만드는 방법, 특정 행(row)이나 열(column), 요소(element)를 선별하는 방법, matrix의 전치(transpose)와 곱(multiplication) 연산자들의 사용예입니다. 
+```{r}
+# create a matrix from x
+x = 1:12
+mat = matrix(x, ncol = 3)
+# select rows/columns/elements
+mat[1,]
+mat[,3]
+mat[3,2]
+t(mat) # transpose 
+mat %*% t(mat) # matrix multiplication
+```
+
+[조교]
+- [How to create and name matrices in R](https://www.youtube.com/watch?v=O7KL17QZNqg)  
+- [Matrix arithmetic in R](https://www.youtube.com/watch?v=GuZQZDCz4hA)  
+  
+  
+## List
+List는 일반 벡터형 객체입니다. 요소로 여러 유형의 데이터구조 - 즉 벡터, matrix, 혹은 다른 list 등 - 를 포함할 수 있습니다.   
+List 객체는 list() 함수로 생성합니다.  
+다음 예는 숫자형 벡터와 문자 벡터를 각각 첫번째와 두번째 요소로 갖는 list 객체를 만드는 예입니다. 
+```{r}
+lst <- list(1:5, c('a', 'b'))
+names(lst) <- c("x", "y") # name list elements (vector에서의 element naming 방식과 동일합니다.)
+```
+
+List에서 특정 elements를 selection하는 방법은 아래와 같습니다. Return 값이 list라는 것에 주의해야 합니다. 
+```{r}
+lst[1] # select elements by position (indexing)
+lst["y"] # select elements by name
+```
+
+만약, return 값을 list가 아닌 해당 elements의 데이터구조로 받고자 한다면, 다음과 같이 double square brackets[[]]를 사용하거나 $ 연산자를 사용해야 합니다.  
+```{r}
+lst[[1]]  
+lst$x
+```
+
+[조교]
+[How to create and name lists in R](https://www.youtube.com/watch?v=Px9VNWHja4M)
+
+## Data frame
+[조교] 
+우선 다음 동영상을 봅시다. 
+[Using the data frame in R](https://www.google.com/search?q=data+frame+in+r&oq=data+frame+in+r&aqs=chrome..69i57j69i60j0l4.4660j0j7&sourceid=chrome&ie=UTF-8#kpvalbx=1)
+
+data frame은 기본적으로 list의 elements를 column-wise 조직한 데이터구조입니다. list와 다른 점은 matrix와 같은 배열 구조를 가지고 있다는 것과, 각 elements(data frame에서는 columns)의 길이가 같아야 한다는 것입니다.   
+data.frame() 함수를 이용해서 생성합니다. 
+```{r}
+name = c("Kim", "Park", "Lee")
+age = c(30, 38, 42)
+child = c(TRUE, FALSE, TRUE)
+df <- data.frame(name, age, child)
+df
+```
+
+data frame의 행(row), 열(column), 특정 원소를 selection하는 방법은 아래와 같습니다.  
+```{r}
+df[1,]
+df[3,2]
+df[,1:2]
+```
+
+다음은 data frame의 구조, 크기, 요약 함수입니다.  
+```{r}
+str(df)
+dim(df)
+summary(df)
+```
+
+## Programming  
+프로그래밍은 기본적으로 순차진행, 반복문, 조건문으로 이루어집니다. 다음은 반복문과 조건문을 작성하기 위한 R의 문법입니다.    
+
+반복문 for loop 
+```{r}
+# summation 1 to 10
+j = 0
+for (i in 1:10){
+  j = i + j
+}
+j
+```
+
+[조교] 
+[Working with for loops in R](https://www.youtube.com/watch?v=gSliFLjH3OI)
+
+반복문 while loop
+```{r}
+i = 0; j = 0
+while (i < 10){
+  i = i + 1
+  j = j + i
+}
+i; j
+```
+
+[Note]
+for loop vs. while loop   
+차이점이 보이시나요?   
+for: execute a loop a fixed number of times
+while: execute a loop while a condition is true
+
+조건문  
+if... else... 
+```{r}
+if (i > 3){
+  print("i larger than 3")
+} else {
+  print("i less than 3")
+}
+```
+
 ## 함수(Functions)
-Vector 외의 다른 자료 구조에 대해 다루기 전에 먼저 함수에 대해 알아보겠습니다.  
 프로그래밍을 하다보면 반복적으로 하게 되는 작업이 있습니다. 함수를 사용하면 이러한 작업을 위해 매번 같은 코드를 작성할 필요가 없어집니다.  
 먼저 R에는 기본적으로 자주 사용되는 함수들이 내장되어 있습니다. 다음은 몇 가지 내장 함수들의 예입니다.  
 
 ```{r}
 # create vectors
 seq(2, 10, by=0.5)  
-rep(1:3, times=3); rep(1:3, each=3)
+rep(1:3, times=3); rep(1:3, each=3) 
 x <- c(10:20, 1, 3, 10, 12) # c() 도 함수입니다. 
 # sorting 
-sort(x); sort(x, decreasing = TRUE) # argument 
+sort(x); sort(x, decreasing = TRUE) # argument, 함수의 실행 방식을 특정하는 변수(parameter) 값이라고 알아둡시다.   
 rev(x)
 # summary
 length(x); range(x)
@@ -148,7 +310,7 @@ round(1.8734, 2)
 exp(x)
 ```
 
-### 사용자 정의 함수 만들기(User-defined functions) 
+### 사용자 정의 함수 만들기(User-defined function) 
 필요에 따라 함수를 새로 만들어서 사용하기도 합니다. 다음은 어떤 값의 제곱값을 계산하는 함수를 만드는 예입니다.   
 ```{r}
 square = function(x){
@@ -159,148 +321,41 @@ square(4)
 4^2 # 물론 이렇게 하면 됩니다. ^^ 
 ```
 
-## Factor 
-Factor는 vector의 한 형태인데, 제한된 수의 다른 값을 요소로 취하는 R의 변수(객체)입니다. 따라서, factor는 범주형 변수입니다.   
-```{r}
-vec = c(1,2,3,1,1,2,2,3,2,3)
-fvec1 = factor(vec)
-fvec1 
-```
-
-factor 함수의 labels 라는 argument 를 사용해서 범주(levels)의 이름을 변경할 수 있습니다.  
-
-factor 함수는 기본적으로(default) numeric 에 대해서는 오름차순으로, character 에 대해서는 alphabet 순으로 levels를 정렬합니다. 따라서, character 에서 levels 의 순서를 새로 정의해주어야 할 필요가 있습니다. 
-```{r}
-fvec2 = factor(vec, labels = c("I", "II", "III"))
-fvec2 
-levels(fvec1) = c("I", "II", "III")
-fvec1
-mon = c("Jan", "Feb", "Jan", "Mar", "Feb", "Jan")
-fmon1 = factor(mon) 
-fmon1
-fmon2 = factor(mon, levels = c("Jan", "Feb", "Mar")) 
-fmon2
-```
-
-## Matrix 
-Matrix 는 2차원 array 입니다. 다음은 matrix 를 만드는 방법, 특정 행이나 열, 요소를 선택하는 방법, matrix의 전치(transpose) 함수와 곱(multiplication) 연산자(%*%)의 사용예입니다. 
-```{r}
-# create a matrix from x
-mat = matrix(x, ncol = 3)
-# select rows/columns/elements
-mat[1,]
-mat[,3]
-mat[3,2]
-t(mat) # transpose 
-mat %*% t(mat) # matrix multiplication
-```
-
-## List
-List는 벡터, matrix, 혹은 다른 list 등 여러 유형의 요소가 포함될 수 있는 일반 벡터형 객체입니다. list() 함수로 생성합니다. 다음 예는 숫자형 벡터와 문자 벡터를 원소로 갖는 list 객체입니다. 
-```{r}
-lst <- list(1:5, c('a', 'b'))
-names(lst) <- c("x", "y") # name list elements (vector 에서 element naming 과 동일합니다.)
-```
-
-List에서 특정 elements는 다음과 같이 selection 합니다. Return 값이 list 라는 것에 주의해야 합니다. 
-```{r}
-lst[1] # select elements by position (indexing)
-lst["x"] # select elements by name
-```
-
-만약, list 가 아닌 해당 elements의 데이터 구조로 접근하고자 한다면 다음과 같이 double square brackets 를 사용하거나 $ 연산자를 사용합니다.  
-```{r}
-lst[[1]]  
-lst$x
-```
-
-## Data frame
-다음 datacamp의 동영상을 시청합시다. 
-[Using the data frame in R](https://www.google.com/search?q=data+frame+in+r&oq=data+frame+in+r&aqs=chrome..69i57j69i60j0l4.4660j0j7&sourceid=chrome&ie=UTF-8#kpvalbx=1)
-
-```{r}
-name = c("Kim", "Park", "Lee")
-age = c(30, 38, 42)
-child = c(TRUE, FALSE, TRUE)
-df <- data.frame(name, age, child)
-df
-```
-
-
-```{r}
-df[1,]
-df[3,2]
-str(df)
-dim(df)
-```
-
-## Programming  
-
-
-for loop 
-```{r}
-# summation 1 to 10
-j = 0
-for (i in 1:10){
-  j = i + j
-}
-j
-```
-<br>
-
-while loop
-```{r}
-i = 0; j = 0
-while (i < 10){
-  i = i + 1
-  j = j + i
-}
-i; j
-```
-<br>
-
-if... else statements 
-```{r}
-if (i > 3){
-  print("i larger than 3")
-} else {
-  print("i less than 3")
-}
-```
-<br>
-
+[조교]
+다음 동영상을 봅시다. 
+[Writing functions in R](https://www.youtube.com/watch?v=M4fMccWy5lU)
 
 
 ## Environment
+다음은 작업공간(working directory) 설정, R 객체의 조회와 제거, 도움말에 대한 함수입니다. 
 ```{r}
-ls()
-rm(i)
+getwd() # setwd() 
+ls() # list R objects
+rm(i) # remove R objects
+?ls
 ```
-
-## R objects
-
-
 
 ## 데이터 불러오기
-
-Read a comma separated value (csv) file
+데이터 가공, 통계, 그래픽 등 작업을 위해 외부 데이터를 불러들이는 방법에 대해서 알아봅니다.  
 ```{r}
-demograph = read.csv("Demographic.csv")
-head(demograph)
+# read a comma separated value (csv) file
+demograph = read.csv("Demographic.csv") # csv 파일을 data frame 으로 불러들입니다. 
+head(demograph) # show the first 6 rows
 ```
-<br>
 
-Read a delimited text file  
+다음은 일반 text 파일을 불러들이는 함수입니다. 
 ```{r}
-proact = read.delim("proact_sample.txt", sep="|") 
-# random 1/20 sample of the PROACT dataset
+# read a delimited text file 
+proact = read.delim("proact_sample.txt", sep="|") # sep은 delimiter를 가리키는 argument 입니다.  
+# proact_sample.txt: random 1/20 sample of the PROACT dataset
+str(proact)
 ```
 
 ## 데이터 쓰기
-
+R에서 생성하거나 가공한 data frame 등의 데이터구조 객체를 파일로 외부에 저장하는 방법입니다.  
 ```{r}
-demograph$Age = round(demograph$Age)
-write.csv(demograph, file = "demograph_roundage.csv", row.names = F, quote = F)
+demograph$Age = round(demograph$Age) # demograph 데이터프레임에서 Age 변수(column name) 값을 소수점 반올림합니다. 
+write.csv(demograph, file = "demograph_roundage.csv", row.names = F, quote = F) 
 write.table(demograph, file = "demograph_roundage.txt", quote = F, row.names = F)
 ```
 
@@ -308,80 +363,32 @@ write.table(demograph, file = "demograph_roundage.txt", quote = F, row.names = F
 
 Scatter plot  
 ```{r}
-attach(mtcars)
-plot(wt, mpg, pch=19)
-pairs(mtcars)
-pairs(mtcars[c("disp", "hp", "wt", "qsec")])
+alsfrs = read.csv("ALSFRS.csv")
+attach(alsfrs)
+plot(alsfrs.slope.before3mo, alsfrs.slope.after3mo)
 ```
-<br>
 
 Histogram
 ```{r}
-hist(mtcars$mpg)
-hist(mtcars$mpg, freq = F)
-lines(density(mtcars$mpg))
-plot(density(mtcars$mpg))
+hist(demograph$Age)
+hist(demograph$Age, freq = F)
+plot(density(demograph$Age))
 ```
-<br>
 
 Bar Plot 
 ```{r}
-counts <- table(mtcars$gear)
-barplot(counts, main="Car Distribution", 
-  	xlab="Number of Gears")
-```
-<br>
-
-Grouped Bar Plot
-```{r}
-counts <- table(mtcars$am, mtcars$gear)
-barplot(counts)
-barplot(counts, col=c("blue","red"),
- 	legend = rownames(counts))
-barplot(counts, col=c("blue","red"),
- 	legend = rownames(counts), beside=TRUE)
+counts <- table(demograph$Gender)
+barplot(counts, main="Gender", 
+  	xlab="Number of patients")
 ```
 
 Boxplot  
 ```{r}
-boxplot(mpg~cyl,data=mtcars, main="Car Milage Data", 
-  	xlab="Number of Cylinders", ylab="Miles Per Gallon")
+boxplot(Age~Gender,data=demograph)
 ```
 
-
-Saving graph  
-: Export -> Save As...
-: You can also save the graph via code using one of the following functions...
-
-- pdf("mygraph.pdf")	
-- png("mygraph.png")
-- jpeg("mygraph.jpg")	
-- bmp("mygraph.bmp")
-- postscript("mygraph.ps")	 
-
-
-## Getting Help  
-?mean  
-??"weighted mean"
-
-## Using Packages   
-install.packages("dplyr")  
-library(dplyr)  
-
-## Working directory
-getwd()  
-setwd()
-
-
-
-
-## 연습 문제
-
-Slack #textbook 채널에 가서 ISLR pdf 파일을 열어 Chapter 2, Page 54-57 의 연습문제 8-10 을 풀어보자. 
-
-https://rstudio.cloud 에 가서 sign up 한후, 아래 link 에 접속하여, https://rstudio.cloud/spaces/2905/join?access_code=QuMv1uIYqUTizsyRrXX8JjK8eoRpk5vJO%2BoiiqgZ
-Data medicine 101 스페이스의 Basics 프로젝트를 copy 한 후 R script 를 작성한다. 
-
-
-
+[조교]
+- [Making basic graphics in R](https://www.youtube.com/watch?v=UXeJ1bNYCos)
+- [How to plot multiple graphs in R](https://www.youtube.com/watch?v=Z3V4Pbxeahg)
+- [Customizing your plots in R](https://www.youtube.com/watch?v=0MrYVzPxBIc)
 
