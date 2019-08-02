@@ -25,8 +25,9 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
-<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.0.13/css/fa-svg-with-js.css" rel="stylesheet" />
+<script src="site_libs/font-awesome-5.0.13/js/fontawesome-all.min.js"></script>
+<script src="site_libs/font-awesome-5.0.13/js/fa-v4-shims.min.js"></script>
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -102,9 +103,6 @@ img {
 button.code-folding-btn:focus {
   outline: none;
 }
-summary {
-  display: list-item;
-}
 </style>
 
 
@@ -119,6 +117,7 @@ body {
   padding-top: 69px;
   margin-top: -69px;
 }
+
 .section h2 {
   padding-top: 69px;
   margin-top: -69px;
@@ -138,43 +137,6 @@ body {
 .section h6 {
   padding-top: 69px;
   margin-top: -69px;
-}
-.dropdown-submenu {
-  position: relative;
-}
-.dropdown-submenu>.dropdown-menu {
-  top: 0;
-  left: 100%;
-  margin-top: -6px;
-  margin-left: -1px;
-  border-radius: 0 6px 6px 6px;
-}
-.dropdown-submenu:hover>.dropdown-menu {
-  display: block;
-}
-.dropdown-submenu>a:after {
-  display: block;
-  content: " ";
-  float: right;
-  width: 0;
-  height: 0;
-  border-color: transparent;
-  border-style: solid;
-  border-width: 5px 0 5px 5px;
-  border-left-color: #cccccc;
-  margin-top: 5px;
-  margin-right: -10px;
-}
-.dropdown-submenu:hover>a:after {
-  border-left-color: #ffffff;
-}
-.dropdown-submenu.pull-left {
-  float: none;
-}
-.dropdown-submenu.pull-left>.dropdown-menu {
-  left: -100%;
-  margin-left: 10px;
-  border-radius: 6px 0 6px 6px;
 }
 </style>
 
@@ -196,77 +158,18 @@ $(document).ready(function () {
 });
 </script>
 
+
 <div class="container-fluid main-container">
 
 <!-- tabsets -->
-
-<style type="text/css">
-.tabset-dropdown > .nav-tabs {
-  display: inline-table;
-  max-height: 500px;
-  min-height: 44px;
-  overflow-y: auto;
-  background: white;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
-  font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
-  font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
-}
-
-.tabset-dropdown > .nav-tabs > li.active {
-  display: block;
-}
-
-.tabset-dropdown > .nav-tabs > li > a,
-.tabset-dropdown > .nav-tabs > li > a:focus,
-.tabset-dropdown > .nav-tabs > li > a:hover {
-  border: none;
-  display: inline-block;
-  border-radius: 4px;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
-  display: block;
-  float: none;
-}
-
-.tabset-dropdown > .nav-tabs > li {
-  display: none;
-}
-</style>
-
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
 });
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
 </script>
 
 <!-- code folding -->
+
 
 
 
@@ -407,7 +310,7 @@ div.tocify {
 
 <div id="r-rstudio" class="section level2">
 <h2>R &amp; Rstudio</h2>
-<p>우선 R이 뭔지 알아야겠죠? 다음 웹사이트를 방문해 알아봅시다.<br />
+<p>우선 R이 뭔지 알아야겠죠? 다음 웹사이트를 방문해봅시다.<br />
 <a href="https://www.r-project.org/about.html" class="uri">https://www.r-project.org/about.html</a></p>
 <p>Rstudio에 대해서도 알아봅시다.<br />
 <a href="https://www.rstudio.com/products/rstudio/" class="uri">https://www.rstudio.com/products/rstudio/</a></p>
@@ -423,27 +326,44 @@ An integrated development environment (IDE) for R <a href="https://www.rstudio.c
 </div>
 <div id="r-gui" class="section level2">
 <h2>R GUI</h2>
-<p>R을 설치했으니, 다음으로 R (R GUI 프로그램)을 실행해봅시다.<br />
+<p>다음으로 R (GUI 프로그램)을 실행해봅시다.<br />
 다음과 같은 화면이 나타날거예요.</p>
 <p><img src="img/R_console.png" style="border: #A9A9A9 1px solid; width:75%"></p>
 <p>R은 간단한 계산기로 사용될 수 있습니다. 다음 산술 연산자를 사용해보세요.</p>
 <ul>
-<li>Addition:+</li>
-<li>Subtraction:-</li>
-<li>Multiplication:*</li>
-<li>Division:/</li>
-<li>Exponentiation:^</li>
-<li>Modulo:%%</li>
+<li>Addition: +</li>
+<li>Subtraction: -</li>
+<li>Multiplication: *</li>
+<li>Division: /</li>
+<li>Exponentiation: ^</li>
+<li>Modulo: %%</li>
 </ul>
 <p><img src="img/Arithmetic_R.png" style="border: #A9A9A9 1px solid; width:75%"></p>
 </div>
 <div class="section level2">
 <h2>변수</h2>
-<p>(통계) 프로그래밍의 기본 개념 중에 <em>변수(variable)</em>라는 것이 있습니다. 변수를 사용하여 값(Value) 또는 객체(Object)를 저장할 수 있습니다. 아직은 “객체”라는 것이 무엇인지 잘 모를텐데, 우선은 R에서 사용되는 모든 유형의 데이터 구조(data structure)를 지칭한다고 이해하시면 좋겠습니다 (이에 대해서는 아래에서 다시 설명합니다), 아무튼 여기서 중요한 것은 <code>변수</code>를 만든다는 것은 메모리의 일부 공간을 확보한다는 것입니다. 나중에 이 변수의 이름을 사용하여 이 변수에 저장된 값이나 객체에 접근할 수 있습니다.</p>
+<p>(통계) 프로그래밍의 기본 개념 중에 <strong>변수(variable)</strong>라는 것이 있습니다. 변수를 사용하여 값(Value) 또는 객체(Object)를 저장할 수 있습니다. 아직은 “객체”라는 것이 무엇인지 잘 모를텐데, 우선은 R에서 사용되는 모든 유형의 데이터 구조(data structure)를 지칭한다고 이해하시면 좋겠습니다 (이에 대해서는 아래에서 다시 설명합니다), 아무튼 여기서 중요한 것은 <code>변수</code>를 만든다는 것은 메모리의 일부 공간을 확보한다는 것입니다. 나중에 이 변수의 이름을 사용하여 이 변수에 저장된 값이나 객체에 접근할 수 있습니다.</p>
 <p>다음 명령을 사용하여 변수 my_var에 값 4를 할당할 수 있습니다.</p>
 <pre class="r"><code>my_var &lt;- 4 # &lt;- 대신에 = 를 사용할 수도 있습니다.   
 my_var
 ## [1] 4</code></pre>
+<p>동영상<br />
+<a href="https://www.youtube.com/watch?v=SWxoJqTqo08&amp;list=PLjgj6kdf_snYBkIsWQYcYtUZiDpam7ygg&amp;index=1">Basics of R</a></p>
+</div>
+<div id="r----basic-data-types" class="section level2">
+<h2>R의 기본 데이터 유형 (Basic data types)</h2>
+<p>R의 기본 data type은 다음과 같습니다.</p>
+<ul>
+<li>Numerics (숫자)</li>
+<li>Integers (정수)</li>
+<li>Booleans (논리값, ex. TRUE or FALSE)</li>
+<li>Characters (문자, 문자열)</li>
+</ul>
+<p>동영상<br />
+<a href="https://www.youtube.com/watch?v=hxlHQ2AtLUk&amp;list=PLjgj6kdf_snYBkIsWQYcYtUZiDpam7ygg&amp;index=2">The basic data types in R</a></p>
+</div>
+<div id="objects" class="section level2">
+<h2>객체(Objects)</h2>
 <p>앞에서 객체에 대해 잠깐 언급하였는데, R에서 사용되는 객체, 즉 데이터 구조에는 다음과 같은 유형들이 있습니다. 이중에서 가장 기본적인 것이 Vector 입니다.</p>
 <ul>
 <li>Vectors</li>
@@ -461,19 +381,11 @@ my_var
 <h3>Create vectors</h3>
 <p>Vector 를 만드는 방법 중에 대표적인 것은 combine 함수 <a href="http://www.rdocumentation.org/packages/base/functions/c">c()</a>를 사용하는 것입니다. 괄호 사이에 쉼표로 구분된 벡터 요소를 배치합니다. 다음 예를 봅시다.</p>
 <pre class="r"><code>my_vec1 = c(2, 4, 6, 8)  </code></pre>
-</div>
-<div id="vector----basic-data-types" class="section level3">
-<h3>Vector의 기본 데이터 유형 (Basic data types)</h3>
-<p>Vector는 1개 이상의 요소로 구성된다고 했는데, 요소의 가장 기본적인 유형은 다음과 같습니다.</p>
-<ul>
-<li>Numerics (숫자)</li>
-<li>Integers (정수)</li>
-<li>Booleans (논리값, ex. TRUE or FALSE)</li>
-<li>Characters (문자, 문자열)</li>
-</ul>
 <p>한 벡터 내의 요소들의 데이터 유형은 항상 같아야 합니다. 다음은 character vector 와 boolean vector 의 예입니다.</p>
 <pre class="r"><code>my_vec2 = c(&quot;apple&quot;, &quot;orange&quot;, &quot;banana&quot;, &quot;grape&quot;)
 my_vec3 = c(TRUE, FALSE, TRUE, FALSE)</code></pre>
+<p>동영상<br />
+<a href="https://www.youtube.com/watch?v=w5dOALbZ9HE&amp;list=PLjgj6kdf_snYBkIsWQYcYtUZiDpam7ygg&amp;index=3">How to create and name vectors</a></p>
 </div>
 <div id="selecting-vector-elements-by-position" class="section level3">
 <h3>Selecting vector elements (by position)</h3>
@@ -629,25 +541,30 @@ lst[&quot;x&quot;] # select elements by name
 lst$x
 ## [1] 1 2 3 4 5</code></pre>
 </div>
-<div id="data-frames" class="section level2">
-<h2>Data frames</h2>
-<p>다음 동영상을 시청합시다. <a href="https://www.google.com/search?q=data+frame+in+r&amp;oq=data+frame+in+r&amp;aqs=chrome..69i57j69i60j0l4.4660j0j7&amp;sourceid=chrome&amp;ie=UTF-8#kpvalbx=1">Data frame in R</a></p>
-<pre class="r"><code>df &lt;- data.frame(n = 1:3, s = c(&#39;a&#39;, &#39;b&#39;, &#39;c&#39;))
-df[1,]
-##   n s
-## 1 1 a
+<div id="data-frame" class="section level2">
+<h2>Data frame</h2>
+<p>다음 datacamp의 동영상을 시청합시다. <a href="https://www.google.com/search?q=data+frame+in+r&amp;oq=data+frame+in+r&amp;aqs=chrome..69i57j69i60j0l4.4660j0j7&amp;sourceid=chrome&amp;ie=UTF-8#kpvalbx=1">Using the data frame in R</a></p>
+<pre class="r"><code>name = c(&quot;Kim&quot;, &quot;Park&quot;, &quot;Lee&quot;)
+age = c(30, 38, 42)
+child = c(TRUE, FALSE, TRUE)
+df &lt;- data.frame(name, age, child)
+df
+##   name age child
+## 1  Kim  30  TRUE
+## 2 Park  38 FALSE
+## 3  Lee  42  TRUE</code></pre>
+<pre class="r"><code>df[1,]
+##   name age child
+## 1  Kim  30  TRUE
 df[3,2]
-## [1] c
-## Levels: a b c
+## [1] 42
 str(df)
-## &#39;data.frame&#39;:    3 obs. of  2 variables:
-##  $ n: int  1 2 3
-##  $ s: Factor w/ 3 levels &quot;a&quot;,&quot;b&quot;,&quot;c&quot;: 1 2 3
+## &#39;data.frame&#39;:    3 obs. of  3 variables:
+##  $ name : Factor w/ 3 levels &quot;Kim&quot;,&quot;Lee&quot;,&quot;Park&quot;: 1 3 2
+##  $ age  : num  30 38 42
+##  $ child: logi  TRUE FALSE TRUE
 dim(df)
-## [1] 3 2
-nrow(df);ncol(df)
-## [1] 3
-## [1] 2</code></pre>
+## [1] 3 3</code></pre>
 </div>
 <div id="programming" class="section level2">
 <h2>Programming</h2>
@@ -682,9 +599,9 @@ i; j
 <div id="environment" class="section level2">
 <h2>Environment</h2>
 <pre class="r"><code>ls()
-##  [1] &quot;df&quot;      &quot;fmon1&quot;   &quot;fmon2&quot;   &quot;fvec1&quot;   &quot;fvec2&quot;   &quot;i&quot;       &quot;j&quot;      
-##  [8] &quot;lst&quot;     &quot;mat&quot;     &quot;mon&quot;     &quot;my_var&quot;  &quot;my_vec1&quot; &quot;my_vec2&quot; &quot;my_vec3&quot;
-## [15] &quot;square&quot;  &quot;vec&quot;     &quot;x&quot;
+##  [1] &quot;age&quot;     &quot;child&quot;   &quot;df&quot;      &quot;fmon1&quot;   &quot;fmon2&quot;   &quot;fvec1&quot;   &quot;fvec2&quot;  
+##  [8] &quot;i&quot;       &quot;j&quot;       &quot;lst&quot;     &quot;mat&quot;     &quot;mon&quot;     &quot;my_var&quot;  &quot;my_vec1&quot;
+## [15] &quot;my_vec2&quot; &quot;my_vec3&quot; &quot;name&quot;    &quot;square&quot;  &quot;vec&quot;     &quot;x&quot;
 rm(i)</code></pre>
 </div>
 <div id="r-objects" class="section level2">
@@ -718,38 +635,38 @@ write.table(demograph, file = &quot;demograph_roundage.txt&quot;, quote = F, row
 <p>Scatter plot</p>
 <pre class="r"><code>attach(mtcars)
 plot(wt, mpg, pch=19)</code></pre>
-<p><img src="DataMedicine_Lecture2_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
+<p><img src="DataMedicine_Lecture2_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
 <pre class="r"><code>pairs(mtcars)</code></pre>
-<p><img src="DataMedicine_Lecture2_files/figure-html/unnamed-chunk-23-2.png" width="672" /></p>
+<p><img src="DataMedicine_Lecture2_files/figure-html/unnamed-chunk-24-2.png" width="672" /></p>
 <pre class="r"><code>pairs(mtcars[c(&quot;disp&quot;, &quot;hp&quot;, &quot;wt&quot;, &quot;qsec&quot;)])</code></pre>
-<p><img src="DataMedicine_Lecture2_files/figure-html/unnamed-chunk-23-3.png" width="672" /> <br></p>
+<p><img src="DataMedicine_Lecture2_files/figure-html/unnamed-chunk-24-3.png" width="672" /> <br></p>
 <p>Histogram</p>
 <pre class="r"><code>hist(mtcars$mpg)</code></pre>
-<p><img src="DataMedicine_Lecture2_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
+<p><img src="DataMedicine_Lecture2_files/figure-html/unnamed-chunk-25-1.png" width="672" /></p>
 <pre class="r"><code>hist(mtcars$mpg, freq = F)
 lines(density(mtcars$mpg))</code></pre>
-<p><img src="DataMedicine_Lecture2_files/figure-html/unnamed-chunk-24-2.png" width="672" /></p>
+<p><img src="DataMedicine_Lecture2_files/figure-html/unnamed-chunk-25-2.png" width="672" /></p>
 <pre class="r"><code>plot(density(mtcars$mpg))</code></pre>
-<p><img src="DataMedicine_Lecture2_files/figure-html/unnamed-chunk-24-3.png" width="672" /> <br></p>
+<p><img src="DataMedicine_Lecture2_files/figure-html/unnamed-chunk-25-3.png" width="672" /> <br></p>
 <p>Bar Plot</p>
 <pre class="r"><code>counts &lt;- table(mtcars$gear)
 barplot(counts, main=&quot;Car Distribution&quot;, 
     xlab=&quot;Number of Gears&quot;)</code></pre>
-<p><img src="DataMedicine_Lecture2_files/figure-html/unnamed-chunk-25-1.png" width="672" /> <br></p>
+<p><img src="DataMedicine_Lecture2_files/figure-html/unnamed-chunk-26-1.png" width="672" /> <br></p>
 <p>Grouped Bar Plot</p>
 <pre class="r"><code>counts &lt;- table(mtcars$am, mtcars$gear)
 barplot(counts)</code></pre>
-<p><img src="DataMedicine_Lecture2_files/figure-html/unnamed-chunk-26-1.png" width="672" /></p>
+<p><img src="DataMedicine_Lecture2_files/figure-html/unnamed-chunk-27-1.png" width="672" /></p>
 <pre class="r"><code>barplot(counts, col=c(&quot;blue&quot;,&quot;red&quot;),
     legend = rownames(counts))</code></pre>
-<p><img src="DataMedicine_Lecture2_files/figure-html/unnamed-chunk-26-2.png" width="672" /></p>
+<p><img src="DataMedicine_Lecture2_files/figure-html/unnamed-chunk-27-2.png" width="672" /></p>
 <pre class="r"><code>barplot(counts, col=c(&quot;blue&quot;,&quot;red&quot;),
     legend = rownames(counts), beside=TRUE)</code></pre>
-<p><img src="DataMedicine_Lecture2_files/figure-html/unnamed-chunk-26-3.png" width="672" /></p>
+<p><img src="DataMedicine_Lecture2_files/figure-html/unnamed-chunk-27-3.png" width="672" /></p>
 <p>Boxplot</p>
 <pre class="r"><code>boxplot(mpg~cyl,data=mtcars, main=&quot;Car Milage Data&quot;, 
     xlab=&quot;Number of Cylinders&quot;, ylab=&quot;Miles Per Gallon&quot;)</code></pre>
-<p><img src="DataMedicine_Lecture2_files/figure-html/unnamed-chunk-27-1.png" width="672" /></p>
+<p><img src="DataMedicine_Lecture2_files/figure-html/unnamed-chunk-28-1.png" width="672" /></p>
 <dl>
 <dt>Saving graph</dt>
 <dd>Export -&gt; Save As…
