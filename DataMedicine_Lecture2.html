@@ -25,9 +25,8 @@
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
-<link href="site_libs/font-awesome-5.0.13/css/fa-svg-with-js.css" rel="stylesheet" />
-<script src="site_libs/font-awesome-5.0.13/js/fontawesome-all.min.js"></script>
-<script src="site_libs/font-awesome-5.0.13/js/fa-v4-shims.min.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
 
 <style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
@@ -103,6 +102,9 @@ img {
 button.code-folding-btn:focus {
   outline: none;
 }
+summary {
+  display: list-item;
+}
 </style>
 
 
@@ -117,7 +119,6 @@ body {
   padding-top: 69px;
   margin-top: -69px;
 }
-
 .section h2 {
   padding-top: 69px;
   margin-top: -69px;
@@ -137,6 +138,43 @@ body {
 .section h6 {
   padding-top: 69px;
   margin-top: -69px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
 }
 </style>
 
@@ -158,18 +196,77 @@ $(document).ready(function () {
 });
 </script>
 
-
 <div class="container-fluid main-container">
 
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
 });
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
 </script>
 
 <!-- code folding -->
-
 
 
 
@@ -339,8 +436,7 @@ An integrated development environment (IDE) for R <a href="https://www.rstudio.c
 <li>Modulo: %%</li>
 </ul>
 <p><img src="img/Arithmetic_R.png" style="border: #A9A9A9 1px solid; width:75%"></p>
-<p>[조교]<br />
-다음 동영상을 봅시다.<br />
+<p><조교><br />
 <a href="https://www.youtube.com/watch?v=SWxoJqTqo08&amp;list=PLjgj6kdf_snYBkIsWQYcYtUZiDpam7ygg&amp;index=1">Basics of R</a></p>
 </div>
 <div class="section level2">
@@ -360,7 +456,7 @@ my_var
 <li>Booleans (논리값, ex. TRUE or FALSE)</li>
 <li>Characters (문자, 문자열)</li>
 </ul>
-<p>[조교] 다음 동영상을 봅시다.<br />
+<p><조교><br />
 <a href="https://www.youtube.com/watch?v=hxlHQ2AtLUk&amp;list=PLjgj6kdf_snYBkIsWQYcYtUZiDpam7ygg&amp;index=2">The basic data types in R</a></p>
 </div>
 <div id="objects" class="section level2">
@@ -385,7 +481,7 @@ my_var
 <p>한 벡터 내의 요소들의 데이터 유형은 항상 같아야 합니다. 다음은 character vector 와 boolean vector 의 예입니다.</p>
 <pre class="r"><code>my_vec2 = c(&quot;apple&quot;, &quot;orange&quot;, &quot;banana&quot;, &quot;grape&quot;)
 my_vec3 = c(TRUE, FALSE, TRUE, FALSE)</code></pre>
-<p>[조교] 다음 동영상을 봅시다.<br />
+<p><조교><br />
 <a href="https://www.youtube.com/watch?v=w5dOALbZ9HE&amp;list=PLjgj6kdf_snYBkIsWQYcYtUZiDpam7ygg&amp;index=3">How to create and name vectors</a></p>
 </div>
 <div id="selecting-vector-elements-i" class="section level3">
@@ -452,7 +548,8 @@ fmon2
 ##  [1] Winter Winter Winter Spring Winter Winter Summer Summer Autumn Winter
 ## [11] Spring Spring Summer Autumn Autumn
 ## Levels: Spring Summer Autumn Winter</code></pre>
-<p>[조교][Using factors in R](<a href="https://www.youtube.com/watch?v=xkRBfy8_2MU" class="uri">https://www.youtube.com/watch?v=xkRBfy8_2MU</a>)</p>
+<p><조교><br />
+<a href="https://www.youtube.com/watch?v=xkRBfy8_2MU">Using factors in R</a></p>
 </div>
 <div id="matrix" class="section level2">
 <h2>Matrix</h2>
@@ -478,7 +575,8 @@ mat %*% t(mat) # matrix multiplication
 ## [2,]  122  140  158  176
 ## [3,]  137  158  179  200
 ## [4,]  152  176  200  224</code></pre>
-<p>[조교] - <a href="https://www.youtube.com/watch?v=O7KL17QZNqg">How to create and name matrices in R</a><br />
+<p><조교><br />
+- <a href="https://www.youtube.com/watch?v=O7KL17QZNqg">How to create and name matrices in R</a><br />
 - <a href="https://www.youtube.com/watch?v=GuZQZDCz4hA">Matrix arithmetic in R</a></p>
 </div>
 <div id="list" class="section level2">
@@ -500,11 +598,13 @@ lst[&quot;y&quot;] # select elements by name
 ## [1] 1 2 3 4 5
 lst$x
 ## [1] 1 2 3 4 5</code></pre>
-<p>[조교][How to create and name lists in R](<a href="https://www.youtube.com/watch?v=Px9VNWHja4M" class="uri">https://www.youtube.com/watch?v=Px9VNWHja4M</a>)</p>
+<p><조교><br />
+<a href="https://www.youtube.com/watch?v=Px9VNWHja4M">How to create and name lists in R</a></p>
 </div>
 <div id="data-frame" class="section level2">
 <h2>Data frame</h2>
-<p>[조교] 우선 다음 동영상을 봅시다. <a href="https://www.google.com/search?q=data+frame+in+r&amp;oq=data+frame+in+r&amp;aqs=chrome..69i57j69i60j0l4.4660j0j7&amp;sourceid=chrome&amp;ie=UTF-8#kpvalbx=1">Using the data frame in R</a></p>
+<p><조교><br />
+<a href="https://www.google.com/search?q=data+frame+in+r&amp;oq=data+frame+in+r&amp;aqs=chrome..69i57j69i60j0l4.4660j0j7&amp;sourceid=chrome&amp;ie=UTF-8#kpvalbx=1">Using the data frame in R</a></p>
 <p>data frame은 기본적으로 list의 elements를 column-wise 조직한 데이터구조입니다. list와 다른 점은 matrix와 같은 배열 구조를 가지고 있다는 것과, 각 elements(data frame에서는 columns)의 길이가 같아야 한다는 것입니다.<br />
 data.frame() 함수를 이용해서 생성합니다.</p>
 <pre class="r"><code>name = c(&quot;Kim&quot;, &quot;Park&quot;, &quot;Lee&quot;)
@@ -555,7 +655,8 @@ for (i in 1:10){
 }
 j
 ## [1] 55</code></pre>
-<p>[조교] [Working with for loops in R](<a href="https://www.youtube.com/watch?v=gSliFLjH3OI" class="uri">https://www.youtube.com/watch?v=gSliFLjH3OI</a>)</p>
+<p><조교><br />
+<a href="https://www.youtube.com/watch?v=gSliFLjH3OI">Working with for loops in R</a></p>
 <p>반복문 while loop</p>
 <pre class="r"><code>i = 0; j = 0
 while (i &lt; 10){
@@ -632,14 +733,15 @@ square(4)
 ## [1] 16
 4^2 # 물론 이렇게 하면 됩니다. ^^ 
 ## [1] 16</code></pre>
-<p>[조교] 다음 동영상을 봅시다. <a href="https://www.youtube.com/watch?v=M4fMccWy5lU">Writing functions in R</a></p>
+<p><조교><br />
+<a href="https://www.youtube.com/watch?v=M4fMccWy5lU">Writing functions in R</a></p>
 </div>
 </div>
 <div id="environment" class="section level2">
 <h2>Environment</h2>
 <p>다음은 작업공간(working directory) 설정, R 객체의 조회와 제거, 도움말에 대한 함수입니다.</p>
 <pre class="r"><code>getwd() # setwd() 
-## [1] &quot;/Users/mac/GitHub/tutorial&quot;
+## [1] &quot;/Users/hong/Documents/GitHub/tutorial&quot;
 ls() # list R objects
 ##  [1] &quot;age&quot;     &quot;child&quot;   &quot;df&quot;      &quot;fmon1&quot;   &quot;fmon2&quot;   &quot;fvec1&quot;   &quot;fvec2&quot;  
 ##  [8] &quot;i&quot;       &quot;j&quot;       &quot;lst&quot;     &quot;mat&quot;     &quot;mon&quot;     &quot;my_var&quot;  &quot;my_vec1&quot;
@@ -682,27 +784,39 @@ write.table(demograph, file = &quot;demograph_roundage.txt&quot;, quote = F, row
 </div>
 <div class="section level2">
 <h2>그래프</h2>
-<p>Scatter plot</p>
+<p>그래프는 탐색적 데이터 분석을 위한 매우 훌륭한 도구입니다. 우선 가장 기본적인 그래프인 scatter plot, histogram, bar plot, box plot 에 대해서 간단히 살펴봅시다.</p>
+<div id="scatter-plot" class="section level3">
+<h3>Scatter plot</h3>
 <pre class="r"><code>alsfrs = read.csv(&quot;ALSFRS.csv&quot;)
 attach(alsfrs)
 plot(alsfrs.slope.before3mo, alsfrs.slope.after3mo)</code></pre>
 <p><img src="DataMedicine_Lecture2_files/figure-html/unnamed-chunk-29-1.png" width="672" /></p>
-<p>Histogram</p>
+</div>
+<div id="histogram" class="section level3">
+<h3>Histogram</h3>
 <pre class="r"><code>hist(demograph$Age)</code></pre>
 <p><img src="DataMedicine_Lecture2_files/figure-html/unnamed-chunk-30-1.png" width="672" /></p>
 <pre class="r"><code>hist(demograph$Age, freq = F)</code></pre>
 <p><img src="DataMedicine_Lecture2_files/figure-html/unnamed-chunk-30-2.png" width="672" /></p>
 <pre class="r"><code>plot(density(demograph$Age))</code></pre>
 <p><img src="DataMedicine_Lecture2_files/figure-html/unnamed-chunk-30-3.png" width="672" /></p>
-<p>Bar Plot</p>
+</div>
+<div id="bar-plot" class="section level3">
+<h3>Bar Plot</h3>
 <pre class="r"><code>counts &lt;- table(demograph$Gender)
 barplot(counts, main=&quot;Gender&quot;, 
     xlab=&quot;Number of patients&quot;)</code></pre>
 <p><img src="DataMedicine_Lecture2_files/figure-html/unnamed-chunk-31-1.png" width="672" /></p>
-<p>Boxplot</p>
+</div>
+<div id="boxplot" class="section level3">
+<h3>Boxplot</h3>
 <pre class="r"><code>boxplot(Age~Gender,data=demograph)</code></pre>
 <p><img src="DataMedicine_Lecture2_files/figure-html/unnamed-chunk-32-1.png" width="672" /></p>
-<p>[조교] - <a href="https://www.youtube.com/watch?v=UXeJ1bNYCos">Making basic graphics in R</a> - <a href="https://www.youtube.com/watch?v=Z3V4Pbxeahg">How to plot multiple graphs in R</a> - <a href="https://www.youtube.com/watch?v=0MrYVzPxBIc">Customizing your plots in R</a></p>
+<p><조교><br />
+- <a href="https://www.youtube.com/watch?v=UXeJ1bNYCos">Making basic graphics in R</a><br />
+- <a href="https://www.youtube.com/watch?v=Z3V4Pbxeahg">How to plot multiple graphs in R</a><br />
+- <a href="https://www.youtube.com/watch?v=0MrYVzPxBIc">Customizing your plots in R</a></p>
+</div>
 </div>
 
 

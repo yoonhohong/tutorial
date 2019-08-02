@@ -50,8 +50,7 @@ R은 간단한 계산기로 사용될 수 있습니다. 다음 산술 연산자�
 
 <img src="img/Arithmetic_R.png" style="border: #A9A9A9 1px solid; width:75%">
 
-[조교]  
-다음 동영상을 봅시다.     
+<조교>      
 [Basics of R](https://www.youtube.com/watch?v=SWxoJqTqo08&list=PLjgj6kdf_snYBkIsWQYcYtUZiDpam7ygg&index=1)
 
 ## 변수 
@@ -72,8 +71,7 @@ R의 기본 data type은 다음과 같습니다.
 * Booleans (논리값, ex. TRUE or FALSE)
 * Characters (문자, 문자열) 
 
-[조교]
-다음 동영상을 봅시다.    
+<조교>  
 [The basic data types in R](https://www.youtube.com/watch?v=hxlHQ2AtLUk&list=PLjgj6kdf_snYBkIsWQYcYtUZiDpam7ygg&index=2)
 
 ## 객체(Objects)
@@ -102,8 +100,7 @@ my_vec2 = c("apple", "orange", "banana", "grape")
 my_vec3 = c(TRUE, FALSE, TRUE, FALSE)
 ```
 
-[조교]
-다음 동영상을 봅시다.    
+<조교>  
 [How to create and name vectors](https://www.youtube.com/watch?v=w5dOALbZ9HE&list=PLjgj6kdf_snYBkIsWQYcYtUZiDpam7ygg&index=3)
 
 ### Selecting vector elements (I)   
@@ -168,7 +165,7 @@ levels(fmon2) = list(Spring = c("Mar", "Apr", "May"),
 fmon2
 ```
 
-[조교]
+<조교>  
 [Using factors in R](https://www.youtube.com/watch?v=xkRBfy8_2MU)
 
 ## Matrix 
@@ -185,9 +182,9 @@ t(mat) # transpose
 mat %*% t(mat) # matrix multiplication
 ```
 
-[조교]
-- [How to create and name matrices in R](https://www.youtube.com/watch?v=O7KL17QZNqg)  
-- [Matrix arithmetic in R](https://www.youtube.com/watch?v=GuZQZDCz4hA)  
+<조교>  
+- [How to create and name matrices in R](https://www.youtube.com/watch?v=O7KL17QZNqg)    
+- [Matrix arithmetic in R](https://www.youtube.com/watch?v=GuZQZDCz4hA)    
   
   
 ## List
@@ -211,12 +208,12 @@ lst[[1]]
 lst$x
 ```
 
-[조교]
+<조교>     
 [How to create and name lists in R](https://www.youtube.com/watch?v=Px9VNWHja4M)
 
+
 ## Data frame
-[조교] 
-우선 다음 동영상을 봅시다. 
+<조교>     
 [Using the data frame in R](https://www.google.com/search?q=data+frame+in+r&oq=data+frame+in+r&aqs=chrome..69i57j69i60j0l4.4660j0j7&sourceid=chrome&ie=UTF-8#kpvalbx=1)
 
 data frame은 기본적으로 list의 elements를 column-wise 조직한 데이터구조입니다. list와 다른 점은 matrix와 같은 배열 구조를 가지고 있다는 것과, 각 elements(data frame에서는 columns)의 길이가 같아야 한다는 것입니다.   
@@ -256,7 +253,7 @@ for (i in 1:10){
 j
 ```
 
-[조교] 
+<조교>     
 [Working with for loops in R](https://www.youtube.com/watch?v=gSliFLjH3OI)
 
 반복문 while loop
@@ -321,9 +318,8 @@ square(4)
 4^2 # 물론 이렇게 하면 됩니다. ^^ 
 ```
 
-[조교]
-다음 동영상을 봅시다. 
-[Writing functions in R](https://www.youtube.com/watch?v=M4fMccWy5lU)
+<조교>       
+[Writing functions in R](https://www.youtube.com/watch?v=M4fMccWy5lU)  
 
 
 ## Environment
@@ -360,35 +356,38 @@ write.table(demograph, file = "demograph_roundage.txt", quote = F, row.names = F
 ```
 
 ## 그래프 
+그래프는 탐색적 데이터 분석을 위한 매우 훌륭한 도구입니다. 우선 가장 기본적인 그래프인 scatter plot, histogram, bar plot, box plot 에 대해서 간단히 살펴봅시다.   
 
-Scatter plot  
+### Scatter plot  
 ```{r}
 alsfrs = read.csv("ALSFRS.csv")
 attach(alsfrs)
 plot(alsfrs.slope.before3mo, alsfrs.slope.after3mo)
 ```
 
-Histogram
+### Histogram
 ```{r}
 hist(demograph$Age)
 hist(demograph$Age, freq = F)
 plot(density(demograph$Age))
 ```
 
-Bar Plot 
+### Bar Plot 
 ```{r}
 counts <- table(demograph$Gender)
 barplot(counts, main="Gender", 
   	xlab="Number of patients")
 ```
 
-Boxplot  
+### Boxplot  
 ```{r}
 boxplot(Age~Gender,data=demograph)
 ```
 
-[조교]
-- [Making basic graphics in R](https://www.youtube.com/watch?v=UXeJ1bNYCos)
-- [How to plot multiple graphs in R](https://www.youtube.com/watch?v=Z3V4Pbxeahg)
-- [Customizing your plots in R](https://www.youtube.com/watch?v=0MrYVzPxBIc)
+<조교>    
+- [Making basic graphics in R](https://www.youtube.com/watch?v=UXeJ1bNYCos)  
+- [How to plot multiple graphs in R](https://www.youtube.com/watch?v=Z3V4Pbxeahg)  
+- [Customizing your plots in R](https://www.youtube.com/watch?v=0MrYVzPxBIc)  
+
+  
 
