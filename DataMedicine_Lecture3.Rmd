@@ -1,28 +1,54 @@
 ---
-title: "데이터 임상의학 w/ R (3)"
-date: Aug 14, 2018
-author: "Yoon-Ho Hong, MD, PhD"
+title: "데이터 가공과 시각화"
 output:
   html_document:
     toc: yes
     toc_float: true
+editor_options: 
+  chunk_output_type: console
 ---
 
+```{r, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE)
+```
 
-## 데이터 가공(Data processing)
+## Preparations  
 
-dplyr, gapminder 설치하기  
+dplyr 와 gapminder 패키지를 설치하고, 로딩합니다.  
 
-설치한 패키지를 load 하기
-```{r message=FALSE, warning=TRUE}
+```{r eval=FALSE}
+install.packages("dplyr")
+install.packages("gapminder")
+```
+
+```{r message=FALSE}
 library(dplyr)
 library(gapminder)
 ```
-<br>
 
-gapminder 데이터셋 둘러보기
-```{r echo=TRUE}
+[Note]  
+R에서 패키지(package)는 함수, 데이터, 코드, 문서 등을 묶어놓은 것을 말합니다. R을 설치하면 자동으로 기본 패키지들이 설치되는데, 이들이 제공하지 못하는 기능들은 새로운 패키지를 설치해서 사용합니다. 현재 10,000여개 이상의 패키지들이 CRAN, Bioconductor, GitHub 등의 repository에 저장되어 있습니다.     
+[R packages: Beginner's Guide](https://www.datacamp.com/community/tutorials/r-packages-guide#what)  
+
+
+## 데이터 가공(Data wrangling)   
+the process of transforming and mapping data from one "raw" data form into another format with the intent of making it more appropriate and valuable for a variety of downstream purposes such as analytics.  
+
+### Learning Objectives
+
+- Select columns in a data frame with the dplyr function select.  
+- Select rows in a data frame according to filtering conditions with the dplyr function filter.  
+- Direct the output of one dplyr function to the input of another function with the ‘pipe’ operator %>%.  
+- Add new columns to a data frame that are functions of existing columns with mutate.  
+- Understand the split-apply-combine concept for data analysis.
+Use summarize, group_by, and tally to split a data frame into groups of observations, apply a summary statistics for each group, and then combine the results.  
+
+### gapminder 데이터셋 둘러보기
+gapminder 데이터는 국가별 년도별 life expectancy, GDP per capita, 그리고 population에 대한 데이터입니다.  
+
+```{r}
 head(gapminder)
+str(gapminder)
 summary(gapminder)
 ```
 
@@ -266,66 +292,6 @@ apropos("^geom_")
 ```{r}
 apropos("^stat_")
 ```
-
-## 연습 문제
-
-proact_sample.txt 파일은 original PROACT dataset 에서 무작위로 20%  환자들의 데이터만을 추출한 것이다. Lab test 데이터 중에서는 일부 features 를 선별하였고, Adverse Event 와 Concomitant Medication form 은 제외하였다. 
-DataMedicine_Lecture3_Exercises.R   
-
-1. "proact_sample.txt" 파일을 읽어들이고, 몇 명의 환자들에 대한 데이터인지 확인하자. (read.table())
-<br>
-
-2. 각 column의 이름이 무엇을 의미하는지 파악해보자.
-<br>
-
-3. 몇 개의 form_name 이 있는지? 각 form_name 은 몇 개의 feature_name 으로 구성되어 있는지, feature_name 에는 어떤 것들이 있는지 알아보자. (droplevels())
-<br>
-
-4. 탐색적 데이터 분석을 진행하기 전에 연구의 목적이 무엇인지 최대한 구체적으로 기술해보자. 분석의 대상이 될 환자들을 어떻게 선정할지 생각해보자.
-<br>
-   
-5. Demographic form 데이터만 추출해서 complete demographic data 가 있는 환자들의 수는 얼마인지 알아보자. (어떤 환자들은 demographic data 가 전혀 없거나 일부 항목이 missing 되어 있을 수 있다.) (tidyr::spread(), complete.cases())
-<br>
-
-6. Extract only the data of subjects with complete demographic data
-<br>
-
-7. ALSFRS form 데이터에는 2번 이상 중복 혹은 불일치 기재된 feature_value 들이 있다. 이와 같은 경우가 발생한 환자들의 SubjectID 는 무엇인가? 이들을 어떻게 처리할 것인가? (duplicated(), which())
-<br>
-
-8. ALSFRS or ALSFRS-R records 가 적어도 한 번 이상 기록된 환자들은 모두 몇 명인가? ALSFRS or ALSFRS-R records 가 기록된 횟수의 분포는 어떠한가? (table())
-<br>
-
-9. ALSFRS 와 ALSFRS_R 의 차이는 무엇인가?
-<br> 
-
-10. ALSFRS 만 기록된 환자는 몇 명인가? ALSFRS_R 만 기록된 환자는 몇 명인가? 둘 다 기록된 환자는 몇 명인가? (gplots::venn())
-<br> 
-
-11. ALSFRS_Total 과 feature_delta 데이터가 모두 있는 환자들은 몇 명인가?
-<br> 
-
-12. feature_delta 와 ALSFRS_Total 의 관계를 산점도로 그려보자. feature_delta < 0 은 데이터 포인트를 찾아보자. 시간에 따른 ALSFRS_Total 의 변화를 line plot 으로 그려보자. feature_delta < 500 인 data points 만 line plot 으로 그려보자. (ggplot(), aes(), group, alpha)
-<br>
-
-13. onset site (Bulbar vs. Limb) 에 따라 ALSFRS_Total 의 변화(질환의 진행속도)가 다른지 살펴보자. 
-<br>
-
-14. Lab data 중 Creatinine 의 변화를 시각화해보자. Baseline Creatinine value 에 따라 질환의 진행속도가 다른지 살펴보자. 
-
-15. 계속해서 탐색적 데이터 분석과 시각화를 해보자. 예를 들면, 다음 변수값에 따라 질환의 진행속도가 다른지
-- age, sex, race  
-- onset to diagnosis (dianostic delay), onset to enrollment
-- uric acid (baseline)
-- BMI (baseline) 
-- FVC, SVC (baseline)
-- BP, PR (baseline)
-
-16. 3-12 개월 사이 ALSFRS_Total 점수의 변화율 (slope)을 구해보자. 
-  - ALSFRS slope, 3-12 mo 
-  - Slope ratio = [ALSFRS_Total(m2) - ALSFRS_Total(m1)] / (m2 - m1)
-  - m1 = the first visit after 3 mo
-  - m2 = the first visit after 12 mo or the last visit within 12 mo 
 
 
 

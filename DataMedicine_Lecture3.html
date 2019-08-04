@@ -9,10 +9,9 @@
 <meta name="generator" content="pandoc" />
 
 
-<meta name="author" content="Yoon-Ho Hong, MD, PhD" />
 
 
-<title>데이터 임상의학 w/ R (3)</title>
+<title>데이터 가공과 시각화</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -401,23 +400,44 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">데이터 임상의학 w/ R (3)</h1>
-<h4 class="author"><em>Yoon-Ho Hong, MD, PhD</em></h4>
-<h4 class="date"><em>Aug 14, 2018</em></h4>
+<h1 class="title toc-ignore">데이터 가공과 시각화</h1>
 
 </div>
 
 
-<div id="-data-processing" class="section level2">
-<h2>데이터 가공(Data processing)</h2>
-<p>dplyr, gapminder 설치하기</p>
-<p>설치한 패키지를 load 하기</p>
+<div id="preparations" class="section level2">
+<h2>Preparations</h2>
+<p>dplyr 와 gapminder 패키지를 설치하고, 로딩합니다.</p>
+<pre class="r"><code>install.packages(&quot;dplyr&quot;)
+install.packages(&quot;gapminder&quot;)</code></pre>
 <pre class="r"><code>library(dplyr)
 library(gapminder)</code></pre>
-<p><br></p>
-<p>gapminder 데이터셋 둘러보기</p>
-<pre class="r"><code>head(gapminder)</code></pre>
-<pre><code>## # A tibble: 6 x 6
+<p>[Note]<br />
+R에서 패키지(package)는 함수, 데이터, 코드, 문서 등을 묶어놓은 것을 말합니다. R을 설치하면 자동으로 기본 패키지들이 설치되는데, 이들이 제공하지 못하는 기능들은 새로운 패키지를 설치해서 사용합니다. 현재 10,000여개 이상의 패키지들이 CRAN, Bioconductor, GitHub 등의 repository에 저장되어 있습니다.<br />
+<a href="https://www.datacamp.com/community/tutorials/r-packages-guide#what">R packages: Beginner’s Guide</a></p>
+</div>
+<div id="-data-wrangling" class="section level2">
+<h2>데이터 가공(Data wrangling)</h2>
+<p>the process of transforming and mapping data from one “raw” data form into another format with the intent of making it more appropriate and valuable for a variety of downstream purposes such as analytics.</p>
+<div id="learning-objectives" class="section level3">
+<h3>Learning Objectives</h3>
+<ul>
+<li>Select columns in a data frame with the dplyr function select.<br />
+</li>
+<li>Select rows in a data frame according to filtering conditions with the dplyr function filter.<br />
+</li>
+<li>Direct the output of one dplyr function to the input of another function with the ‘pipe’ operator %&gt;%.<br />
+</li>
+<li>Add new columns to a data frame that are functions of existing columns with mutate.<br />
+</li>
+<li>Understand the split-apply-combine concept for data analysis. Use summarize, group_by, and tally to split a data frame into groups of observations, apply a summary statistics for each group, and then combine the results.</li>
+</ul>
+</div>
+<div id="gapminder--" class="section level3">
+<h3>gapminder 데이터셋 둘러보기</h3>
+<p>gapminder 데이터는 국가별 년도별 life expectancy, GDP per capita, 그리고 population에 대한 데이터입니다.</p>
+<pre class="r"><code>head(gapminder)
+## # A tibble: 6 x 6
 ##   country     continent  year lifeExp      pop gdpPercap
 ##   &lt;fct&gt;       &lt;fct&gt;     &lt;int&gt;   &lt;dbl&gt;    &lt;int&gt;     &lt;dbl&gt;
 ## 1 Afghanistan Asia       1952    28.8  8425333      779.
@@ -425,9 +445,17 @@ library(gapminder)</code></pre>
 ## 3 Afghanistan Asia       1962    32.0 10267083      853.
 ## 4 Afghanistan Asia       1967    34.0 11537966      836.
 ## 5 Afghanistan Asia       1972    36.1 13079460      740.
-## 6 Afghanistan Asia       1977    38.4 14880372      786.</code></pre>
-<pre class="r"><code>summary(gapminder)</code></pre>
-<pre><code>##         country        continent        year         lifeExp     
+## 6 Afghanistan Asia       1977    38.4 14880372      786.
+str(gapminder)
+## Classes &#39;tbl_df&#39;, &#39;tbl&#39; and &#39;data.frame&#39;:    1704 obs. of  6 variables:
+##  $ country  : Factor w/ 142 levels &quot;Afghanistan&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ continent: Factor w/ 5 levels &quot;Africa&quot;,&quot;Americas&quot;,..: 3 3 3 3 3 3 3 3 3 3 ...
+##  $ year     : int  1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 ...
+##  $ lifeExp  : num  28.8 30.3 32 34 36.1 ...
+##  $ pop      : int  8425333 9240934 10267083 11537966 13079460 14880372 12881816 13867957 16317921 22227415 ...
+##  $ gdpPercap: num  779 821 853 836 740 ...
+summary(gapminder)
+##         country        continent        year         lifeExp     
 ##  Afghanistan:  12   Africa  :624   Min.   :1952   Min.   :23.60  
 ##  Albania    :  12   Americas:300   1st Qu.:1966   1st Qu.:48.20  
 ##  Algeria    :  12   Asia    :396   Median :1980   Median :60.71  
@@ -443,12 +471,13 @@ library(gapminder)</code></pre>
 ##  3rd Qu.:1.959e+07   3rd Qu.:  9325.5  
 ##  Max.   :1.319e+09   Max.   :113523.1  
 ## </code></pre>
+</div>
 <div id="filter" class="section level3">
 <h3>filter</h3>
 <p>조건에 맞는 관측치만 골라내기</p>
 <pre class="r"><code>gapminder %&gt;%
-  filter(year == 1957)</code></pre>
-<pre><code>## # A tibble: 142 x 6
+  filter(year == 1957)
+## # A tibble: 142 x 6
 ##    country     continent  year lifeExp      pop gdpPercap
 ##    &lt;fct&gt;       &lt;fct&gt;     &lt;int&gt;   &lt;dbl&gt;    &lt;int&gt;     &lt;dbl&gt;
 ##  1 Afghanistan Asia       1957    30.3  9240934      821.
@@ -463,8 +492,8 @@ library(gapminder)</code></pre>
 ## 10 Belgium     Europe     1957    69.2  8989111     9715.
 ## # … with 132 more rows</code></pre>
 <pre class="r"><code>gapminder %&gt;%
-  filter(country == &quot;Korea, Rep.&quot;)</code></pre>
-<pre><code>## # A tibble: 12 x 6
+  filter(country == &quot;Korea, Rep.&quot;)
+## # A tibble: 12 x 6
 ##    country     continent  year lifeExp      pop gdpPercap
 ##    &lt;fct&gt;       &lt;fct&gt;     &lt;int&gt;   &lt;dbl&gt;    &lt;int&gt;     &lt;dbl&gt;
 ##  1 Korea, Rep. Asia       1952    47.5 20947571     1031.
@@ -484,8 +513,8 @@ library(gapminder)</code></pre>
 <h3>arrange</h3>
 <p>오름차순</p>
 <pre class="r"><code>gapminder %&gt;%
-  arrange(gdpPercap)</code></pre>
-<pre><code>## # A tibble: 1,704 x 6
+  arrange(gdpPercap)
+## # A tibble: 1,704 x 6
 ##    country          continent  year lifeExp      pop gdpPercap
 ##    &lt;fct&gt;            &lt;fct&gt;     &lt;int&gt;   &lt;dbl&gt;    &lt;int&gt;     &lt;dbl&gt;
 ##  1 Congo, Dem. Rep. Africa     2002    45.0 55379852      241.
@@ -502,8 +531,8 @@ library(gapminder)</code></pre>
 <p><br></p>
 <p>내림차순</p>
 <pre class="r"><code>gapminder %&gt;%
-  arrange(desc(gdpPercap))</code></pre>
-<pre><code>## # A tibble: 1,704 x 6
+  arrange(desc(gdpPercap))
+## # A tibble: 1,704 x 6
 ##    country   continent  year lifeExp     pop gdpPercap
 ##    &lt;fct&gt;     &lt;fct&gt;     &lt;int&gt;   &lt;dbl&gt;   &lt;int&gt;     &lt;dbl&gt;
 ##  1 Kuwait    Asia       1957    58.0  212846   113523.
@@ -522,8 +551,8 @@ library(gapminder)</code></pre>
 <h3>mutate</h3>
 <p>백만명단위로 인구수 변환</p>
 <pre class="r"><code>gapminder %&gt;%
-  mutate(pop = pop/1000000)</code></pre>
-<pre><code>## # A tibble: 1,704 x 6
+  mutate(pop = pop/1000000)
+## # A tibble: 1,704 x 6
 ##    country     continent  year lifeExp   pop gdpPercap
 ##    &lt;fct&gt;       &lt;fct&gt;     &lt;int&gt;   &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;
 ##  1 Afghanistan Asia       1952    28.8  8.43      779.
@@ -540,8 +569,8 @@ library(gapminder)</code></pre>
 <p><br></p>
 <p>총국민소득 구하기</p>
 <pre class="r"><code>gapminder %&gt;%
-  mutate(gdp = gdpPercap*pop)</code></pre>
-<pre><code>## # A tibble: 1,704 x 7
+  mutate(gdp = gdpPercap*pop)
+## # A tibble: 1,704 x 7
 ##    country     continent  year lifeExp      pop gdpPercap          gdp
 ##    &lt;fct&gt;       &lt;fct&gt;     &lt;int&gt;   &lt;dbl&gt;    &lt;int&gt;     &lt;dbl&gt;        &lt;dbl&gt;
 ##  1 Afghanistan Asia       1952    28.8  8425333      779.  6567086330.
@@ -564,8 +593,8 @@ library(gapminder)</code></pre>
 <p>2007년의 평균 기대수명</p>
 <pre class="r"><code>gapminder %&gt;%
   filter(year == 2007) %&gt;%
-  summarize(meanLifeExp = mean(lifeExp))</code></pre>
-<pre><code>## # A tibble: 1 x 1
+  summarize(meanLifeExp = mean(lifeExp))
+## # A tibble: 1 x 1
 ##   meanLifeExp
 ##         &lt;dbl&gt;
 ## 1        67.0</code></pre>
@@ -573,8 +602,8 @@ library(gapminder)</code></pre>
 <p>2007년의 평균 기대수명과 총인구수</p>
 <pre class="r"><code>gapminder %&gt;%
   filter(year == 2007) %&gt;%
-  summarise(meanLifeExp = mean(lifeExp), totPop = sum(as.numeric(pop))) # integer overflow, 2*10^9</code></pre>
-<pre><code>## # A tibble: 1 x 2
+  summarise(meanLifeExp = mean(lifeExp), totPop = sum(as.numeric(pop))) # integer overflow, 2*10^9
+## # A tibble: 1 x 2
 ##   meanLifeExp     totPop
 ##         &lt;dbl&gt;      &lt;dbl&gt;
 ## 1        67.0 6251013179</code></pre>
@@ -584,8 +613,8 @@ library(gapminder)</code></pre>
 <p>년도별 평균 기대수명</p>
 <pre class="r"><code>gapminder %&gt;%
   group_by(year) %&gt;%
-  summarise(meanLifeExp = mean(lifeExp))</code></pre>
-<pre><code>## # A tibble: 12 x 2
+  summarise(meanLifeExp = mean(lifeExp))
+## # A tibble: 12 x 2
 ##     year meanLifeExp
 ##    &lt;int&gt;       &lt;dbl&gt;
 ##  1  1952        49.1
@@ -604,8 +633,8 @@ library(gapminder)</code></pre>
 <p>년도별 대륙별 평균 기대수명</p>
 <pre class="r"><code>gapminder %&gt;%
   group_by(continent, year) %&gt;%
-  summarize(meanLifeExp = mean(lifeExp))</code></pre>
-<pre><code>## # A tibble: 60 x 3
+  summarize(meanLifeExp = mean(lifeExp))
+## # A tibble: 60 x 3
 ## # Groups:   continent [5]
 ##    continent  year meanLifeExp
 ##    &lt;fct&gt;     &lt;int&gt;       &lt;dbl&gt;
@@ -650,20 +679,20 @@ library(gapminder)</code></pre>
 <pre class="r"><code>gapminder_2007 &lt;- gapminder %&gt;%
   filter(year == 2007) </code></pre>
 <pre class="r"><code>ggplot(data = gapminder_2007, aes(x=gdpPercap, y=lifeExp)) + geom_point()</code></pre>
-<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-15-1.png" width="672" /></p>
+<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
 </div>
 <div id="additional-aesthetics" class="section level3">
 <h3>additional aesthetics</h3>
 <p>그래픽 요소(color, size)에 데이터를 매핑</p>
 <pre class="r"><code>ggplot(data = gapminder_2007, aes(x=gdpPercap, y=lifeExp, color=continent, size=pop)) + geom_point()</code></pre>
-<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
+<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
 </div>
 <div id="faceting" class="section level3">
 <h3>faceting</h3>
 <pre class="r"><code>ggplot(data = gapminder_2007, aes(x=gdpPercap, y=lifeExp)) + 
   geom_point() + 
   facet_wrap(~continent)</code></pre>
-<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
+<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
 </div>
 <div id="line-plot" class="section level3">
 <h3>line plot</h3>
@@ -674,28 +703,28 @@ library(gapminder)</code></pre>
 p = ggplot(data = year_continent, aes(x=year, y=meanLifeExp, color=continent)) + geom_point()
 p = p + geom_line()
 p</code></pre>
-<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
 <pre class="r"><code>p + expand_limits(y=0) </code></pre>
-<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-18-2.png" width="672" /></p>
+<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-20-2.png" width="672" /></p>
 <p>2007년 1인당 국민소득과 기대 수명의 관계를 산점도로 그리고, 선형 회귀직선을 그려보자.</p>
 <pre class="r"><code>p &lt;- ggplot(gapminder_2007, aes(gdpPercap, lifeExp)) + geom_point()
 p</code></pre>
-<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
 <pre class="r"><code>p = p + scale_x_log10() # scale 함수 
 p</code></pre>
-<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-19-2.png" width="672" /></p>
+<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-21-2.png" width="672" /></p>
 <pre class="r"><code>gapminder_2007_coef = coef(lm(lifeExp ~ log10(gdpPercap), data = gapminder_2007))
-gapminder_2007_coef</code></pre>
-<pre><code>##      (Intercept) log10(gdpPercap) 
+gapminder_2007_coef
+##      (Intercept) log10(gdpPercap) 
 ##         4.949612        16.585064</code></pre>
 <pre class="r"><code>p + geom_abline(intercept = gapminder_2007_coef[&quot;(Intercept)&quot;], 
                 slope = gapminder_2007_coef[&quot;log10(gdpPercap)&quot;], color = &quot;red&quot;)</code></pre>
-<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
+<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
 <p>통계적 데이터의 변환 함수를 이용하자.</p>
 <pre class="r"><code>p</code></pre>
-<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-22-1.png" width="672" /></p>
+<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
 <pre class="r"><code>p + stat_smooth(method = &quot;lm&quot;, se=F, color = &quot;red&quot;) </code></pre>
-<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-22-2.png" width="672" /></p>
+<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-24-2.png" width="672" /></p>
 </div>
 <div id="bar-plot" class="section level3">
 <h3>bar plot</h3>
@@ -704,38 +733,38 @@ gapminder_2007_coef</code></pre>
   group_by(continent) %&gt;%
   summarise(meanLifeExp = mean(lifeExp))
 ggplot(by_continent, aes(x=continent, y=meanLifeExp)) + geom_col()</code></pre>
-<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
+<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-25-1.png" width="672" /></p>
 </div>
 <div id="histogram" class="section level3">
 <h3>histogram</h3>
 <p>기대수명의 분포 (histogram)</p>
-<pre class="r"><code>ggplot(gapminder, aes(x=lifeExp)) + geom_histogram()</code></pre>
-<pre><code>## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
-<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-24-1.png" width="672" /> <br></p>
+<pre class="r"><code>ggplot(gapminder, aes(x=lifeExp)) + geom_histogram()
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-26-1.png" width="672" /> <br></p>
 <p>5년 단위 구간(bins)</p>
 <pre class="r"><code>ggplot(gapminder, aes(x=lifeExp)) + geom_histogram(binwidth = 5)</code></pre>
-<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-25-1.png" width="672" /></p>
+<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-27-1.png" width="672" /></p>
 </div>
 <div id="box-plot" class="section level3">
 <h3>box plot</h3>
 <p>대륙별 기대수명의 분포 비교 (box plot)</p>
 <pre class="r"><code>ggplot(gapminder, aes(x=continent, y=lifeExp)) + geom_boxplot()</code></pre>
-<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-26-1.png" width="672" /> <br></p>
+<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-28-1.png" width="672" /> <br></p>
 </div>
 <div id="ggplot2-plot----" class="section level3">
 <h3>ggplot2 plot 의 기본 성분과 구조</h3>
 <p>ggplot2 plot의 기본 성분<br />
 - Data: 주로 data frame 객체 형태의 데이터 - Aesthetic mappings: 데이터를 축, 색상, 점의 크기 등으로 매핑하는 방법 - Geometric object: 점, 선, 도형과 같은 기하학적 객체 - Scales: - Coordinate system: 좌표계 - Facetting: 조건부 플롯을 위해 패널을 분할하여 표현하는 방법 - Statistical transformation: Binning, quantiles, smoothing 등의 통계 변환 - Position adjustment: 위치의 조정</p>
 <pre class="r"><code>p &lt;- ggplot(data = gapminder_2007, aes(x=gdpPercap, y=lifeExp)) + geom_point()
-attributes(p)</code></pre>
-<pre><code>## $names
+attributes(p)
+## $names
 ## [1] &quot;data&quot;        &quot;layers&quot;      &quot;scales&quot;      &quot;mapping&quot;     &quot;theme&quot;      
 ## [6] &quot;coordinates&quot; &quot;facet&quot;       &quot;plot_env&quot;    &quot;labels&quot;     
 ## 
 ## $class
-## [1] &quot;gg&quot;     &quot;ggplot&quot;</code></pre>
-<pre class="r"><code>summary(p)</code></pre>
-<pre><code>## data: country, continent, year, lifeExp, pop, gdpPercap [142x6]
+## [1] &quot;gg&quot;     &quot;ggplot&quot;
+summary(p)
+## data: country, continent, year, lifeExp, pop, gdpPercap [142x6]
 ## mapping:  x = ~gdpPercap, y = ~lifeExp
 ## faceting: &lt;ggproto object: Class FacetNull, Facet, gg&gt;
 ##     compute_layout: function
@@ -773,8 +802,8 @@ attributes(p)</code></pre>
 <li>Position adjustment: geometric 의 위치를 지정하는 함수군</li>
 <li>Others</li>
 </ul>
-<pre class="r"><code>apropos(&quot;^geom_&quot;)</code></pre>
-<pre><code>##  [1] &quot;geom_abline&quot;     &quot;geom_area&quot;       &quot;geom_bar&quot;       
+<pre class="r"><code>apropos(&quot;^geom_&quot;)
+##  [1] &quot;geom_abline&quot;     &quot;geom_area&quot;       &quot;geom_bar&quot;       
 ##  [4] &quot;geom_bin2d&quot;      &quot;geom_blank&quot;      &quot;geom_boxplot&quot;   
 ##  [7] &quot;geom_col&quot;        &quot;geom_contour&quot;    &quot;geom_count&quot;     
 ## [10] &quot;geom_crossbar&quot;   &quot;geom_curve&quot;      &quot;geom_density&quot;   
@@ -790,8 +819,8 @@ attributes(p)</code></pre>
 ## [40] &quot;geom_sf_label&quot;   &quot;geom_sf_text&quot;    &quot;geom_smooth&quot;    
 ## [43] &quot;geom_spoke&quot;      &quot;geom_step&quot;       &quot;geom_text&quot;      
 ## [46] &quot;geom_tile&quot;       &quot;geom_violin&quot;     &quot;geom_vline&quot;</code></pre>
-<pre class="r"><code>apropos(&quot;^stat_&quot;)</code></pre>
-<pre><code>##  [1] &quot;stat_bin&quot;            &quot;stat_bin_2d&quot;         &quot;stat_bin_hex&quot;       
+<pre class="r"><code>apropos(&quot;^stat_&quot;)
+##  [1] &quot;stat_bin&quot;            &quot;stat_bin_2d&quot;         &quot;stat_bin_hex&quot;       
 ##  [4] &quot;stat_bin2d&quot;          &quot;stat_binhex&quot;         &quot;stat_boxplot&quot;       
 ##  [7] &quot;stat_contour&quot;        &quot;stat_count&quot;          &quot;stat_density&quot;       
 ## [10] &quot;stat_density_2d&quot;     &quot;stat_density2d&quot;      &quot;stat_ecdf&quot;          
@@ -802,45 +831,6 @@ attributes(p)</code></pre>
 ## [25] &quot;stat_summary_2d&quot;     &quot;stat_summary_bin&quot;    &quot;stat_summary_hex&quot;   
 ## [28] &quot;stat_summary2d&quot;      &quot;stat_unique&quot;         &quot;stat_ydensity&quot;</code></pre>
 </div>
-</div>
-<div id="-" class="section level2">
-<h2>연습 문제</h2>
-<p>proact_sample.txt 파일은 original PROACT dataset 에서 무작위로 20% 환자들의 데이터만을 추출한 것이다. Lab test 데이터 중에서는 일부 features 를 선별하였고, Adverse Event 와 Concomitant Medication form 은 제외하였다. DataMedicine_Lecture3_Exercises.R</p>
-<ol style="list-style-type: decimal">
-<li><p>“proact_sample.txt” 파일을 읽어들이고, 몇 명의 환자들에 대한 데이터인지 확인하자. (read.table()) <br></p></li>
-<li><p>각 column의 이름이 무엇을 의미하는지 파악해보자. <br></p></li>
-<li><p>몇 개의 form_name 이 있는지? 각 form_name 은 몇 개의 feature_name 으로 구성되어 있는지, feature_name 에는 어떤 것들이 있는지 알아보자. (droplevels()) <br></p></li>
-<li><p>탐색적 데이터 분석을 진행하기 전에 연구의 목적이 무엇인지 최대한 구체적으로 기술해보자. 분석의 대상이 될 환자들을 어떻게 선정할지 생각해보자. <br></p></li>
-<li><p>Demographic form 데이터만 추출해서 complete demographic data 가 있는 환자들의 수는 얼마인지 알아보자. (어떤 환자들은 demographic data 가 전혀 없거나 일부 항목이 missing 되어 있을 수 있다.) (tidyr::spread(), complete.cases()) <br></p></li>
-<li><p>Extract only the data of subjects with complete demographic data <br></p></li>
-<li><p>ALSFRS form 데이터에는 2번 이상 중복 혹은 불일치 기재된 feature_value 들이 있다. 이와 같은 경우가 발생한 환자들의 SubjectID 는 무엇인가? 이들을 어떻게 처리할 것인가? (duplicated(), which()) <br></p></li>
-<li><p>ALSFRS or ALSFRS-R records 가 적어도 한 번 이상 기록된 환자들은 모두 몇 명인가? ALSFRS or ALSFRS-R records 가 기록된 횟수의 분포는 어떠한가? (table()) <br></p></li>
-<li><p>ALSFRS 와 ALSFRS_R 의 차이는 무엇인가? <br></p></li>
-<li><p>ALSFRS 만 기록된 환자는 몇 명인가? ALSFRS_R 만 기록된 환자는 몇 명인가? 둘 다 기록된 환자는 몇 명인가? (gplots::venn()) <br></p></li>
-<li><p>ALSFRS_Total 과 feature_delta 데이터가 모두 있는 환자들은 몇 명인가? <br></p></li>
-<li><p>feature_delta 와 ALSFRS_Total 의 관계를 산점도로 그려보자. feature_delta &lt; 0 은 데이터 포인트를 찾아보자. 시간에 따른 ALSFRS_Total 의 변화를 line plot 으로 그려보자. feature_delta &lt; 500 인 data points 만 line plot 으로 그려보자. (ggplot(), aes(), group, alpha) <br></p></li>
-<li><p>onset site (Bulbar vs. Limb) 에 따라 ALSFRS_Total 의 변화(질환의 진행속도)가 다른지 살펴보자. <br></p></li>
-<li><p>Lab data 중 Creatinine 의 변화를 시각화해보자. Baseline Creatinine value 에 따라 질환의 진행속도가 다른지 살펴보자.</p></li>
-<li>계속해서 탐색적 데이터 분석과 시각화를 해보자. 예를 들면, 다음 변수값에 따라 질환의 진행속도가 다른지</li>
-</ol>
-<ul>
-<li>age, sex, race<br />
-</li>
-<li>onset to diagnosis (dianostic delay), onset to enrollment</li>
-<li>uric acid (baseline)</li>
-<li>BMI (baseline)</li>
-<li>FVC, SVC (baseline)</li>
-<li>BP, PR (baseline)</li>
-</ul>
-<ol start="16" style="list-style-type: decimal">
-<li>3-12 개월 사이 ALSFRS_Total 점수의 변화율 (slope)을 구해보자.</li>
-</ol>
-<ul>
-<li>ALSFRS slope, 3-12 mo</li>
-<li>Slope ratio = [ALSFRS_Total(m2) - ALSFRS_Total(m1)] / (m2 - m1)</li>
-<li>m1 = the first visit after 3 mo</li>
-<li>m2 = the first visit after 12 mo or the last visit within 12 mo</li>
-</ul>
 </div>
 
 
