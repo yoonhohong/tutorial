@@ -13,7 +13,6 @@ knitr::opts_chunk$set(collapse = TRUE)
 ```
 
 ## Preparations  
-
 dplyr 와 gapminder 패키지를 설치하고, 로딩합니다.  
 
 ```{r eval=FALSE}
@@ -32,7 +31,9 @@ R에서 패키지(package)는 함수, 데이터, 코드, 문서 등을 묶어놓
 
 
 ## 데이터 가공(Data wrangling)   
-the process of transforming and mapping data from one "raw" data form into another format with the intent of making it more appropriate and valuable for a variety of downstream purposes such as analytics.  
+> the process of transforming and mapping data from one "raw" data form into another format with the intent of making it more appropriate and valuable for a variety of downstream purposes such as analytics.  
+
+*Did you know that Data Scientists spend 80% of their time cleaning data and the other 20% complaining about it?*
 
 ### Learning Objectives
 
