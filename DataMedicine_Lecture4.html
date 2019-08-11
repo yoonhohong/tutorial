@@ -9,10 +9,9 @@
 <meta name="generator" content="pandoc" />
 
 
-<meta name="author" content="Yoon-Ho Hong, MD, PhD" />
 
 
-<title>데이터 임상의학 w/ R (4)</title>
+<title>기계학습의 기초</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -401,36 +400,72 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">데이터 임상의학 w/ R (4)</h1>
-<h4 class="author"><em>Yoon-Ho Hong, MD, PhD</em></h4>
-<h4 class="date"><em>Aug 21, 2018</em></h4>
+<h1 class="title toc-ignore">기계학습의 기초</h1>
 
 </div>
 
 
 <div id="machine-learning" class="section level1">
-<h1>Machine Learning</h1>
-<div id="what-is-machine-learning-statistical-learning" class="section level2">
-<h2>What is machine learning (statistical learning)?</h2>
+<h1>기계학습(Machine Learning)</h1>
+<div id="-" class="section level2">
+<h2>기계학습이란 무엇인가?</h2>
+<p>기계학습은 지도 기계학습과 비지도 기계학습으로 구분한다. 지도 기계학습은 입력 변수를 기반으로 출력 변수를 예측하는 모델을 만드는 것이고, 비지도 기계학습은 출력 변수 없이 입력 변수만 가지고 자료의 상관 관계와 구조를 파악하는 것과 관련이 있다 (cluster analysis).</p>
+<p>출력 변수는 반응 변수, 응답 변수, 또는 종속 변수라고 불리며 보통 <span class="math inline">\(Y\)</span>를 사용하여 나타낸다.</p>
+<p>입력 변수는 보통 <span class="math inline">\(X\)</span>로 나타내고, 아래 첨자를 사용하여 서로 다른 입력 변수들을 구분한다. 입력 변수는 설명 변수, 예측 변수, 독립 변수, 특징(features) 또는 그냥 변수라고 불린다.</p>
+<p><span class="math inline">\(X\)</span>와 <span class="math inline">\(Y\)</span>의 관계를 다음 식으로 나타낼 수 있다.</p>
 <blockquote>
 <p><span class="math inline">\(Y\)</span> = f(<span class="math inline">\(X\)</span>) + <span class="math inline">\(e\)</span></p>
 </blockquote>
 <p><span class="math inline">\(X\)</span> = <span class="math inline">\(X_1\)</span> + <span class="math inline">\(X_2\)</span> + … + <span class="math inline">\(X_p\)</span>; predictors, independent variables, features, variables<br />
 <span class="math inline">\(Y\)</span>; response variable, dependent variable<br />
 <span class="math inline">\(e\)</span>; random error term (independent of <span class="math inline">\(X\)</span>, mean = 0)</p>
+<p>위에서 f는 어떤 함수이고, 지도 기계학습은 이 f를 추정하는 일련의 과정을 말하는 것이다.</p>
 </div>
-<div id="how-to-estimate-the-function-f" class="section level2">
-<h2>how to estimate the function <span class="math inline">\(f\)</span>?</h2>
+<div id="f----why-estimate-f" class="section level2">
+<h2><span class="math inline">\(f\)</span>를 추정하는 이유는 무엇인가? Why estimate <span class="math inline">\(f\)</span>?</h2>
+<p>f를 어떻게 추정하는지 하는 방법을 구체적으로 살펴보기에 앞서, 우선 f를 추정하고자 하는 목적, 이유에 대해 살펴보자. 크게 두가지로 구분해 볼 수 있는데, 그것은 바로 예측과 추론이다.</p>
 <ol style="list-style-type: decimal">
-<li>parametric methods<br />
+<li>prediction</li>
+</ol>
+<p><span class="math display">\[\hat{Y} = \hat{f}(X)\]</span></p>
+<p><span class="math inline">\(\hat{Y}\)</span>은 Y에 대한 예측 결과를 나타내며, <span class="math inline">\(\hat{f}\)</span>은 f에 대한 추정을 나타낸다.</p>
+<p>예측 문제에서 <span class="math inline">\(\hat{f}\)</span>는 보통 블랙박스로 취급된다. <span class="math inline">\(\hat{f}\)</span>가 정확한 예측을 제공한다면 그것의 정확한 형태에 대해서는 통상 관심이 없기 때문이다.</p>
+<p><span class="math inline">\(\hat{Y}\)</span>의 정확성은 오차를 얼마나 줄일 수 있느냐에 달려있다. 오차는 크게 축소가능한 오차와 축소불가능한 오차로 구분할 수 있다.</p>
+<p>축소가능 오차(reducible error): 가장 적절한 기계학습 기법을 사용하여 f를 추정함으로써 <span class="math inline">\(\hat{f}\)</span>의 정확성을 개선할 수 있다.</p>
+<p>축소불가능 오차(irreducible error): 근본적으로 측정할 수 없는 변동성이나, 혹은 측정되지 않은 유용한 변수들에 대한 오차를 말한다.</p>
+<p>축소불가능 오차는 예측 정확도의 상한선이 되겠지만, 그 경계는 현실적으로 거의 언제나 알려져 있지 않다. 우리는 축소가능 오차를 최대한 줄이는 f를 추정하는 기법들에 대해 다룬다.</p>
+<ol start="2" style="list-style-type: decimal">
+<li>inference</li>
+</ol>
+<p>추론은 X가 변함에 따라 Y가 어떻게 영향을 받는지를 이해하는데 관심이 있다. 따라서, <span class="math inline">\(\hat{f}\)</span>는 블랙박스로 취급될 수 없다. 그것의 정확한 형태를 알아야 할 필요가 있기 때문이다.</p>
+<ul>
+<li>which predictors are associated with the response?<br />
 </li>
+<li>what is the relationship between the response and each predictor?<br />
+</li>
+<li>Can the relationship between Y and each predictor be adequately summarized using a linear equation, or is the relationship more complicated?<br />
+[Challenges]<br />
+의학, 의료 분야에서 기계학습을 이용한 예측과 추론 문제의 예를 들어보자.</li>
+</ul>
+</div>
+<div id="-f--how-to-estimate-the-function-f" class="section level2">
+<h2>어떻게 f를 추정하는가? how to estimate the function <span class="math inline">\(f\)</span>?</h2>
+<p>훈련 데이터를 이용하여 f를 추정하는데, 이를 위한 기계학습 기법들은 크게 모수적 방법과 비모수적 방법으로 나누어 볼 수 있다.</p>
+<ol style="list-style-type: decimal">
+<li>parametric methods</li>
 </ol>
 <ul>
 <li>assume about the functional form (model-based)<br />
 </li>
-<li>fit the model by using the data (training) (ex. least squares)<br />
-</li>
+<li>fit the model by using the data (training) (ex. least squares) 모수적 방법은 두 단계로 구성된 모델 기반의 방법이다.<br />
+우선, f의 함수 형태에 대해 가정한다. 예를 들면, 아주 단순하게 Y는 X에 대해 선형 관계라고 가정한다.</li>
 </ul>
+<p><span class="math display">\[f(X) = \beta_0 + \beta_1X_1 + \beta_2X_2 + ...+\beta_pX_p\]</span></p>
+<p>다음으로 훈련데이터를 이용하여 모델을 적합(fit)하는 절차가 필요하다. 즉, 위 선형 모델의 경우, 파라미터 집합 <span class="math inline">\(\beta_0\)</span>, <span class="math inline">\(\beta_1\)</span>, <span class="math inline">\(\beta_2\)</span>,…, <span class="math inline">\(\beta_p\)</span>을 추정하는 절차이며, 선형 모델의 적합에 가장 일반적으로 사용되는 기법은 최소제곱(least squares)이다.</p>
+<p>[중요]<br />
+과적합(overfitting)이란 오차를 너무 면밀히 추적하는 것을 말한다. 일반적으로 모수적 방법에서 가정한 모델이 유연하고 복잡할 수록 (spline model &gt; linear model) 과적합의 위험은 커진다.</p>
+<p><strong>figure</strong><br />
+<img src="img/least_flexible_model.png" style="border: #A9A9A9 1px solid; width:75%"> <img src="img/flexible_model.png" style="border: #A9A9A9 1px solid; width: 75%"> <img src="img/very_flexible_model.png" style="border: #A9A9A9 1px solid; width: 75%"></p>
 <ol start="2" style="list-style-type: decimal">
 <li>non-parametric methods</li>
 </ol>
@@ -439,79 +474,54 @@ div.tocify {
 </li>
 <li>estimate <span class="math inline">\(f\)</span> that gets as close to data points as possible w/o being too much wiggly</li>
 </ul>
-<p><strong>figure</strong><br />
-<img src="img/least_flexible_model.png" style="border: #A9A9A9 1px solid; width:75%"> <img src="img/flexible_model.png" style="border: #A9A9A9 1px solid; width: 75%"> <img src="img/very_flexible_model.png" style="border: #A9A9A9 1px solid; width: 75%"></p>
+<p>[Challenge]<br />
+모수적 방법과 비모수적 방법의 장,단점에 대해 생각해봅시다.</p>
 </div>
-<div id="why-estimate-f" class="section level2">
-<h2>Why estimate <span class="math inline">\(f\)</span>?</h2>
-<ol style="list-style-type: decimal">
-<li>prediction</li>
-</ol>
-<p><span class="math display">\[\hat{Y} = \hat{f}(X)\]</span></p>
-<p>not typically concerned with the exact form of f, provided that it yields accurate predictions for Y (blackbox)</p>
-<p>accuracy of <span class="math inline">\(\hat{Y}\)</span> depends on…<br />
-- reducible error<br />
-- irreducible error (due to unmeasured variables or unmeasurable variation)</p>
-<ol start="2" style="list-style-type: decimal">
-<li>inference</li>
-</ol>
-<ul>
-<li>which predictors are associated with the response?<br />
-</li>
-<li>what is the relationship between the response and each predictor?<br />
-</li>
-<li>etc…</li>
-</ul>
-</div>
-<div id="model-flexibility-vs.interpretability" class="section level2">
-<h2>Model flexibility vs. Interpretability</h2>
-<p><strong>figure</strong><br />
+<div id="model-flexibility-interpretability" class="section level2">
+<h2>Model flexibility &amp; Interpretability</h2>
+<p>[Challenge]<br />
+일반적으로 덜 유연한(e.g., linear) 모델을 더 유연한 모델(e.g., spline)보다 선호할 수 있는데, 그 이유는 무엇일까?</p>
+<p><strong>figure</strong> 모델의 유연성과 해석력 사이의 관계<br />
 <img src="img/flexibility_interpretability.png" style="border: #A9A9A9 1px solid; width: 75%"></p>
-<hr />
-<p><strong>Note</strong> If we are only interested in prediction, and the interpretability of the predictive model is simply not of interest, you might expect that it will be best to use the most flexible model available. Surprisingly, this is not always the case! We will often obtain more accurate predictions using a less flexible method. This phenomenon, which may seem counterintuitive at first glance, has to do with the potential for overfitting in highly flexible methods.</p>
-<hr />
+<p>우리가 추론에는 관심이 없고, 예측에만 관심이 있다면 가장 유연한 모델을 사용하는 것이 최선이라고 예상할 수 있다. 그러나, 놀랍게도 이것이 항상 맞는 것은 아니다! 우리는 종종 덜 유연한 방법을 사용하여 더 정확한 예측을 얻을 것이다. 직관에 반하는 것처럼 보이는 이러한 현상은 아주 유연한 방법들의 잠재적인 과적합 문제와 관련이 있다.</p>
 </div>
-<div id="supervised-vs.unsupervised-learning" class="section level2">
-<h2>Supervised vs. Unsupervised learning</h2>
-<p>When we have no response variable <span class="math inline">\(Y\)</span>, what sort of learning is possible? We can seek to understand the relationships between the variables or between the observations (cluster analysis)</p>
-</div>
-<div id="regression-vs.classification" class="section level2">
-<h2>Regression vs. Classification</h2>
+<div id="--regression-vs.classification" class="section level2">
+<h2>회귀와 분류 (Regression vs. Classification)</h2>
 <p>whether the response variable is quantitative (regression) or qualitative (classification)</p>
-<p>Bayes classifier</p>
-<p>assigns each observation to the most likely class, given its predictor values<br />
-<span class="math display">\[Pr(Y=j|X)\]</span> <strong>figure</strong> <img src="img/bayes_classifier.png" style="border: #A9A9A9 1px solid; width:75%"> ***<br />
-<strong>Note</strong> But for real data, we do not know the conditional distri- bution of Y given X, and so computing the Bayes classifier is impossible.</p>
-<hr />
-<p>K-nearest neighbors (KNN)</p>
-<p><strong>figure</strong> <img src="img/knn.png" style="border: #A9A9A9 1px solid; width:75%"></p>
 </div>
-<div id="how-to-asess-the-accuracy-of-model" class="section level2">
-<h2>How to asess the accuracy of model?</h2>
-<hr />
+<div id="---how-to-asess-the-accuracy-of-model" class="section level2">
+<h2>모델의 정확도 평가 (How to asess the accuracy of model?)</h2>
+<p>기계학습 모델의 성능 평가에 대해 말하기에 앞서, 모든 자료에 대해 가장 좋은 결과를 줄 수 있는 단 하나의 방법(master algorithm)은 없을까 생각해보자. 결론부터 말하자면, 그러한 기법은 없다. 이것이 우리가 앞으로 여러가지 기계학습 기법을 살펴보는 이유이다. 이것은 공짜 점심은 없다는 이론과 관계가 있다.</p>
 <p><strong>Note</strong> <em>No free lunch theorem</em> Selecting the best approach can be one of the most challenging parts of performing statistical learning in practice.</p>
-<hr />
-<p><br></p>
+<div id="-regression" class="section level3">
+<h3>회귀 (Regression)</h3>
+<p>기계학습 모델의 성능을 평가한다는 것은 예측치와 관측치가 얼마나 잘 맞는지 측정한다는 것이다. 회귀 문제에서 가장 일반적으로 사용되는 척도는 아래 식으로 주어지는 평균제곱오차이다.</p>
 <p>mean squared error (MSE)</p>
-<p><span class="math display">\[MSE = \frac{1}{n}\sum_{i=1}^{n}(y_i - \hat{f}(x_i))^2\]</span></p>
-<p>error rate</p>
-<p><span class="math display">\[\frac{1}{n}\sum_{i=1}^{n}I(y_i \neq \hat{y_i})\]</span></p>
+<p><span class="math display">\[MSE = \frac{1}{n}\sum_{i=1}^{n}(y_i - \hat{f}(x_i))^2\]</span> training data를 이용하여 계산한 MSE는 training MSE 라고 한다. 우리는 그러나 일반적으로 기계학습 모델이 training data에서 얼마나 잘 작동하는지에는 관심이 없다. 실제로 관심이 있는 것은 test data에 적용할 때 없는 예측 정확도이다 (test MSE).</p>
 </div>
-<div id="trade-off-between-bias-variance" class="section level2">
-<h2>Trade-off between Bias-Variance</h2>
+<div id="-classification" class="section level3">
+<h3>분류 (Classification)</h3>
+<p>분류 문제에서 분류기 <span class="math inline">\(\hat{f}\)</span>의 정확도를 수량화하는 가장 흔한 지표는 아래 식으로 주어지는 오차율이다.</p>
+<p>error rate</p>
+<p><span class="math display">\[\frac{1}{n}\sum_{i=1}^{n}I(y_i \neq \hat{y_i})\]</span> <span class="math inline">\(\hat{y_i}\)</span>는 <span class="math inline">\(\hat{f}\)</span>를 사용하여 예측된 i번째 관측치에 대한 클래스 표시(label)이고,<br />
+<span class="math inline">\(I(y_i \neq \hat{y_i})\)</span>는 indicator variable로 <span class="math inline">\(y_i \neq \hat{y_i}\)</span>이면 1이고, <span class="math inline">\(y_i = \hat{y_i}\)</span>이면 0이다.</p>
+</div>
+</div>
+<div id="---bias-variance-trade-off" class="section level2">
+<h2>편향 분산 절출 (Bias-Variance trade-off)</h2>
 <p>Bias: error<br />
-Variance: how much the <span class="math inline">\(\hat{f}\)</span> changes with different training data sets<br />
-Test MSE: model accuracy</p>
+Variance: how much the <span class="math inline">\(\hat{f}\)</span> changes with different training data sets</p>
 <blockquote>
 <p>As a general rule, as we use more flexible methods, the variance will increase and the bias will decrease</p>
 </blockquote>
-<p><em>figure</em> <img src="img/bias_variance_tradeoff.png" style="border: #A9A9A9 1px solid; width:75%"> <img src="img/knn_bias_variance_tradeoff.png" style="border: #A9A9A9 1px solid; width:75%"></p>
+<p><em>figure</em> <img src="img/bias_variance_tradeoff.png" style="border: #A9A9A9 1px solid; width:75%"></p>
+<p><img src="img/knn_bias_variance_tradeoff.png" style="border: #A9A9A9 1px solid; width:75%"></p>
 <blockquote>
-<p>The challenge lies in finding a method for which both the variance and the squared bias are low.</p>
+<p>The challenge lies in finding a method for which both the variance and the bias are low.</p>
 </blockquote>
 </div>
-<div id="exercises" class="section level2">
-<h2>Exercises</h2>
+<div id="-" class="section level2">
+<h2>실습 문제</h2>
 <ol style="list-style-type: decimal">
 <li>For each of parts (a) through (d), indicate whether we would generally expect the performance of a flexible statistical learning method to be better or worse than an inflexible method. Justify your answer.</li>
 </ol>
