@@ -407,35 +407,26 @@ div.tocify {
 
 <div id="preparations" class="section level2">
 <h2>Preparations</h2>
-<p>dplyr 와 gapminder 패키지를 설치하고, 로딩합니다.</p>
+<p>dplyr와 gapminder 패키지를 설치하고, 로딩합니다.</p>
 <pre class="r"><code>install.packages(&quot;dplyr&quot;)
 install.packages(&quot;gapminder&quot;)</code></pre>
 <pre class="r"><code>library(dplyr)
 library(gapminder)</code></pre>
 <p>[Note]<br />
-R에서 패키지(package)는 함수, 데이터, 코드, 문서 등을 묶어놓은 것을 말합니다. R을 설치하면 자동으로 기본 패키지들이 설치되는데, 이들이 제공하지 못하는 기능들은 새로운 패키지를 설치해서 사용합니다. 현재 10,000여개 이상의 패키지들이 CRAN, Bioconductor, GitHub 등의 repository에 저장되어 있습니다.<br />
+R에서 패키지(package)는 함수, 데이터, 코드, 문서 등을 묶어놓은 것을 말합니다. R을 설치하면 자동으로 기본 패키지들이 설치되는데, 이들이 제공하지 못하는 기능들은 새로운 패키지를 설치해서 사용합니다. 현재 10,000여개 이상의 패키지들이 CRAN, Bioconductor, GitHub 등의 repository에 저장되어 있습니다.</p>
+<p>R 패키지에 대해서 좀 더 자세히 알아보고 싶으면 다음 웹사이트를 방문해보세요.<br />
 <a href="https://www.datacamp.com/community/tutorials/r-packages-guide#what">R packages: Beginner’s Guide</a></p>
 </div>
 <div id="-data-wrangling" class="section level2">
 <h2>데이터 가공(Data wrangling)</h2>
+<blockquote>
 <p>the process of transforming and mapping data from one “raw” data form into another format with the intent of making it more appropriate and valuable for a variety of downstream purposes such as analytics.</p>
-<div id="learning-objectives" class="section level3">
-<h3>Learning Objectives</h3>
-<ul>
-<li>Select columns in a data frame with the dplyr function select.<br />
-</li>
-<li>Select rows in a data frame according to filtering conditions with the dplyr function filter.<br />
-</li>
-<li>Direct the output of one dplyr function to the input of another function with the ‘pipe’ operator %&gt;%.<br />
-</li>
-<li>Add new columns to a data frame that are functions of existing columns with mutate.<br />
-</li>
-<li>Understand the split-apply-combine concept for data analysis. Use summarize, group_by, and tally to split a data frame into groups of observations, apply a summary statistics for each group, and then combine the results.</li>
-</ul>
-</div>
+</blockquote>
+<p><em>Did you know that Data Scientists spend 80% of their time cleaning data and the other 20% complaining about it?</em></p>
 <div id="gapminder--" class="section level3">
 <h3>gapminder 데이터셋 둘러보기</h3>
 <p>gapminder 데이터는 국가별 년도별 life expectancy, GDP per capita, 그리고 population에 대한 데이터입니다.</p>
+<p>gapminder 패키지를 설치하고 로딩하면 작업공간에서 gapminder 데이터를 불러올 수 있습니다.</p>
 <pre class="r"><code>head(gapminder)
 ## # A tibble: 6 x 6
 ##   country     continent  year lifeExp      pop gdpPercap
@@ -472,6 +463,27 @@ summary(gapminder)
 ##  Max.   :1.319e+09   Max.   :113523.1  
 ## </code></pre>
 </div>
+<div id="select" class="section level3">
+<h3>select</h3>
+<p>특정 변수들만 골라냅니다.</p>
+<pre class="r"><code>gapminder %&gt;%
+  select(continent, country) %&gt;%
+  distinct() # distinct data, removing duplicates  
+## # A tibble: 142 x 2
+##    continent country    
+##    &lt;fct&gt;     &lt;fct&gt;      
+##  1 Asia      Afghanistan
+##  2 Europe    Albania    
+##  3 Africa    Algeria    
+##  4 Africa    Angola     
+##  5 Americas  Argentina  
+##  6 Oceania   Australia  
+##  7 Europe    Austria    
+##  8 Asia      Bahrain    
+##  9 Asia      Bangladesh 
+## 10 Europe    Belgium    
+## # … with 132 more rows</code></pre>
+</div>
 <div id="filter" class="section level3">
 <h3>filter</h3>
 <p>조건에 맞는 관측치만 골라내기</p>
@@ -491,6 +503,7 @@ summary(gapminder)
 ##  9 Bangladesh  Asia       1957    39.3 51365468      662.
 ## 10 Belgium     Europe     1957    69.2  8989111     9715.
 ## # … with 132 more rows</code></pre>
+<p>1957년 데이터만 subsetting 합니다.</p>
 <pre class="r"><code>gapminder %&gt;%
   filter(country == &quot;Korea, Rep.&quot;)
 ## # A tibble: 12 x 6
@@ -511,7 +524,7 @@ summary(gapminder)
 </div>
 <div id="arrange" class="section level3">
 <h3>arrange</h3>
-<p>오름차순</p>
+<p>오름차순으로 정렬합니다.</p>
 <pre class="r"><code>gapminder %&gt;%
   arrange(gdpPercap)
 ## # A tibble: 1,704 x 6
@@ -528,8 +541,7 @@ summary(gapminder)
 ##  9 Burundi          Africa     1952    39.0  2445618      339.
 ## 10 Eritrea          Africa     1957    38.0  1542611      344.
 ## # … with 1,694 more rows</code></pre>
-<p><br></p>
-<p>내림차순</p>
+<p>내림차순으로 정렬하려면 desc() 함수를 사용합니다.</p>
 <pre class="r"><code>gapminder %&gt;%
   arrange(desc(gdpPercap))
 ## # A tibble: 1,704 x 6
@@ -549,7 +561,7 @@ summary(gapminder)
 </div>
 <div id="mutate" class="section level3">
 <h3>mutate</h3>
-<p>백만명단위로 인구수 변환</p>
+<p>변수를 변환해서 새로운 변수를 생성하는 함수입니다. 인구수를 백만명단위로 변환해봅시다.</p>
 <pre class="r"><code>gapminder %&gt;%
   mutate(pop = pop/1000000)
 ## # A tibble: 1,704 x 6
@@ -566,8 +578,7 @@ summary(gapminder)
 ##  9 Afghanistan Asia       1992    41.7 16.3       649.
 ## 10 Afghanistan Asia       1997    41.8 22.2       635.
 ## # … with 1,694 more rows</code></pre>
-<p><br></p>
-<p>총국민소득 구하기</p>
+<p>총국민소득을 구해봅시다.</p>
 <pre class="r"><code>gapminder %&gt;%
   mutate(gdp = gdpPercap*pop)
 ## # A tibble: 1,704 x 7
@@ -590,7 +601,8 @@ summary(gapminder)
 <h2>데이터 요약(Summary)</h2>
 <div id="summarize" class="section level3">
 <h3>summarize</h3>
-<p>2007년의 평균 기대수명</p>
+<p>summarize() 함수는 통계 요약치 등을 구할 때 유용하게 사용됩니다.<br />
+2007년의 평균 기대수명을 구해봅시다.</p>
 <pre class="r"><code>gapminder %&gt;%
   filter(year == 2007) %&gt;%
   summarize(meanLifeExp = mean(lifeExp))
@@ -598,19 +610,10 @@ summary(gapminder)
 ##   meanLifeExp
 ##         &lt;dbl&gt;
 ## 1        67.0</code></pre>
-<p><br></p>
-<p>2007년의 평균 기대수명과 총인구수</p>
-<pre class="r"><code>gapminder %&gt;%
-  filter(year == 2007) %&gt;%
-  summarise(meanLifeExp = mean(lifeExp), totPop = sum(as.numeric(pop))) # integer overflow, 2*10^9
-## # A tibble: 1 x 2
-##   meanLifeExp     totPop
-##         &lt;dbl&gt;      &lt;dbl&gt;
-## 1        67.0 6251013179</code></pre>
 </div>
 <div id="group_by" class="section level3">
 <h3>group_by</h3>
-<p>년도별 평균 기대수명</p>
+<p>년도별 평균 기대수명을 구해봅시다.</p>
 <pre class="r"><code>gapminder %&gt;%
   group_by(year) %&gt;%
   summarise(meanLifeExp = mean(lifeExp))
@@ -629,8 +632,7 @@ summary(gapminder)
 ## 10  1997        65.0
 ## 11  2002        65.7
 ## 12  2007        67.0</code></pre>
-<p><br></p>
-<p>년도별 대륙별 평균 기대수명</p>
+<p>대륙별, 년도별 평균 기대수명?</p>
 <pre class="r"><code>gapminder %&gt;%
   group_by(continent, year) %&gt;%
   summarize(meanLifeExp = mean(lifeExp))
@@ -651,142 +653,201 @@ summary(gapminder)
 ## # … with 50 more rows</code></pre>
 </div>
 </div>
+<div id="combine-datasets" class="section level2">
+<h2>Combine datasets</h2>
+<p>in base package: intersect, union, setdiff</p>
+<pre class="r"><code>x1 = c(&quot;a&quot;, &quot;b&quot;, &quot;c&quot;)
+y1 = c(&quot;b&quot;, &quot;c&quot;, &quot;d&quot;)
+intersect(x1, y1)
+## [1] &quot;b&quot; &quot;c&quot;
+setdiff(x1, y1)
+## [1] &quot;a&quot;
+union(x1, y1)
+## [1] &quot;a&quot; &quot;b&quot; &quot;c&quot; &quot;d&quot;</code></pre>
+<p>in dplyr</p>
+<pre class="r"><code>x2 = c(1, 2, 3)
+y2 = c(2, 3, 4)
+x12 = data.frame(x1, x2)
+y12 = data.frame(y1, y2)
+names(y12)[1] = &quot;x1&quot;
+inner_join(x12, y12, by=&quot;x1&quot;)
+## Warning: Column `x1` joining factors with different levels, coercing to
+## character vector
+##   x1 x2 y2
+## 1  b  2  2
+## 2  c  3  3
+left_join(x12, y12, by=&quot;x1&quot;)
+## Warning: Column `x1` joining factors with different levels, coercing to
+## character vector
+##   x1 x2 y2
+## 1  a  1 NA
+## 2  b  2  2
+## 3  c  3  3
+right_join(x12, y12, by=&quot;x1&quot;)
+## Warning: Column `x1` joining factors with different levels, coercing to
+## character vector
+##   x1 x2 y2
+## 1  b  2  2
+## 2  c  3  3
+## 3  d NA  4
+full_join(x12, y12, by=&quot;x1&quot;)
+## Warning: Column `x1` joining factors with different levels, coercing to
+## character vector
+##   x1 x2 y2
+## 1  a  1 NA
+## 2  b  2  2
+## 3  c  3  3
+## 4  d NA  4</code></pre>
+</div>
+<div id="reshaping-data" class="section level2">
+<h2>Reshaping data</h2>
+<p>분석에 적합한 형태로 long format &lt;-&gt; wide format 전환하기 위해 tidyr 패키지의 gather와 spread 함수를 사용합니다.</p>
+<pre class="r"><code>install.packages(&quot;tidyr&quot;)</code></pre>
+<pre class="r"><code>library(tidyr)</code></pre>
+<pre class="r"><code>alsfrs = read.csv(&quot;ALSFRS_long.csv&quot;)</code></pre>
+<pre class="r"><code>alsfrs_wide = spread(alsfrs, key = feature, value = value)</code></pre>
+<pre class="r"><code>alsfrs_long = gather(alsfrs_wide, key = &quot;feature&quot;, value = &quot;value&quot;, ALSFRS_R_Total:trunk)</code></pre>
+<p>[Note]<br />
+데이터 가공에 자주 사용되는 dplyr와 tidyr에 대한 cheat sheet를 아래에서 다운로드 받아서 곁에 두고 참조하시기 바랍니다.</p>
+<p><a href="https://github.com/yoonhohong/tutorial/blob/master/data-wrangling-cheatsheet.pdf">data wrangling cheet sheet</a></p>
+</div>
 <div id="-data-visualization" class="section level2">
 <h2>데이터 시각화(Data visualization)</h2>
-<blockquote>
-<p>“Visualization is any technique for creating images, diagrams, or animations to communicate a message” - Wikipedia</p>
-</blockquote>
-<blockquote>
-<p>“One picture is worth ten thousand words”</p>
-</blockquote>
-<blockquote>
-<p>“백수이불여일화 百數以不如一畵”</p>
-</blockquote>
-<blockquote>
-<p>“The simple graph has brought more information to the data analyst’s mind than any other device.” — John Tukey</p>
-</blockquote>
-<p>load ggplot2</p>
-<pre class="r"><code>library(ggplot2)</code></pre>
-<p><br></p>
+<p>다음 동영상을 보고 데이터 시각화의 목적과 장점에 대해 생각해봅시다.<br />
+<a href="https://www.youtube.com/watch?v=YxKr2a-Y1WE">Introduction to data visualization using ggplot2</a></p>
 <p>ggplot2<br />
 - by Hadley Wickham<br />
-- based on “Grammar of Graphics” (그래픽의 각 요소를 구분하여 취급)<br />
-- incremental method (기초 플롯을 생성한 후, 필요한 그래픽 요소들을 붙이는 방식)</p>
+- based on “Grammar of Graphics” - incremental method (기초 플롯을 생성한 후, 필요한 그래픽 요소들을 추가, 수정하는 방식)</p>
+<p><a href="https://www.youtube.com/watch?v=uiTc55clwuA">Grammar of Graphics</a><br />
+<a href="https://www.youtube.com/watch?v=PiY9hwOkL8U">ggplot2: layers</a></p>
+<p>ggplot2 패키지를 설치하고 로딩</p>
+<pre class="r"><code>install.packages(&quot;ggplot2&quot;)</code></pre>
+<pre class="r"><code>library(ggplot2)</code></pre>
 <div id="scatter-plot" class="section level3">
 <h3>scatter plot</h3>
-<p>scatter plot: gdpPercap vs. lifeExp in year 2007<br />
-2007년 1인당 국민소득과 기대수명의 관계를 산점도로 그리기</p>
+<p>2007년 1인당 국민소득과 기대수명의 관계를 산점도로 그리기</p>
 <pre class="r"><code>gapminder_2007 &lt;- gapminder %&gt;%
   filter(year == 2007) </code></pre>
-<pre class="r"><code>ggplot(data = gapminder_2007, aes(x=gdpPercap, y=lifeExp)) + geom_point()</code></pre>
-<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-17-1.png" width="672" /></p>
-</div>
-<div id="additional-aesthetics" class="section level3">
-<h3>additional aesthetics</h3>
+<pre class="r"><code>p = ggplot(data = gapminder_2007, aes(x=gdpPercap, y=lifeExp))
+p + geom_point()</code></pre>
+<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-25-1.png" width="672" /></p>
+<div id="other-aesthetics" class="section level4">
+<h4>other aesthetics</h4>
 <p>그래픽 요소(color, size)에 데이터를 매핑</p>
-<pre class="r"><code>ggplot(data = gapminder_2007, aes(x=gdpPercap, y=lifeExp, color=continent, size=pop)) + geom_point()</code></pre>
-<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
+<pre class="r"><code>p + geom_point(aes(color = continent, size=pop)) </code></pre>
+<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-26-1.png" width="672" /></p>
 </div>
-<div id="faceting" class="section level3">
-<h3>faceting</h3>
-<pre class="r"><code>ggplot(data = gapminder_2007, aes(x=gdpPercap, y=lifeExp)) + 
-  geom_point() + 
-  facet_wrap(~continent)</code></pre>
-<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-19-1.png" width="672" /></p>
+<div id="facet" class="section level4">
+<h4>facet</h4>
+<pre class="r"><code>p + geom_point() + facet_grid(.~continent)</code></pre>
+<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-27-1.png" width="672" /></p>
+</div>
 </div>
 <div id="line-plot" class="section level3">
 <h3>line plot</h3>
-<p>대륙별로 평균 기대수명의 연도에 따른 변화를 보자.</p>
+<p>geom_line 함수를 사용해서, 대륙별로 평균 기대수명의 연도에 따른 변화를 살펴봅시다.</p>
 <pre class="r"><code>year_continent = gapminder %&gt;%
   group_by(continent, year) %&gt;%
-  summarize(meanLifeExp = mean(lifeExp))
-p = ggplot(data = year_continent, aes(x=year, y=meanLifeExp, color=continent)) + geom_point()
-p = p + geom_line()
-p</code></pre>
-<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
-<pre class="r"><code>p + expand_limits(y=0) </code></pre>
-<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-20-2.png" width="672" /></p>
-<p>2007년 1인당 국민소득과 기대 수명의 관계를 산점도로 그리고, 선형 회귀직선을 그려보자.</p>
+  summarize(meanLifeExp = mean(lifeExp))</code></pre>
+<pre class="r"><code>p = ggplot(data = year_continent, aes(x=year, y=meanLifeExp, color=continent)) 
+p + geom_line()</code></pre>
+<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-29-1.png" width="672" /></p>
+<div id="scale" class="section level4">
+<h4>scale</h4>
+<p>2007년 1인당 국민소득과 기대 수명의 관계를 산점도로 그리고, x축을 로그 변환해봅시다.</p>
 <pre class="r"><code>p &lt;- ggplot(gapminder_2007, aes(gdpPercap, lifeExp)) + geom_point()
-p</code></pre>
-<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-21-1.png" width="672" /></p>
-<pre class="r"><code>p = p + scale_x_log10() # scale 함수 
-p</code></pre>
-<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-21-2.png" width="672" /></p>
-<pre class="r"><code>gapminder_2007_coef = coef(lm(lifeExp ~ log10(gdpPercap), data = gapminder_2007))
-gapminder_2007_coef
-##      (Intercept) log10(gdpPercap) 
-##         4.949612        16.585064</code></pre>
-<pre class="r"><code>p + geom_abline(intercept = gapminder_2007_coef[&quot;(Intercept)&quot;], 
-                slope = gapminder_2007_coef[&quot;log10(gdpPercap)&quot;], color = &quot;red&quot;)</code></pre>
-<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
-<p>통계적 데이터의 변환 함수를 이용하자.</p>
-<pre class="r"><code>p</code></pre>
-<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
-<pre class="r"><code>p + stat_smooth(method = &quot;lm&quot;, se=F, color = &quot;red&quot;) </code></pre>
-<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-24-2.png" width="672" /></p>
+p + scale_x_log10()# scale 함수 </code></pre>
+<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-30-1.png" width="672" /></p>
+</div>
+</div>
+<div id="stat" class="section level3">
+<h3>stat</h3>
+<p>통계적 데이터 변환 함수를 이용해(stat_) 선형회귀직선을 추가해봅시다.</p>
+<pre class="r"><code>p +scale_x_log10() + stat_smooth(method = &quot;lm&quot;, se=F, color = &quot;red&quot;) </code></pre>
+<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-31-1.png" width="672" /></p>
 </div>
 <div id="bar-plot" class="section level3">
 <h3>bar plot</h3>
-<p>대륙별 평균 기대수명의 비교. (bar plot)</p>
-<pre class="r"><code>by_continent = gapminder %&gt;%
+<p>대륙별 국가 수를 bar plot으로 그려봅시다.</p>
+<pre class="r"><code>gapminder %&gt;%
+  select(continent, country) %&gt;%
+  distinct() %&gt;%
   group_by(continent) %&gt;%
-  summarise(meanLifeExp = mean(lifeExp))
-ggplot(by_continent, aes(x=continent, y=meanLifeExp)) + geom_col()</code></pre>
-<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-25-1.png" width="672" /></p>
+  summarize(n = n()) -&gt; gapminder_temp1</code></pre>
+<pre class="r"><code>ggplot(gapminder_temp1, aes(continent, n)) + geom_col()</code></pre>
+<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-33-1.png" width="672" /></p>
+<pre class="r"><code>gapminder %&gt;%
+  select(continent, country) %&gt;%
+  distinct() -&gt; gapminder_temp2 
+ggplot(gapminder_temp2, aes(continent)) + geom_bar()</code></pre>
+<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-34-1.png" width="672" /></p>
+<p>[Challenges]<br />
+1. 위 bar graph에서 대륙별로 bar의 색깔을 다르게 표현해보세요.</p>
+<ol start="2" style="list-style-type: decimal">
+<li>x-y 좌표축을 flip 해보세요.</li>
+</ol>
 </div>
 <div id="histogram" class="section level3">
 <h3>histogram</h3>
-<p>기대수명의 분포 (histogram)</p>
+<p>기대수명의 분포를 살펴봅시다(histogram).</p>
 <pre class="r"><code>ggplot(gapminder, aes(x=lifeExp)) + geom_histogram()
 ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
-<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-26-1.png" width="672" /> <br></p>
-<p>5년 단위 구간(bins)</p>
+<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-37-1.png" width="672" /></p>
+<pre class="r"><code>ggplot(gapminder, aes(x=lifeExp)) + stat_bin()
+## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.</code></pre>
+<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-37-2.png" width="672" /></p>
+<p>5년 단위 구간(bins)으로 보고 싶으면 binwidth를 설정합니다.</p>
 <pre class="r"><code>ggplot(gapminder, aes(x=lifeExp)) + geom_histogram(binwidth = 5)</code></pre>
-<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-27-1.png" width="672" /></p>
+<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-38-1.png" width="672" /></p>
 </div>
 <div id="box-plot" class="section level3">
 <h3>box plot</h3>
-<p>대륙별 기대수명의 분포 비교 (box plot)</p>
-<pre class="r"><code>ggplot(gapminder, aes(x=continent, y=lifeExp)) + geom_boxplot()</code></pre>
-<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-28-1.png" width="672" /> <br></p>
+<p>대륙별 기대수명의 분포를 비교해봅시다(box plot).</p>
+<pre class="r"><code>p = ggplot(gapminder, aes(x=continent, y=lifeExp)) 
+p + geom_boxplot()</code></pre>
+<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-39-1.png" width="672" /></p>
+<p>[Challenges]<br />
+box plot은 유용하지만 한가지 단점이 있습니다. 데이터 분포의 모양을 알 수 없다는 것이지요. 1. 위 box plot에 데이터 점을 표시해봅시다.</p>
+<pre class="r"><code>p + geom_boxplot() + geom_jitter(col=&quot;orange&quot;, alpha=0.5)</code></pre>
+<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-40-1.png" width="672" /></p>
+<p>Europe과 Oceania의 차이가 보이시나요?<br />
+2. 위 box plot 대신에 violin plot을 그려봅시다. geom_violin()</p>
+<pre class="r"><code>p + geom_violin()</code></pre>
+<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-41-1.png" width="672" /></p>
+</div>
+<div id="themes" class="section level3">
+<h3>themes</h3>
+<p>ggplot2에는 시각화의 모양을 빠르게 변경하는데 유용한 몇 가지 다른 테마가 있습니다. 예를 들어 theme_bw() 함수는 배경을 white color로 변경합니다.</p>
+<pre class="r"><code>p + geom_boxplot() + theme_bw()</code></pre>
+<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-42-1.png" width="672" /></p>
+</div>
+<div id="customization" class="section level3">
+<h3>customization</h3>
+<p>ggplot2를 이용하면 원하는대로 쉽게 그래프를 사용자 정의할 수 있습니다. 예를 들어, 그래프에 제목을 달고, 축의 레이블을 변경해보겠습니다.</p>
+<pre class="r"><code>p = p + geom_boxplot() + 
+  labs(title = &quot;Distribution of life expectancy across different continents&quot;, x = &quot;Continent&quot;, y = &quot;Life expectance (years)&quot;) 
+p </code></pre>
+<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-43-1.png" width="672" /></p>
+<p>제목과 축의 레이블의 크기를 늘려서 가독성을 향상시켜보겠습니다.</p>
+<pre class="r"><code>p + theme(text = element_text(size = 16))</code></pre>
+<p><img src="DataMedicine_Lecture3_files/figure-html/unnamed-chunk-44-1.png" width="672" /></p>
 </div>
 <div id="ggplot2-plot----" class="section level3">
 <h3>ggplot2 plot 의 기본 성분과 구조</h3>
 <p>ggplot2 plot의 기본 성분<br />
-- Data: 주로 data frame 객체 형태의 데이터 - Aesthetic mappings: 데이터를 축, 색상, 점의 크기 등으로 매핑하는 방법 - Geometric object: 점, 선, 도형과 같은 기하학적 객체 - Scales: - Coordinate system: 좌표계 - Facetting: 조건부 플롯을 위해 패널을 분할하여 표현하는 방법 - Statistical transformation: Binning, quantiles, smoothing 등의 통계 변환 - Position adjustment: 위치의 조정</p>
-<pre class="r"><code>p &lt;- ggplot(data = gapminder_2007, aes(x=gdpPercap, y=lifeExp)) + geom_point()
-attributes(p)
+- Data: 주로 data frame 형태의 데이터 (data)<br />
+- Aesthetics: 데이터를 축, 색상, 점의 크기 등으로 매핑 (mapping) - Geometric objects: 점, 선, 도형과 같은 기하학적 객체<br />
+- Scales: 데이터의 스케일(x축, y축, 점의 크기, 투명도 등)을 동적으로 조정하여 어떤 시각적 요소를 사용할 것인가 정의<br />
+- Coordinate system: 좌표계<br />
+- Facetting: 조건부 플롯을 위해 패널을 분할하여 표현하는 방법 - Statistical transformation: Binning, quantiles, smoothing 등의 통계 변환<br />
+- Position adjustment: 위치의 조정</p>
+<pre class="r"><code>attributes(p)
 ## $names
 ## [1] &quot;data&quot;        &quot;layers&quot;      &quot;scales&quot;      &quot;mapping&quot;     &quot;theme&quot;      
 ## [6] &quot;coordinates&quot; &quot;facet&quot;       &quot;plot_env&quot;    &quot;labels&quot;     
 ## 
 ## $class
-## [1] &quot;gg&quot;     &quot;ggplot&quot;
-summary(p)
-## data: country, continent, year, lifeExp, pop, gdpPercap [142x6]
-## mapping:  x = ~gdpPercap, y = ~lifeExp
-## faceting: &lt;ggproto object: Class FacetNull, Facet, gg&gt;
-##     compute_layout: function
-##     draw_back: function
-##     draw_front: function
-##     draw_labels: function
-##     draw_panels: function
-##     finish_data: function
-##     init_scales: function
-##     map_data: function
-##     params: list
-##     setup_data: function
-##     setup_params: function
-##     shrink: TRUE
-##     train_scales: function
-##     vars: function
-##     super:  &lt;ggproto object: Class FacetNull, Facet, gg&gt;
-## -----------------------------------
-## geom_point: na.rm = FALSE
-## stat_identity: na.rm = FALSE
-## position_identity</code></pre>
-<p><br></p>
+## [1] &quot;gg&quot;     &quot;ggplot&quot;</code></pre>
 <p>ggplot2 plot 의 구조<br />
 - ggplot = layers + scales + coordinate system - layers = data + mapping + geom + stat + position</p>
 </div>
@@ -794,7 +855,7 @@ summary(p)
 <h3>ggplot2 함수군</h3>
 <ul>
 <li>Plot creation: ggplot 클래스 객체를 생성하는 함수군</li>
-<li>Geoms: graphic 의 geometric (기하학적인 형태)을 지정하는 함수군</li>
+<li>Geoms: graphic의 geometric (기하학적인 형태)을 지정하는 함수군</li>
 <li>Statistics: 데이터를 통계적인 관점으로 변환하는 함수군</li>
 <li>Scales: 축의 스케일 변환과 라벨, 범례 등을 변경하는 함수군</li>
 <li>Coordinate systems: 좌표계를 설정하는 함수군</li>
@@ -802,6 +863,7 @@ summary(p)
 <li>Position adjustment: geometric 의 위치를 지정하는 함수군</li>
 <li>Others</li>
 </ul>
+<p>geom_ 함수에는 어떤 것들이 있는지 살펴봅시다.</p>
 <pre class="r"><code>apropos(&quot;^geom_&quot;)
 ##  [1] &quot;geom_abline&quot;     &quot;geom_area&quot;       &quot;geom_bar&quot;       
 ##  [4] &quot;geom_bin2d&quot;      &quot;geom_blank&quot;      &quot;geom_boxplot&quot;   
@@ -819,6 +881,7 @@ summary(p)
 ## [40] &quot;geom_sf_label&quot;   &quot;geom_sf_text&quot;    &quot;geom_smooth&quot;    
 ## [43] &quot;geom_spoke&quot;      &quot;geom_step&quot;       &quot;geom_text&quot;      
 ## [46] &quot;geom_tile&quot;       &quot;geom_violin&quot;     &quot;geom_vline&quot;</code></pre>
+<p>stat_ 함수에는 어떤 것들이 있는지 살펴봅시다.</p>
 <pre class="r"><code>apropos(&quot;^stat_&quot;)
 ##  [1] &quot;stat_bin&quot;            &quot;stat_bin_2d&quot;         &quot;stat_bin_hex&quot;       
 ##  [4] &quot;stat_bin2d&quot;          &quot;stat_binhex&quot;         &quot;stat_boxplot&quot;       
@@ -830,6 +893,21 @@ summary(p)
 ## [22] &quot;stat_spoke&quot;          &quot;stat_sum&quot;            &quot;stat_summary&quot;       
 ## [25] &quot;stat_summary_2d&quot;     &quot;stat_summary_bin&quot;    &quot;stat_summary_hex&quot;   
 ## [28] &quot;stat_summary2d&quot;      &quot;stat_unique&quot;         &quot;stat_ydensity&quot;</code></pre>
+<p><a href="https://www.youtube.com/watch?v=9HBCPFNvkzQ">ggplot2: stats and geoms</a></p>
+<p>[실습 문제]</p>
+<ol style="list-style-type: decimal">
+<li><p>proact_sample.txt 파일을 불러들여서, ALSFRS form 만 골라내고, feature_name이 mouth, hands, trunk, leg, respiratory_R, ALSFRS_R_Total에 해당하는 데이터만 선별해서 데이터셋을 만들어보세요.</p></li>
+<li><p>위 데이터셋에서 factor 변수의 levels을 살펴보고, 불필요한 범주들을 정리해보세요.</p></li>
+<li><p>변수의 이름을 다음과 같이 변경합시다. feature_name -&gt; feature, feature_value -&gt; value, feature_delta -&gt; delta. 가능하면 짧은 이름이 좋겠죠. 중복되는 건 없애구요.</p></li>
+<li><p>위 데이터셋에는 중복된 entry들이 있습니다. Let’s remove duplicate entries in the dataset.</p></li>
+<li><p>데이터셋에는 subjectID, feature, delta가 모두 같은데, value 값이 다른 논리적으로 있을 수 없는(있어서는 안되는?) entry 들이 있군요. 이들을 제거해봅시다 () include entries that appear only once</p></li>
+<li><p>위 데이터셋(long format)을 wide format으로 변환해보세요.</p></li>
+</ol>
+<p>alsfrs_wide = spread(temp2, key = feature, value = value) alsfrs_wide = alsfrs_wide[complete.cases(alsfrs_wide),] ```</p>
+<p>alsfrs_wide_complete를 long format으로 변환해보세요.</p>
+<p>임의의 1명의 Subject에 대해서 ALSFRS_R_Total의 시간(delta)에 따른 변화를 그래프로 나타내보세요.</p>
+<p>전체 환자에 대해서 ALSFRS_R_Total의 시간(delta)에 따른 변화를 그래프로 나타내보세요.</p>
+<p>subject 마다 추적 기간이 다르군요. 어떻게 다른지 알아봅시다.</p>
 </div>
 </div>
 

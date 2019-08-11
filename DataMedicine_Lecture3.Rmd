@@ -47,6 +47,15 @@ str(gapminder)
 summary(gapminder)
 ```
 
+### select 
+
+특정 변수들만 골라냅니다.   
+```{r}
+gapminder %>%
+  select(continent, country) %>%
+  distinct() # distinct data, removing duplicates  
+```
+
 ### filter
 
 조건에 맞는 관측치만 골라내기
@@ -120,162 +129,242 @@ gapminder %>%
   summarize(meanLifeExp = mean(lifeExp))
 ```
 
-[Note]   
-데이터 가공에 dplyr와 함께 자주 사용되는 패키지에 tidyr이 있습니다. dplyr와 tidyr에 대한 cheat sheet를 아래에서 다운로드 받아서 곁에 두고 참조하시기 바랍니다.   
+## Combine datasets
+
+in base package: intersect, union, setdiff 
+```{r}
+x1 = c("a", "b", "c")
+y1 = c("b", "c", "d")
+intersect(x1, y1)
+setdiff(x1, y1)
+union(x1, y1)
+```
+
+in dplyr   
+```{r}
+x2 = c(1, 2, 3)
+y2 = c(2, 3, 4)
+x12 = data.frame(x1, x2)
+y12 = data.frame(y1, y2)
+names(y12)[1] = "x1"
+inner_join(x12, y12, by="x1")
+left_join(x12, y12, by="x1")
+right_join(x12, y12, by="x1")
+full_join(x12, y12, by="x1")
+```
 
 ## Reshaping data 
-위 cheet sheet 에서 tidyr 패키지의 gather와 spread 함수를 사용합니다.  
+분석에 적합한 형태로 long format <-> wide format 전환하기 위해 tidyr 패키지의 gather와 spread 함수를 사용합니다.
 
-## Combine datasets 
-left 
+```{r eval=FALSE}
+install.packages("tidyr")
+```
+
+```{r message=FALSE}
+library(tidyr)
+```
+
+```{r}
+alsfrs = read.csv("ALSFRS_long.csv")
+```
+
+```{r}
+alsfrs_wide = spread(alsfrs, key = feature, value = value)
+```
+
+```{r}
+alsfrs_long = gather(alsfrs_wide, key = "feature", value = "value", ALSFRS_R_Total:trunk)
+```
+
+[Note]   
+데이터 가공에 자주 사용되는 dplyr와 tidyr에 대한 cheat sheet를 아래에서 다운로드 받아서 곁에 두고 참조하시기 바랍니다.   
+
+[data wrangling cheet sheet](https://github.com/yoonhohong/tutorial/blob/master/data-wrangling-cheatsheet.pdf)  
+
 
 ## 데이터 시각화(Data visualization)
 
-> "Visualization is any technique for creating images, diagrams, or animations to communicate a message" - Wikipedia 
-
-> "One picture is worth ten thousand words"
-
-> "백수이불여일화 百數以不如一畵"
-
-> “The simple graph has brought more information to the data analyst’s mind than any other device.” — John Tukey
-
-load ggplot2
-```{r message=FALSE}
-library(ggplot2)
-```
-<br>
+다음 동영상을 보고 데이터 시각화의 목적과 장점에 대해 생각해봅시다.    
+[Introduction to data visualization using ggplot2](https://www.youtube.com/watch?v=YxKr2a-Y1WE)
 
 ggplot2  
 - by Hadley Wickham  
-- based on "Grammar of Graphics" (그래픽의 각 요소를 구분하여 취급)  
-- incremental method (기초 플롯을 생성한 후, 필요한 그래픽 요소들을 붙이는 방식)   
+- based on "Grammar of Graphics" 
+- incremental method (기초 플롯을 생성한 후, 필요한 그래픽 요소들을 추가, 수정하는 방식)    
+
+[Grammar of Graphics](https://www.youtube.com/watch?v=uiTc55clwuA)   
+[ggplot2: layers](https://www.youtube.com/watch?v=PiY9hwOkL8U)    
+
+ggplot2 패키지를 설치하고 로딩  
+```{r eval=FALSE}
+install.packages("ggplot2")
+```
+
+```{r message=FALSE}
+library(ggplot2)
+```
 
 ### scatter plot
-
-scatter plot: gdpPercap vs. lifeExp in year 2007  
+ 
 2007년 1인당 국민소득과 기대수명의 관계를 산점도로 그리기  
-
 ```{r}
 gapminder_2007 <- gapminder %>%
   filter(year == 2007) 
 ```
 
 ```{r}
-ggplot(data = gapminder_2007, aes(x=gdpPercap, y=lifeExp)) + geom_point()
+p = ggplot(data = gapminder_2007, aes(x=gdpPercap, y=lifeExp))
+p + geom_point()
 ```
 
-### additional aesthetics
+#### other aesthetics
 그래픽 요소(color, size)에 데이터를 매핑
 ```{r}
-ggplot(data = gapminder_2007, aes(x=gdpPercap, y=lifeExp, color=continent, size=pop)) + geom_point()
+p + geom_point(aes(color = continent, size=pop)) 
 ```
 
-### faceting 
-
+#### facet
 ```{r}
-ggplot(data = gapminder_2007, aes(x=gdpPercap, y=lifeExp)) + 
-  geom_point() + 
-  facet_wrap(~continent)
+p + geom_point() + facet_grid(.~continent)
 ```
-
-
 
 ### line plot
-
-대륙별로 평균 기대수명의 연도에 따른 변화를 보자. 
+geom_line 함수를 사용해서, 대륙별로 평균 기대수명의 연도에 따른 변화를 살펴봅시다.   
 ```{r}
 year_continent = gapminder %>%
   group_by(continent, year) %>%
   summarize(meanLifeExp = mean(lifeExp))
-p = ggplot(data = year_continent, aes(x=year, y=meanLifeExp, color=continent)) + geom_point()
-p = p + geom_line()
-p
-p + expand_limits(y=0) 
 ```
 
-2007년 1인당 국민소득과 기대 수명의 관계를 산점도로 그리고, 선형 회귀직선을 그려보자. 
+```{r}
+p = ggplot(data = year_continent, aes(x=year, y=meanLifeExp, color=continent)) 
+p + geom_line()
+```
+
+#### scale
+
+2007년 1인당 국민소득과 기대 수명의 관계를 산점도로 그리고, x축을 로그 변환해봅시다.    
 ```{r}
 p <- ggplot(gapminder_2007, aes(gdpPercap, lifeExp)) + geom_point()
-p
-p = p + scale_x_log10() # scale 함수 
-p
+p + scale_x_log10()# scale 함수 
 ```
 
+### stat  
+통계적 데이터 변환 함수를 이용해(stat_) 선형회귀직선을 추가해봅시다.     
 ```{r}
-gapminder_2007_coef = coef(lm(lifeExp ~ log10(gdpPercap), data = gapminder_2007))
-gapminder_2007_coef
-```
-
-```{r}
-p + geom_abline(intercept = gapminder_2007_coef["(Intercept)"], 
-                slope = gapminder_2007_coef["log10(gdpPercap)"], color = "red")
-```
-
-통계적 데이터의 변환 함수를 이용하자. 
-```{r}
-p
-p + stat_smooth(method = "lm", se=F, color = "red") 
+p +scale_x_log10() + stat_smooth(method = "lm", se=F, color = "red") 
 ```
 
 ### bar plot
 
-대륙별 평균 기대수명의 비교. (bar plot)
+대륙별 국가 수를 bar plot으로 그려봅시다.   
 ```{r}
-by_continent = gapminder %>%
+gapminder %>%
+  select(continent, country) %>%
+  distinct() %>%
   group_by(continent) %>%
-  summarise(meanLifeExp = mean(lifeExp))
-ggplot(by_continent, aes(x=continent, y=meanLifeExp)) + geom_col()
+  summarize(n = n()) -> gapminder_temp1
+```
+
+```{r}
+ggplot(gapminder_temp1, aes(continent, n)) + geom_col()
+```
+
+```{r}
+gapminder %>%
+  select(continent, country) %>%
+  distinct() -> gapminder_temp2 
+ggplot(gapminder_temp2, aes(continent)) + geom_bar()
+```
+
+[Challenges]  
+1. 위 bar graph에서 대륙별로 bar의 색깔을 다르게 표현해보세요.  
+```{r include=FALSE}
+ggplot(gapminder_temp2, aes(continent)) + geom_bar(aes(fill=continent))
+```
+
+2. x-y 좌표축을 flip 해보세요.  
+```{r include=FALSE}
+ggplot(gapminder_temp2, aes(continent)) + geom_bar(aes(fill=continent)) + coord_flip()
 ```
 
 ### histogram 
 
-기대수명의 분포 (histogram)
+기대수명의 분포를 살펴봅시다(histogram).   
 ```{r}
 ggplot(gapminder, aes(x=lifeExp)) + geom_histogram()
+ggplot(gapminder, aes(x=lifeExp)) + stat_bin()
 ```
-<br>
 
-5년 단위 구간(bins)
+5년 단위 구간(bins)으로 보고 싶으면 binwidth를 설정합니다.   
 ```{r}
 ggplot(gapminder, aes(x=lifeExp)) + geom_histogram(binwidth = 5)
 ```
 
 ### box plot
 
-대륙별 기대수명의 분포 비교 (box plot)
+대륙별 기대수명의 분포를 비교해봅시다(box plot).  
 ```{r}
-ggplot(gapminder, aes(x=continent, y=lifeExp)) + geom_boxplot()
+p = ggplot(gapminder, aes(x=continent, y=lifeExp)) 
+p + geom_boxplot()
 ```
-<br>
+
+[Challenges]   
+box plot은 유용하지만 한가지 단점이 있습니다. 데이터 분포의 모양을 알 수 없다는 것이지요. 
+1. 위 box plot에 데이터 점을 표시해봅시다.  
+```{r}
+p + geom_boxplot() + geom_jitter(col="orange", alpha=0.5)
+```
+
+Europe과 Oceania의 차이가 보이시나요?   
+2. 위 box plot 대신에 violin plot을 그려봅시다. geom_violin()   
+```{r}
+p + geom_violin()
+```
+
+### themes 
+ggplot2에는 시각화의 모양을 빠르게 변경하는데 유용한 몇 가지 다른 테마가 있습니다. 예를 들어 theme_bw() 함수는 배경을 white color로 변경합니다.   
+```{r}
+p + geom_boxplot() + theme_bw()
+```
+
+### customization 
+ggplot2를 이용하면 원하는대로 쉽게 그래프를 사용자 정의할 수 있습니다. 예를 들어, 그래프에 제목을 달고, 축의 레이블을 변경해보겠습니다.    
+```{r}
+p = p + geom_boxplot() + 
+  labs(title = "Distribution of life expectancy across different continents", x = "Continent", y = "Life expectance (years)") 
+p 
+```
+
+제목과 축의 레이블의 크기를 늘려서 가독성을 향상시켜보겠습니다.   
+```{r}
+p + theme(text = element_text(size = 16))
+```
 
 ### ggplot2 plot 의 기본 성분과 구조
 
-ggplot2 plot의 기본 성분  
-- Data: 주로 data frame 객체 형태의 데이터
-- Aesthetic mappings: 데이터를 축, 색상, 점의 크기 등으로 매핑하는 방법
-- Geometric object: 점, 선, 도형과 같은 기하학적 객체
-- Scales: 
-- Coordinate system: 좌표계
+ggplot2 plot의 기본 성분    
+- Data: 주로 data frame 형태의 데이터 (data)    
+- Aesthetics: 데이터를 축, 색상, 점의 크기 등으로 매핑 (mapping)
+- Geometric objects: 점, 선, 도형과 같은 기하학적 객체   
+- Scales: 데이터의 스케일(x축, y축, 점의 크기, 투명도 등)을 동적으로 조정하여 어떤 시각적 요소를 사용할 것인가 정의   
+- Coordinate system: 좌표계    
 - Facetting: 조건부 플롯을 위해 패널을 분할하여 표현하는 방법
-- Statistical transformation: Binning, quantiles, smoothing 등의 통계 변환 
-- Position adjustment: 위치의 조정 
+- Statistical transformation: Binning, quantiles, smoothing 등의 통계 변환    
+- Position adjustment: 위치의 조정   
 
 ```{r}
-p <- ggplot(data = gapminder_2007, aes(x=gdpPercap, y=lifeExp)) + geom_point()
 attributes(p)
-summary(p)
 ```
-<br>
 
 ggplot2 plot 의 구조  
 - ggplot = layers + scales + coordinate system 
 - layers = data + mapping + geom + stat + position 
 
-
 ### ggplot2 함수군
 
 - Plot creation: ggplot 클래스 객체를 생성하는 함수군
-- Geoms: graphic 의 geometric (기하학적인 형태)을 지정하는 함수군
+- Geoms: graphic의 geometric (기하학적인 형태)을 지정하는 함수군
 - Statistics: 데이터를 통계적인 관점으로 변환하는 함수군
 - Scales: 축의 스케일 변환과 라벨, 범례 등을 변경하는 함수군
 - Coordinate systems: 좌표계를 설정하는 함수군
@@ -283,13 +372,87 @@ ggplot2 plot 의 구조
 - Position adjustment: geometric 의 위치를 지정하는 함수군
 - Others
 
+geom_ 함수에는 어떤 것들이 있는지 살펴봅시다.   
 ```{r}
 apropos("^geom_")
 ```
 
+stat_ 함수에는 어떤 것들이 있는지 살펴봅시다.   
 ```{r}
 apropos("^stat_")
 ```
+
+
+[ggplot2: stats and geoms](https://www.youtube.com/watch?v=9HBCPFNvkzQ)
+
+
+[실습 문제]    
+
+1. proact_sample.txt 파일을 불러들여서, ALSFRS form 만 골라내고, feature_name이 mouth, hands, trunk, leg, respiratory_R, ALSFRS_R_Total에 해당하는 데이터만 선별해서 데이터셋을 만들어보세요. 
+
+```{r include=FALSE}
+proact = read.delim("proact_sample.txt", sep = "|")
+
+proact %>%
+  filter(form_name == "ALSFRS") %>%
+  filter(feature_name %in% c("mouth", "hands", "trunk", "leg", "respiratory_R", "ALSFRS_R_Total")) %>%
+  select(-c(feature_unit, form_name)) -> proact
+```
+
+2. 위 데이터셋에서 factor 변수의 levels을 살펴보고, 불필요한 범주들을 정리해보세요.  
+```{r include=FALSE}
+proact = droplevels(proact)  
+```
+
+3. 변수의 이름을 다음과 같이 변경합시다. feature_name -> feature, feature_value -> value, feature_delta -> delta. 가능하면 짧은 이름이 좋겠죠. 중복되는 건 없애구요.  
+```{r include=FALSE}
+proact = rename(proact, feature = feature_name, value = feature_value, 
+                delta = feature_delta) 
+```
+
+4. 위 데이터셋에는 중복된 entry들이 있습니다. Let's remove duplicate entries in the dataset.   
+```{r include=FALSE}
+temp = distinct(proact)
+```
+
+5. 데이터셋에는 subjectID, feature, delta가 모두 같은데, value 값이 다른 논리적으로 있을 수 없는(있어서는 안되는?) entry 들이 있군요. 이들을 제거해봅시다 ()
+ include entries that appear only once  
+```{r include=FALSE}
+temp %>% 
+  group_by(SubjectID, feature, delta) %>%
+  filter(n() == 1) -> temp2
+```
+
+2. 위 데이터셋(long format)을 wide format으로 변환해보세요.  
+
+
+
+alsfrs_wide = spread(temp2, key = feature, value = value) 
+alsfrs_wide = alsfrs_wide[complete.cases(alsfrs_wide),]
+```
+
+alsfrs_wide_complete를 long format으로 변환해보세요.   
+```{r include=FALSE}
+alsfrs_long = gather(alsfrs_wide, key = "feature", value = "value", ALSFRS_R_Total:trunk)
+# write.csv(alsfrs_long, "ALSFRS_long.csv", quote = F, row.names = F)
+```
+
+임의의 1명의 Subject에 대해서 ALSFRS_R_Total의 시간(delta)에 따른 변화를 그래프로 나타내보세요.    
+```{r include=FALSE}
+subj_sample = alsfrs_long %>%
+  filter(SubjectID %in% sample(SubjectID, 10)) %>%
+  filter(feature == "ALSFRS_R_Total")
+p = ggplot(subj_sample, aes(x=delta, y = value, col = factor(SubjectID)))
+p + geom_point() + geom_line()
+```
+
+전체 환자에 대해서 ALSFRS_R_Total의 시간(delta)에 따른 변화를 그래프로 나타내보세요.    
+```{r include=FALSE}
+ggplot(alsfrs_wide, aes(x=delta, y=ALSFRS_R_Total, col=factor(SubjectID))) + geom_line() + theme(legend.position = "none")
+```
+
+subject 마다 추적 기간이 다르군요. 어떻게 다른지 알아봅시다.  
+
 
 
 
