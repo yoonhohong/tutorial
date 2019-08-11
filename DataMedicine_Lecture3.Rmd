@@ -436,22 +436,47 @@ alsfrs_long = gather(alsfrs_wide, key = "feature", value = "value", ALSFRS_R_Tot
 8. 임의의 10명의 Subject에 대해서 ALSFRS_R_Total의 시간(delta)에 따른 변화를 그래프로 나타내보세요.    
 ```{r include=FALSE}
 alsfrs = read.csv("ALSFRS_long.csv")
+alsfrs$SubjectID = factor(alsfrs$SubjectID)
 sample_subj = sample(alsfrs$SubjectID, 10)
 temp = alsfrs %>%
   filter(SubjectID %in% sample_subj) %>%
   filter(feature == "ALSFRS_R_Total")
 ggplot(temp, 
-       aes(x=delta, y=value, col=factor(SubjectID))) + geom_line() + geom_point()
+       aes(x=delta, y=value, col=SubjectID)) + geom_line() + geom_point()
 ```
 
 9. 전체 환자에 대해서 ALSFRS_R_Total의 시간(delta)에 따른 변화를 그래프로 나타내보세요.    
 ```{r include=FALSE}
-temp = alsfrs %>%
-  filter(feature == "ALSFRS_R_Total")
-ggplot(temp, aes(x=delta, y=value, col=factor(SubjectID))) + geom_line() + theme(legend.position = "none")
+alsfrs_total = alsfrs %>%
+  filter(feature == "ALSFRS_R_Total") %>%
+  select(-feature) %>%
+  droplevels()
+ggplot(alsfrs_total, aes(x=delta, y=value, col=factor(SubjectID))) + geom_line() + theme(legend.position = "none")
 ```
 
-10. subject 마다 추적 기간이 다르군요. 어떻게 다른지 알아봅시다.  
+10. subject 마다 질환의 진행속도가(ALSFRS_R_Total의 slope) 다른 것 같습니다. 진행속도를 다음과 같이  계산해봅시다.  
 
+$$R =(ALSFRS_{last}-ALSFRS_{first})/\delta_{interval}$$  
+$R$: Rate of progression  
+$ALSFRS_{last}$: ALSFRS_R_Total at last visit  
+$ALSFRS_{first}$: ALSFRS_R_Total at first visit  
+$\delta_{interval}$: time interval between the first and last visit  
+
+```{r include=FALSE}
+alsfrs_total %>%
+  group_by(SubjectID) %>%
+  arrange(delta) %>%
+  summarize(delta_interval = last(delta) - first(delta), diff_ALSFRS = last(value) - first(value)) %>%
+  mutate(slope = diff_ALSFRS/delta_interval) -> alsfrs_slope
+```
+
+11. 위에서 계산한 질환의 진행속도의(ALSFRS_R_Total의 slope) 분포를 살펴봅시다.   
+
+```{r include=FALSE}
+range(alsfrs_slope$slope)
+alsfrs_slope = alsfrs_slope[complete.cases(alsfrs_slope),]
+ggplot(alsfrs_slope, aes(x=slope)) + geom_histogram()
+ggplot(alsfrs_slope, aes(x=slope)) + geom_density()
+```
 
 
