@@ -41,7 +41,7 @@ R 패키지에 대해서 좀 더 자세히 알아보고 싶으면 다음 웹사�
 gapminder 데이터는 국가별 년도별 life expectancy, GDP per capita, 그리고 population에 대한 데이터입니다.  
 
 gapminder 패키지를 설치하고 로딩하면 작업공간에서 gapminder 데이터를 불러올 수 있습니다.  
-```{r}
+```{r eval=FALSE}
 head(gapminder)
 str(gapminder)
 summary(gapminder)
@@ -50,7 +50,7 @@ summary(gapminder)
 ### select 
 
 특정 변수들만 골라냅니다.   
-```{r}
+```{r eval=FALSE}
 gapminder %>%
   select(continent, country) %>%
   distinct() # distinct data, removing duplicates  
@@ -59,14 +59,13 @@ gapminder %>%
 ### filter
 
 조건에 맞는 관측치만 골라내기
-```{r}
+```{r eval=FALSE}
 gapminder %>%
   filter(year == 1957)
 ```
 1957년 데이터만 subsetting 합니다.   
 
-
-```{r}
+```{r eval=FALSE}
 gapminder %>%
   filter(country == "Korea, Rep.")
 ```
@@ -75,13 +74,13 @@ gapminder %>%
 ### arrange
 
 오름차순으로 정렬합니다.   
-```{r}
+```{r eval=FALSE}
 gapminder %>%
   arrange(gdpPercap)
 ```
 
 내림차순으로 정렬하려면 desc() 함수를 사용합니다.   
-```{r}
+```{r eval=FALSE}
 gapminder %>%
   arrange(desc(gdpPercap))
 ```
@@ -90,13 +89,13 @@ gapminder %>%
 
 변수를 변환해서 새로운 변수를 생성하는 함수입니다.
 인구수를 백만명단위로 변환해봅시다.   
-```{r}
+```{r eval=FALSE}
 gapminder %>%
   mutate(pop = pop/1000000)
 ```
 
-총국민소득을 구해봅시다.   
-```{r}
+이번에는 총국민소득을 구해봅시다.   
+```{r eval=FALSE}
 gapminder %>%
   mutate(gdp = gdpPercap*pop)
 ```
@@ -106,7 +105,7 @@ gapminder %>%
 ### summarize
 summarize() 함수는 통계 요약치 등을 구할 때 유용하게 사용됩니다.   
 2007년의 평균 기대수명을 구해봅시다.    
-```{r}
+```{r eval=FALSE}
 gapminder %>%
   filter(year == 2007) %>%
   summarize(meanLifeExp = mean(lifeExp))
@@ -116,14 +115,14 @@ gapminder %>%
 ### group_by
 
 년도별 평균 기대수명을 구해봅시다.   
-```{r}
+```{r eval=FALSE}
 gapminder %>%
   group_by(year) %>%
   summarise(meanLifeExp = mean(lifeExp))
 ```
 
 대륙별, 년도별 평균 기대수명?    
-```{r}
+```{r eval=FALSE}
 gapminder %>%
   group_by(continent, year) %>%
   summarize(meanLifeExp = mean(lifeExp))
@@ -435,10 +434,10 @@ alsfrs_long = gather(alsfrs_wide, key = "feature", value = "value", ALSFRS_R_Tot
 # write.csv(alsfrs_long, "ALSFRS_long.csv", quote = F, row.names = F)
 ```
 
-8. 임의의 10명의 Subject에 대해서 ALSFRS_R_Total의 시간(delta)에 따른 변화를 그래프로 나타내보세요.    
+8. 임의의 1명의 Subject에 대해서 ALSFRS_R_Total의 시간(delta)에 따른 변화를 그래프로 나타내보세요.    
 ```{r include=FALSE}
 subj_sample = alsfrs_long %>%
-  filter(SubjectID %in% sample(SubjectID, 10)) %>%
+  filter(SubjectID %in% sample(SubjectID, 1)) %>%
   filter(feature == "ALSFRS_R_Total")
 p = ggplot(subj_sample, aes(x=delta, y = value, col = factor(SubjectID)))
 p + geom_point() + geom_line()

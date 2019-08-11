@@ -428,173 +428,42 @@ R에서 패키지(package)는 함수, 데이터, 코드, 문서 등을 묶어놓
 <p>gapminder 데이터는 국가별 년도별 life expectancy, GDP per capita, 그리고 population에 대한 데이터입니다.</p>
 <p>gapminder 패키지를 설치하고 로딩하면 작업공간에서 gapminder 데이터를 불러올 수 있습니다.</p>
 <pre class="r"><code>head(gapminder)
-## # A tibble: 6 x 6
-##   country     continent  year lifeExp      pop gdpPercap
-##   &lt;fct&gt;       &lt;fct&gt;     &lt;int&gt;   &lt;dbl&gt;    &lt;int&gt;     &lt;dbl&gt;
-## 1 Afghanistan Asia       1952    28.8  8425333      779.
-## 2 Afghanistan Asia       1957    30.3  9240934      821.
-## 3 Afghanistan Asia       1962    32.0 10267083      853.
-## 4 Afghanistan Asia       1967    34.0 11537966      836.
-## 5 Afghanistan Asia       1972    36.1 13079460      740.
-## 6 Afghanistan Asia       1977    38.4 14880372      786.
 str(gapminder)
-## Classes &#39;tbl_df&#39;, &#39;tbl&#39; and &#39;data.frame&#39;:    1704 obs. of  6 variables:
-##  $ country  : Factor w/ 142 levels &quot;Afghanistan&quot;,..: 1 1 1 1 1 1 1 1 1 1 ...
-##  $ continent: Factor w/ 5 levels &quot;Africa&quot;,&quot;Americas&quot;,..: 3 3 3 3 3 3 3 3 3 3 ...
-##  $ year     : int  1952 1957 1962 1967 1972 1977 1982 1987 1992 1997 ...
-##  $ lifeExp  : num  28.8 30.3 32 34 36.1 ...
-##  $ pop      : int  8425333 9240934 10267083 11537966 13079460 14880372 12881816 13867957 16317921 22227415 ...
-##  $ gdpPercap: num  779 821 853 836 740 ...
-summary(gapminder)
-##         country        continent        year         lifeExp     
-##  Afghanistan:  12   Africa  :624   Min.   :1952   Min.   :23.60  
-##  Albania    :  12   Americas:300   1st Qu.:1966   1st Qu.:48.20  
-##  Algeria    :  12   Asia    :396   Median :1980   Median :60.71  
-##  Angola     :  12   Europe  :360   Mean   :1980   Mean   :59.47  
-##  Argentina  :  12   Oceania : 24   3rd Qu.:1993   3rd Qu.:70.85  
-##  Australia  :  12                  Max.   :2007   Max.   :82.60  
-##  (Other)    :1632                                                
-##       pop              gdpPercap       
-##  Min.   :6.001e+04   Min.   :   241.2  
-##  1st Qu.:2.794e+06   1st Qu.:  1202.1  
-##  Median :7.024e+06   Median :  3531.8  
-##  Mean   :2.960e+07   Mean   :  7215.3  
-##  3rd Qu.:1.959e+07   3rd Qu.:  9325.5  
-##  Max.   :1.319e+09   Max.   :113523.1  
-## </code></pre>
+summary(gapminder)</code></pre>
 </div>
 <div id="select" class="section level3">
 <h3>select</h3>
 <p>특정 변수들만 골라냅니다.</p>
 <pre class="r"><code>gapminder %&gt;%
   select(continent, country) %&gt;%
-  distinct() # distinct data, removing duplicates  
-## # A tibble: 142 x 2
-##    continent country    
-##    &lt;fct&gt;     &lt;fct&gt;      
-##  1 Asia      Afghanistan
-##  2 Europe    Albania    
-##  3 Africa    Algeria    
-##  4 Africa    Angola     
-##  5 Americas  Argentina  
-##  6 Oceania   Australia  
-##  7 Europe    Austria    
-##  8 Asia      Bahrain    
-##  9 Asia      Bangladesh 
-## 10 Europe    Belgium    
-## # … with 132 more rows</code></pre>
+  distinct() # distinct data, removing duplicates  </code></pre>
 </div>
 <div id="filter" class="section level3">
 <h3>filter</h3>
 <p>조건에 맞는 관측치만 골라내기</p>
 <pre class="r"><code>gapminder %&gt;%
-  filter(year == 1957)
-## # A tibble: 142 x 6
-##    country     continent  year lifeExp      pop gdpPercap
-##    &lt;fct&gt;       &lt;fct&gt;     &lt;int&gt;   &lt;dbl&gt;    &lt;int&gt;     &lt;dbl&gt;
-##  1 Afghanistan Asia       1957    30.3  9240934      821.
-##  2 Albania     Europe     1957    59.3  1476505     1942.
-##  3 Algeria     Africa     1957    45.7 10270856     3014.
-##  4 Angola      Africa     1957    32.0  4561361     3828.
-##  5 Argentina   Americas   1957    64.4 19610538     6857.
-##  6 Australia   Oceania    1957    70.3  9712569    10950.
-##  7 Austria     Europe     1957    67.5  6965860     8843.
-##  8 Bahrain     Asia       1957    53.8   138655    11636.
-##  9 Bangladesh  Asia       1957    39.3 51365468      662.
-## 10 Belgium     Europe     1957    69.2  8989111     9715.
-## # … with 132 more rows</code></pre>
+  filter(year == 1957)</code></pre>
 <p>1957년 데이터만 subsetting 합니다.</p>
 <pre class="r"><code>gapminder %&gt;%
-  filter(country == &quot;Korea, Rep.&quot;)
-## # A tibble: 12 x 6
-##    country     continent  year lifeExp      pop gdpPercap
-##    &lt;fct&gt;       &lt;fct&gt;     &lt;int&gt;   &lt;dbl&gt;    &lt;int&gt;     &lt;dbl&gt;
-##  1 Korea, Rep. Asia       1952    47.5 20947571     1031.
-##  2 Korea, Rep. Asia       1957    52.7 22611552     1488.
-##  3 Korea, Rep. Asia       1962    55.3 26420307     1536.
-##  4 Korea, Rep. Asia       1967    57.7 30131000     2029.
-##  5 Korea, Rep. Asia       1972    62.6 33505000     3031.
-##  6 Korea, Rep. Asia       1977    64.8 36436000     4657.
-##  7 Korea, Rep. Asia       1982    67.1 39326000     5623.
-##  8 Korea, Rep. Asia       1987    69.8 41622000     8533.
-##  9 Korea, Rep. Asia       1992    72.2 43805450    12104.
-## 10 Korea, Rep. Asia       1997    74.6 46173816    15994.
-## 11 Korea, Rep. Asia       2002    77.0 47969150    19234.
-## 12 Korea, Rep. Asia       2007    78.6 49044790    23348.</code></pre>
+  filter(country == &quot;Korea, Rep.&quot;)</code></pre>
 </div>
 <div id="arrange" class="section level3">
 <h3>arrange</h3>
 <p>오름차순으로 정렬합니다.</p>
 <pre class="r"><code>gapminder %&gt;%
-  arrange(gdpPercap)
-## # A tibble: 1,704 x 6
-##    country          continent  year lifeExp      pop gdpPercap
-##    &lt;fct&gt;            &lt;fct&gt;     &lt;int&gt;   &lt;dbl&gt;    &lt;int&gt;     &lt;dbl&gt;
-##  1 Congo, Dem. Rep. Africa     2002    45.0 55379852      241.
-##  2 Congo, Dem. Rep. Africa     2007    46.5 64606759      278.
-##  3 Lesotho          Africa     1952    42.1   748747      299.
-##  4 Guinea-Bissau    Africa     1952    32.5   580653      300.
-##  5 Congo, Dem. Rep. Africa     1997    42.6 47798986      312.
-##  6 Eritrea          Africa     1952    35.9  1438760      329.
-##  7 Myanmar          Asia       1952    36.3 20092996      331 
-##  8 Lesotho          Africa     1957    45.0   813338      336.
-##  9 Burundi          Africa     1952    39.0  2445618      339.
-## 10 Eritrea          Africa     1957    38.0  1542611      344.
-## # … with 1,694 more rows</code></pre>
+  arrange(gdpPercap)</code></pre>
 <p>내림차순으로 정렬하려면 desc() 함수를 사용합니다.</p>
 <pre class="r"><code>gapminder %&gt;%
-  arrange(desc(gdpPercap))
-## # A tibble: 1,704 x 6
-##    country   continent  year lifeExp     pop gdpPercap
-##    &lt;fct&gt;     &lt;fct&gt;     &lt;int&gt;   &lt;dbl&gt;   &lt;int&gt;     &lt;dbl&gt;
-##  1 Kuwait    Asia       1957    58.0  212846   113523.
-##  2 Kuwait    Asia       1972    67.7  841934   109348.
-##  3 Kuwait    Asia       1952    55.6  160000   108382.
-##  4 Kuwait    Asia       1962    60.5  358266    95458.
-##  5 Kuwait    Asia       1967    64.6  575003    80895.
-##  6 Kuwait    Asia       1977    69.3 1140357    59265.
-##  7 Norway    Europe     2007    80.2 4627926    49357.
-##  8 Kuwait    Asia       2007    77.6 2505559    47307.
-##  9 Singapore Asia       2007    80.0 4553009    47143.
-## 10 Norway    Europe     2002    79.0 4535591    44684.
-## # … with 1,694 more rows</code></pre>
+  arrange(desc(gdpPercap))</code></pre>
 </div>
 <div id="mutate" class="section level3">
 <h3>mutate</h3>
 <p>변수를 변환해서 새로운 변수를 생성하는 함수입니다. 인구수를 백만명단위로 변환해봅시다.</p>
 <pre class="r"><code>gapminder %&gt;%
-  mutate(pop = pop/1000000)
-## # A tibble: 1,704 x 6
-##    country     continent  year lifeExp   pop gdpPercap
-##    &lt;fct&gt;       &lt;fct&gt;     &lt;int&gt;   &lt;dbl&gt; &lt;dbl&gt;     &lt;dbl&gt;
-##  1 Afghanistan Asia       1952    28.8  8.43      779.
-##  2 Afghanistan Asia       1957    30.3  9.24      821.
-##  3 Afghanistan Asia       1962    32.0 10.3       853.
-##  4 Afghanistan Asia       1967    34.0 11.5       836.
-##  5 Afghanistan Asia       1972    36.1 13.1       740.
-##  6 Afghanistan Asia       1977    38.4 14.9       786.
-##  7 Afghanistan Asia       1982    39.9 12.9       978.
-##  8 Afghanistan Asia       1987    40.8 13.9       852.
-##  9 Afghanistan Asia       1992    41.7 16.3       649.
-## 10 Afghanistan Asia       1997    41.8 22.2       635.
-## # … with 1,694 more rows</code></pre>
-<p>총국민소득을 구해봅시다.</p>
+  mutate(pop = pop/1000000)</code></pre>
+<p>이번에는 총국민소득을 구해봅시다.</p>
 <pre class="r"><code>gapminder %&gt;%
-  mutate(gdp = gdpPercap*pop)
-## # A tibble: 1,704 x 7
-##    country     continent  year lifeExp      pop gdpPercap          gdp
-##    &lt;fct&gt;       &lt;fct&gt;     &lt;int&gt;   &lt;dbl&gt;    &lt;int&gt;     &lt;dbl&gt;        &lt;dbl&gt;
-##  1 Afghanistan Asia       1952    28.8  8425333      779.  6567086330.
-##  2 Afghanistan Asia       1957    30.3  9240934      821.  7585448670.
-##  3 Afghanistan Asia       1962    32.0 10267083      853.  8758855797.
-##  4 Afghanistan Asia       1967    34.0 11537966      836.  9648014150.
-##  5 Afghanistan Asia       1972    36.1 13079460      740.  9678553274.
-##  6 Afghanistan Asia       1977    38.4 14880372      786. 11697659231.
-##  7 Afghanistan Asia       1982    39.9 12881816      978. 12598563401.
-##  8 Afghanistan Asia       1987    40.8 13867957      852. 11820990309.
-##  9 Afghanistan Asia       1992    41.7 16317921      649. 10595901589.
-## 10 Afghanistan Asia       1997    41.8 22227415      635. 14121995875.
-## # … with 1,694 more rows</code></pre>
+  mutate(gdp = gdpPercap*pop)</code></pre>
 </div>
 </div>
 <div id="-summary" class="section level2">
@@ -605,52 +474,18 @@ summary(gapminder)
 2007년의 평균 기대수명을 구해봅시다.</p>
 <pre class="r"><code>gapminder %&gt;%
   filter(year == 2007) %&gt;%
-  summarize(meanLifeExp = mean(lifeExp))
-## # A tibble: 1 x 1
-##   meanLifeExp
-##         &lt;dbl&gt;
-## 1        67.0</code></pre>
+  summarize(meanLifeExp = mean(lifeExp))</code></pre>
 </div>
 <div id="group_by" class="section level3">
 <h3>group_by</h3>
 <p>년도별 평균 기대수명을 구해봅시다.</p>
 <pre class="r"><code>gapminder %&gt;%
   group_by(year) %&gt;%
-  summarise(meanLifeExp = mean(lifeExp))
-## # A tibble: 12 x 2
-##     year meanLifeExp
-##    &lt;int&gt;       &lt;dbl&gt;
-##  1  1952        49.1
-##  2  1957        51.5
-##  3  1962        53.6
-##  4  1967        55.7
-##  5  1972        57.6
-##  6  1977        59.6
-##  7  1982        61.5
-##  8  1987        63.2
-##  9  1992        64.2
-## 10  1997        65.0
-## 11  2002        65.7
-## 12  2007        67.0</code></pre>
+  summarise(meanLifeExp = mean(lifeExp))</code></pre>
 <p>대륙별, 년도별 평균 기대수명?</p>
 <pre class="r"><code>gapminder %&gt;%
   group_by(continent, year) %&gt;%
-  summarize(meanLifeExp = mean(lifeExp))
-## # A tibble: 60 x 3
-## # Groups:   continent [5]
-##    continent  year meanLifeExp
-##    &lt;fct&gt;     &lt;int&gt;       &lt;dbl&gt;
-##  1 Africa     1952        39.1
-##  2 Africa     1957        41.3
-##  3 Africa     1962        43.3
-##  4 Africa     1967        45.3
-##  5 Africa     1972        47.5
-##  6 Africa     1977        49.6
-##  7 Africa     1982        51.6
-##  8 Africa     1987        53.3
-##  9 Africa     1992        53.6
-## 10 Africa     1997        53.6
-## # … with 50 more rows</code></pre>
+  summarize(meanLifeExp = mean(lifeExp))</code></pre>
 </div>
 </div>
 <div id="combine-datasets" class="section level2">
@@ -900,14 +735,13 @@ p </code></pre>
 <li><p>위 데이터셋에서 factor 변수의 levels을 살펴보고, 불필요한 범주들을 정리해보세요.</p></li>
 <li><p>변수의 이름을 다음과 같이 변경합시다. feature_name -&gt; feature, feature_value -&gt; value, feature_delta -&gt; delta. 가능하면 짧은 이름이 좋겠죠. 중복되는 건 없애구요.</p></li>
 <li><p>위 데이터셋에는 중복된 entry들이 있습니다. Let’s remove duplicate entries in the dataset.</p></li>
-<li><p>데이터셋에는 subjectID, feature, delta가 모두 같은데, value 값이 다른 논리적으로 있을 수 없는(있어서는 안되는?) entry 들이 있군요. 이들을 제거해봅시다 () include entries that appear only once</p></li>
+<li><p>데이터셋에는 subjectID, feature, delta가 모두 같은데, value 값이 다른 논리적으로 있을 수 없는(있어서는 안되는?) entry 들이 있군요. 이들을 제거해봅시다 (include entries that appear only once).</p></li>
 <li><p>위 데이터셋(long format)을 wide format으로 변환해보세요.</p></li>
+<li><p>alsfrs_wide를 long format으로 변환해보세요.</p></li>
+<li><p>임의의 1명의 Subject에 대해서 ALSFRS_R_Total의 시간(delta)에 따른 변화를 그래프로 나타내보세요.</p></li>
+<li><p>전체 환자에 대해서 ALSFRS_R_Total의 시간(delta)에 따른 변화를 그래프로 나타내보세요.</p></li>
+<li><p>subject 마다 추적 기간이 다르군요. 어떻게 다른지 알아봅시다.</p></li>
 </ol>
-<p>alsfrs_wide = spread(temp2, key = feature, value = value) alsfrs_wide = alsfrs_wide[complete.cases(alsfrs_wide),] ```</p>
-<p>alsfrs_wide_complete를 long format으로 변환해보세요.</p>
-<p>임의의 1명의 Subject에 대해서 ALSFRS_R_Total의 시간(delta)에 따른 변화를 그래프로 나타내보세요.</p>
-<p>전체 환자에 대해서 ALSFRS_R_Total의 시간(delta)에 따른 변화를 그래프로 나타내보세요.</p>
-<p>subject 마다 추적 기간이 다르군요. 어떻게 다른지 알아봅시다.</p>
 </div>
 </div>
 
