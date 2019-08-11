@@ -392,39 +392,38 @@ apropos("^stat_")
 ```{r include=FALSE}
 proact = read.delim("proact_sample.txt", sep = "|")
 
-proact %>%
+alsfrs = proact %>%
   filter(form_name == "ALSFRS") %>%
   filter(feature_name %in% c("mouth", "hands", "trunk", "leg", "respiratory_R", "ALSFRS_R_Total")) %>%
-  select(-c(feature_unit, form_name)) -> proact
+  select(-c(feature_unit, form_name))
 ```
 
 2. 위 데이터셋에서 factor 변수의 levels을 살펴보고, 불필요한 범주들을 정리해보세요.  
 ```{r include=FALSE}
-proact = droplevels(proact)  
+alsfrs = droplevels(alsfrs)  
 ```
 
 3. 변수의 이름을 다음과 같이 변경합시다. feature_name -> feature, feature_value -> value, feature_delta -> delta. 가능하면 짧은 이름이 좋겠죠. 중복되는 건 없애구요.  
 ```{r include=FALSE}
-proact = rename(proact, feature = feature_name, value = feature_value, 
-                delta = feature_delta) 
+alsfrs = rename(alsfrs, feature = feature_name, value = feature_value, delta = feature_delta) 
 ```
 
 4. 위 데이터셋에는 중복된 entry들이 있습니다. Let's remove duplicate entries in the dataset.   
 ```{r include=FALSE}
-temp = distinct(proact)
+alsfrs = distinct(alsfrs)
 ```
 
 5. 데이터셋에는 subjectID, feature, delta가 모두 같은데, value 값이 다른 논리적으로 있을 수 없는(있어서는 안되는?) entry 들이 있군요. 이들을 제거해봅시다 (include entries that appear only once).   
 ```{r include=FALSE}
-temp %>% 
+alsfrs %>% 
   group_by(SubjectID, feature, delta) %>%
-  filter(n() == 1) -> temp2
+  filter(n() == 1) -> alsfrs
 ```
 
 6. 위 데이터셋(long format)을 wide format으로 변환해보세요.  
 
 ```{r include=F}
-alsfrs_wide = spread(temp2, key = feature, value = value) 
+alsfrs_wide = spread(alsfrs, key = feature, value = value) 
 alsfrs_wide = alsfrs_wide[complete.cases(alsfrs_wide),]
 ```
 
@@ -434,25 +433,25 @@ alsfrs_long = gather(alsfrs_wide, key = "feature", value = "value", ALSFRS_R_Tot
 # write.csv(alsfrs_long, "ALSFRS_long.csv", quote = F, row.names = F)
 ```
 
-8. 임의의 1명의 Subject에 대해서 ALSFRS_R_Total의 시간(delta)에 따른 변화를 그래프로 나타내보세요.    
+8. 임의의 10명의 Subject에 대해서 ALSFRS_R_Total의 시간(delta)에 따른 변화를 그래프로 나타내보세요.    
 ```{r include=FALSE}
-subj_sample = alsfrs_long %>%
-  filter(SubjectID %in% sample(SubjectID, 1)) %>%
+alsfrs = read.csv("ALSFRS_long.csv")
+sample_subj = sample(alsfrs$SubjectID, 10)
+temp = alsfrs %>%
+  filter(SubjectID %in% sample_subj) %>%
   filter(feature == "ALSFRS_R_Total")
-p = ggplot(subj_sample, aes(x=delta, y = value, col = factor(SubjectID)))
-p + geom_point() + geom_line()
+ggplot(temp, 
+       aes(x=delta, y=value, col=factor(SubjectID))) + geom_line() + geom_point()
 ```
 
 9. 전체 환자에 대해서 ALSFRS_R_Total의 시간(delta)에 따른 변화를 그래프로 나타내보세요.    
 ```{r include=FALSE}
-ggplot(alsfrs_wide, aes(x=delta, y=ALSFRS_R_Total, col=factor(SubjectID))) + geom_line() + theme(legend.position = "none")
+temp = alsfrs %>%
+  filter(feature == "ALSFRS_R_Total")
+ggplot(temp, aes(x=delta, y=value, col=factor(SubjectID))) + geom_line() + theme(legend.position = "none")
 ```
 
 10. subject 마다 추적 기간이 다르군요. 어떻게 다른지 알아봅시다.  
-
-
-
-
 
 
 
