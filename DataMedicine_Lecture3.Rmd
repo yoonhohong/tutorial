@@ -415,29 +415,27 @@ proact = rename(proact, feature = feature_name, value = feature_value,
 temp = distinct(proact)
 ```
 
-5. 데이터셋에는 subjectID, feature, delta가 모두 같은데, value 값이 다른 논리적으로 있을 수 없는(있어서는 안되는?) entry 들이 있군요. 이들을 제거해봅시다 ()
- include entries that appear only once  
+5. 데이터셋에는 subjectID, feature, delta가 모두 같은데, value 값이 다른 논리적으로 있을 수 없는(있어서는 안되는?) entry 들이 있군요. 이들을 제거해봅시다 (include entries that appear only once).   
 ```{r include=FALSE}
 temp %>% 
   group_by(SubjectID, feature, delta) %>%
   filter(n() == 1) -> temp2
 ```
 
-2. 위 데이터셋(long format)을 wide format으로 변환해보세요.  
+6. 위 데이터셋(long format)을 wide format으로 변환해보세요.  
 
-
-
+```{r include=F}
 alsfrs_wide = spread(temp2, key = feature, value = value) 
 alsfrs_wide = alsfrs_wide[complete.cases(alsfrs_wide),]
 ```
 
-alsfrs_wide_complete를 long format으로 변환해보세요.   
+7. alsfrs_wide를 long format으로 변환해보세요.   
 ```{r include=FALSE}
 alsfrs_long = gather(alsfrs_wide, key = "feature", value = "value", ALSFRS_R_Total:trunk)
 # write.csv(alsfrs_long, "ALSFRS_long.csv", quote = F, row.names = F)
 ```
 
-임의의 1명의 Subject에 대해서 ALSFRS_R_Total의 시간(delta)에 따른 변화를 그래프로 나타내보세요.    
+8. 임의의 10명의 Subject에 대해서 ALSFRS_R_Total의 시간(delta)에 따른 변화를 그래프로 나타내보세요.    
 ```{r include=FALSE}
 subj_sample = alsfrs_long %>%
   filter(SubjectID %in% sample(SubjectID, 10)) %>%
@@ -446,12 +444,12 @@ p = ggplot(subj_sample, aes(x=delta, y = value, col = factor(SubjectID)))
 p + geom_point() + geom_line()
 ```
 
-전체 환자에 대해서 ALSFRS_R_Total의 시간(delta)에 따른 변화를 그래프로 나타내보세요.    
+9. 전체 환자에 대해서 ALSFRS_R_Total의 시간(delta)에 따른 변화를 그래프로 나타내보세요.    
 ```{r include=FALSE}
 ggplot(alsfrs_wide, aes(x=delta, y=ALSFRS_R_Total, col=factor(SubjectID))) + geom_line() + theme(legend.position = "none")
 ```
 
-subject 마다 추적 기간이 다르군요. 어떻게 다른지 알아봅시다.  
+10. subject 마다 추적 기간이 다르군요. 어떻게 다른지 알아봅시다.  
 
 
 

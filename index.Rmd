@@ -21,7 +21,7 @@ title: "데이터 의학 (Data Medicine)"
 **강의록**    
 - [Lecture 1](DataMedicine_Lecture1.html) 데이터 의학이란?  
 - [Lecture 2](DataMedicine_Lecture2.html) R 프로그래밍의 기초   
-- [Lecture 3](DataMedicine_Lecture3.html) 탐색적 데이터 분석과 시각화
+- [Lecture 3](DataMedicine_Lecture3.html) 탐색적 데이터 분석과 시각화  
 - [Lecture 4](DataMedicine_Lecture3_2.html) 통계 분석   
 - [Lecture 4](DataMedicine_Lecture4.html) 기계학습의 기초      
 - [Lecture 5](DataMedicine_Lecture5.html) 회귀와 분류  
