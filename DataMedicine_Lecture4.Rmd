@@ -6,9 +6,28 @@ output:
     toc_float: true
 ---
 
-# 기계학습(Machine Learning)   
 
-## 기계학습이란 무엇인가?   
+기계 학습 모델은 features 및 label 이라고도하는 입력 (input)및 출력(output) 데이터 수집이 필요합니다. 예를 들어, 환자들에서 기저 심혈관 위험인자들을 결정한 다음,  심근경색 발생 여부를 추적한 연구는 features가 위험 인자 세트이고 label이 미래의 심근 경색인 훈련 데이터를 제공 할 것입니다. 이 모델은 features을 사용하여 label을 예측하도록 훈련되었으므로, 새 환자의 경우 모델에서 심근경색이 발생할 위험을 예측합니다. 이 일반적인 프레임 워크는 다양한 작업에 사용될 수 있습니다.
+
+> Conceptual overview of supervised machine learning  
+
+1. Preparing to build a model   
+<img src="img/preparing2buildModel.png" style="border: #A9A9A9 1px solid; width:75%">   
+
+2. Traning a model  
+<img src="img/trainingModel.png" style="border: #A9A9A9 1px solid; width:75%">  
+
+3. Evaluating a model  
+<img src="img/evaluatingModel.png" style="border: #A9A9A9 1px solid; width:75%">  
+
+[Introduction to machine learning with R](https://www.youtube.com/watch?v=rwobGhobPzY)   
+
+[Classification, regression and clustering problems](https://www.youtube.com/watch?v=UIKHlSjJAPE)   
+
+[Statistical modeling](https://www.youtube.com/watch?v=UIKHlSjJAPE)
+
+
+# 기계학습이란 무엇인가?   
 기계학습은 지도 기계학습과 비지도 기계학습으로 구분한다. 지도 기계학습은 입력 변수를 기반으로 출력 변수를 예측하는 모델을 만드는 것이고, 비지도 기계학습은 출력 변수 없이 입력 변수만 가지고 자료의 상관 관계와 구조를 파악하는 것과 관련이 있다 (cluster analysis).  
 
 출력 변수는 반응 변수, 응답 변수, 또는 종속 변수라고 불리며 보통 $Y$를 사용하여 나타낸다.   
@@ -26,7 +45,7 @@ $e$; random error term (independent of $X$, mean = 0)
 위에서 f는 어떤 함수이고, 지도 기계학습은 이 f를 추정하는 일련의 과정을 말하는 것이다.   
 
 
-## $f$를 추정하는 이유는 무엇인가? Why estimate $f$? 
+# $f$를 추정하는 이유는 무엇인가?  
 
 f를 어떻게 추정하는지 하는 방법을 구체적으로 살펴보기에 앞서, 우선 f를 추정하고자 하는 목적, 이유에 대해 살펴보자. 크게 두가지로 구분해 볼 수 있는데, 그것은 바로 예측과 추론이다.  
 
@@ -56,7 +75,7 @@ $\hat{Y}$의 정확성은 오차를 얼마나 줄일 수 있느냐에 달려있�
 [Challenges]  
 의학, 의료 분야에서 기계학습을 이용한 예측과 추론 문제의 예를 들어보자.    
 
-## 어떻게 f를 추정하는가? how to estimate the function $f$?  
+# 어떻게 f를 추정하는가?    
 
 훈련 데이터를 이용하여 f를 추정하는데, 이를 위한 기계학습 기법들은 크게 모수적 방법과 비모수적 방법으로 나누어 볼 수 있다.   
 
@@ -87,8 +106,7 @@ $$f(X) = \beta_0 + \beta_1X_1 + \beta_2X_2 + ...+\beta_pX_p$$
 [Challenge]  
 모수적 방법과 비모수적 방법의 장,단점에 대해 생각해봅시다.   
 
-
-## Model flexibility & Interpretability 
+# Model flexibility & Interpretability 
 
 [Challenge]  
 일반적으로 덜 유연한(e.g., linear) 모델을 더 유연한 모델(e.g., spline)보다 선호할 수 있는데, 그 이유는 무엇일까?    
@@ -99,18 +117,14 @@ $$f(X) = \beta_0 + \beta_1X_1 + \beta_2X_2 + ...+\beta_pX_p$$
 
 우리가 추론에는 관심이 없고, 예측에만 관심이 있다면 가장 유연한 모델을 사용하는 것이 최선이라고 예상할 수 있다. 그러나, 놀랍게도 이것이 항상 맞는 것은 아니다! 우리는 종종 덜 유연한 방법을 사용하여 더 정확한 예측을 얻을 것이다. 직관에 반하는 것처럼 보이는 이러한 현상은 아주 유연한 방법들의 잠재적인 과적합 문제와 관련이 있다.    
 
-## 회귀와 분류 (Regression vs. Classification)  
-
-whether the response variable is quantitative (regression) or qualitative (classification) 
-
-## 모델의 정확도 평가 (How to asess the accuracy of model?)  
+# 모델의 정확도 평가 (How to asess the accuracy of model?)  
 
 기계학습 모델의 성능 평가에 대해 말하기에 앞서, 모든 자료에 대해 가장 좋은 결과를 줄 수 있는 단 하나의 방법(master algorithm)은 없을까 생각해보자. 결론부터 말하자면, 그러한 기법은 없다. 이것이 우리가 앞으로 여러가지 기계학습 기법을 살펴보는 이유이다. 이것은 공짜 점심은 없다는 이론과 관계가 있다.   
 
 **Note** 
 *No free lunch theorem* Selecting the best approach can be one of the most challenging parts of performing statistical learning in practice.
 
-### 회귀 (Regression)  
+## 회귀 (Regression)  
 
 기계학습 모델의 성능을 평가한다는 것은 예측치와 관측치가 얼마나 잘 맞는지 측정한다는 것이다. 회귀 문제에서 가장 일반적으로 사용되는 척도는 아래 식으로 주어지는 평균제곱오차이다.   
 
@@ -119,7 +133,7 @@ mean squared error (MSE)
 $$MSE = \frac{1}{n}\sum_{i=1}^{n}(y_i - \hat{f}(x_i))^2$$
 training data를 이용하여 계산한 MSE는 training MSE 라고 한다. 우리는 그러나 일반적으로 기계학습 모델이 training data에서 얼마나 잘 작동하는지에는 관심이 없다. 실제로 관심이 있는 것은 test data에 적용할 때 없는 예측 정확도이다 (test MSE).   
 
-### 분류 (Classification)
+## 분류 (Classification)
 
 분류 문제에서 분류기 $\hat{f}$의 정확도를 수량화하는 가장 흔한 지표는 아래 식으로 주어지는 오차율이다. 
 
@@ -129,9 +143,11 @@ $$\frac{1}{n}\sum_{i=1}^{n}I(y_i \neq \hat{y_i})$$
 $\hat{y_i}$는 $\hat{f}$를 사용하여 예측된 i번째 관측치에 대한 클래스 표시(label)이고,   
 $I(y_i \neq \hat{y_i})$는 indicator variable로 $y_i \neq \hat{y_i}$이면 1이고, $y_i = \hat{y_i}$이면 0이다. 
 
-## 편향 분산 절출 (Bias-Variance trade-off)  
+# 편향 분산 절충 (Bias-Variance trade-off)  
 
-Bias: error   
+[Bias-Variance Trade-off](https://www.youtube.com/watch?v=EuBBz3bI-aA)
+
+Bias: residuals     
 Variance: how much the $\hat{f}$ changes with different training data sets   
 
 > As a general rule, as we use more flexible methods, the variance will increase and the bias will decrease
@@ -141,56 +157,45 @@ Variance: how much the $\hat{f}$ changes with different training data sets
    
 <img src="img/knn_bias_variance_tradeoff.png" style="border: #A9A9A9 1px solid; width:75%">
 
-> The challenge lies in finding a method for which both the variance and the bias are low.
-
-## 실습 문제  
-
-1. For each of parts (a) through (d), indicate whether we would generally expect the performance of a flexible statistical learning method to be better or worse than an inflexible method. Justify your answer.
-(a) The sample size n is extremely large, and the number of predic- tors p is small.
-(b) The number of predictors p is extremely large, and the number of observations n is small.
-(c) The relationship between the predictors and response is highly non-linear.
-(d) The variance of the error terms, i.e. σ2 = Var(ε), is extremely high.
-<br>
-
-2. Explain whether each scenario is a classification or regression problem, and indicate whether we are most interested in inference or prediction. Finally, provide n and p.
-(a) We collect a set of data on the top 500 firms in the US. For each firm we record profit, number of employees, industry and the CEO salary. We are interested in understanding which factors affect CEO salary.
-(b) We are considering launching a new product and wish to know whether it will be a success or a failure. We collect data on 20 similar products that were previously launched. For each prod- uct we have recorded whether it was a success or failure, price charged for the product, marketing budget, competition price, and ten other variables.
-(c) We are interesting in predicting the % change in the US dollar in relation to the weekly changes in the world stock markets. Hence we collect weekly data for all of 2012. For each week we record the % change in the dollar, the % change in the US market, the % change in the British market, and the % change in the German market.
-<br> 
+> The challenge lies in finding a method for which both the variance and the bias are low.   
 
 
-3. You will now think of some medical applications for machine learning.  
-(a) Describe three real-life applications in which classification might be useful. Describe the response, as well as the predictors. Is the goal of each application inference or prediction? Explain your answer.
-(b) Describe three real-life applications in which regression might be useful. Describe the response, as well as the predictors. Is the goal of each application inference or prediction? Explain your answer.
-(c) Describe three real-life applications in which cluster analysis might be useful.
-<br> 
-
-4. What are the advantages and disadvantages of a very flexible (versus a less flexible) approach for regression or classification? Under what circumstances might a more flexible approach be preferred to a less flexible approach? When might a less flexible approach be preferred?
-<br> 
-
-5. Describe the differences between a parametric and a non-parametric statistical learning approach. What are the advantages of a para- metric approach to regression or classification (as opposed to a non- parametric approach)? What are its disadvantages?
-<br> 
-
-6. The table below provides a training data set containing six observa- tions, three predictors, and one qualitative response variable.
-
-Obs.|$X_1$|$X_2$|$X_3$|$Y$
---- | --- | --- | --- | ---
-1|0|3|0|Red  
-2|2|0|0|Red  
-3|0|1|3|Red  
-4|0|1|2|Green  
-5|-1|0|1|Green  
-6|1|1|1|Red  
-  
-Suppose we wish to use this data set to make a prediction for Y when X1 = X2 = X3 = 0 using K-nearest neighbors.
-(a) Compute the Euclidean distance between each observation and thetestpoint,X1 =X2 =X3 =0.
-
-(b) What is our prediction with K = 1? Why?
-(c) What is our prediction with K = 3? Why?
-(d) If the Bayes decision boundary in this problem is highly non- linear, then would we expect the best value for K to be large or small? Why?
+# Machine Learning in Medicine 
 
 
+[Machine learning in medicine](https://www.nejm.org/action/showMediaPlayer?doi=10.1056%2FNEJMdo005499&aid=10.1056%2FNEJMra1814259&area=)
 
+
+## Key questions to ask when deciding what type of model is necessary 
+
+> How complex is the prediction task? 
+
+간단한 예측 작업은 적은 수의 예측 변수를 가지고 높은 정확도로 수행될 수 있는 작업으로 정의됩니다. 예를 들어, 고칼륨혈증의 발생을 예측하는 것은 신장 기능, 칼륨 보충제 사용 및 특정 약물의 복용과 같은 작은 변수 세트에서 가능할 수 있습니다. 복잡한 예측 작업은 적은 수의 예측 변수로 정확하게 예측할 수 없는 작업으로 정의됩니다. 예를 들어, 병리 슬라이드에서 이상을 식별하려면 수백만 픽셀에서 분명하지 않은 패턴을 평가해야합니다.일반적으로 간단한 예측 작업은 기존 모델 (예 : 로지스틱 회귀)을 사용하여 수행 할 수 있으며 복잡한 작업에는 더 복잡한 모델 (예 : 신경망)이 필요합니다.   
+
+
+> Should the prediction task be performed by clinicians who are entering the data manually, or should it be performed by a computer using raw data?  
+
+예측 작업을 단순하거나 복잡한 것으로 분류하는 것 외에도 모델이 실제로 어떻게 사용될지 고려해야합니다. 모델이 bedside scoring system (예를 들어, 폐색전증의 가능성을 평가하는 Wells score)에 사용될 경우, 인간에 의해 선별된 적은 수의 변수를 사용하는 것이 바람직합니다. 이 경우 기존 모델은 더 복잡한 모델만큼 효과적일 수 있습니다. 모델이 사람의 개입이나 정규화없이 noisy data를 자동으로 분석해야하는 경우 작업이 복잡해지고 복잡한 모델이 일반적으로 더 유용해집니다. 원시 데이터를 더 작은 "깨끗한" 데이터 세트로 처리하는 규칙 세트를 작성할 수 있으며, 이는 예측 작업이 단순 할 경우 기존 모델에 적합할 수 있습니다. 그러나 이러한 규칙을 작성하고 업데이트하는 데 많은 시간이 소요됩니다.
+
+> How many examples exist to train a model?
+
+간단한 예측 작업은 일반적으로 모델을 구축하기 위해 많은 예제를 배울 필요가 없습니다. 복잡한 모델의 훈련에는 일반적으로 더 많은 예가 필요합니다. 미리 정해진 수의 예는 없지만 복잡한 모델을 구성하려면 최소한 수천 개의 예가 필요하며 예측 작업이 복잡할수록 더 많은 데이터가 필요합니다. 정확한 모델을 구성하는데 필요한 훈련 예제의 수를 줄이기 위해 특수한 방법을(e.g., transfer learning) 사용하기도 합니다.   
+
+> How interpretable does a model need to be?  
+
+단순예측모델은 평가된 features 수가 매우 적기 때문에 간단한 예측 작업을 해석할 수 있습니다. 반면에 복잡한 모델은 복잡한 패턴을 식별하는 법을 배우는 것으로 예상되기 때문에 본질적으로 해석하기가 어렵습니다. 이러한 복잡성으로 인해 보다 정확한 예측이 가능하지만 특정 예측의 미묘한 패턴을 간결하게 제시하거나 설명하기가 어렵다는 단점이 있습니다.
+
+
+# 실습 문제  
+
+1. (a)에서 (d)까지의 각 항목에 대해, 유연한 기계학습 방법의 성능이 유연성이 없는 방법보다 더 우수하거나 혹은 더 나쁠 것으로 예상하는지 여부를 표시하십시오. 왜 그렇게 생각하는지 설명하십시오.   
+(a) 표본 크기 n은 매우 크며 예측 변수 p의 수는 적다.  
+(b) 예측 변수 p의 수는 매우 많고, 관측 수 n은 적다.  
+(c) 예측 자와 반응 사이의 관계가 매우 비선형적이다.    
+(d) 오차항(error term)의 편차, 즉 σ2 = Var(ε)가 매우 높다.   
+
+
+2. 의학, 의료에서 분류(classification), 회귀(regression)가 유용할 수 있는 기계학습의 적용 사례를 각각 하나씩 들어봅시다. 예측 변수와 반응 변수는 무엇인지, 기계학습 모델의 목표는 추론 또는 예측인지 설명하십시오.     
 
 
 
