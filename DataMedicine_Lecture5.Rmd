@@ -40,7 +40,11 @@ $n$: 관측치의 개수
 
 [Linear model: least squares, residuals, R^2, F-statistic ](https://www.youtube.com/watch?v=nk2CQITm_eo)
 
-[Challenges]   
+
+[t-test and ANOVA](https://www.youtube.com/watch?v=NF5_btOaCig&list=PLblh5JKOoLUIzaEkCLIUxQFjPIlapw8nU&index=6)   
+
+자, 그럼 이론은 이해했으니, 다음으로 실제로 선형 회귀 모델을 이용해봅시다.   
+
 먼저 gapminder 자료를 기억해봅시다.  
 
 1. gapminder 데이터에서 기대수명은 일인당 국민소득과 연관이 있다고 말할 수 있을까요?    
@@ -80,7 +84,7 @@ model fit의 결과를 보기위해 summary() 함수를 사용합니다.
 summary(lm.fit)
 ```
 
-### 1. gapminder 데이터에서 (1952년) 기대수명은 일인당 국민소득과 연관이 있다고 말할 수 있을까요? (Is there relationship?)   
+### 1. 기대수명은 일인당 국민소득과 연관이 있다고 말할 수 있을까요? 
 
 위 질문에 답하기 위해 우리는 다음 두 가지를 하였습니다.  
 1. fit a linear model 
@@ -93,7 +97,7 @@ $\mu_0$: population mean (population coefficient in linear regression)
 SE: standard error (of the coefficient in linear regression)  
 
 
-###2. 일인당 국민소득과 기대수명의 관계를 설명하는데 어떤 모델이 적합할까요? 선형 모델로 그 관계를 얼마나 설명할 수 있을까요? (Is the relationship linear?)  
+###2. 일인당 국민소득과 기대수명의 관계를 선형 모델로 얼마나 설명할 수 있을까요? 
 
 $$R^2 = \frac{TSS - RSS}{TSS}$$  
 - $R^2$: the proportion of the total variation explained by the fit (regression model) 
@@ -152,281 +156,242 @@ predict(lm.fit, gapminder_2002, interval ="confidence")
 ```
 
 
-
-
-
-
-
-
-## Potential problems in linear regression  
-
-### 1. Non-linearity of the data
-> Is the relationship linear?
-
-```{r}
-
-plot(lstat, medv)
-abline(lm.fit)
-```
-
-```{r}
-# diagnostic plots
-par(mfrow=c(2,2))
-plot(lm.fit)
-```
-
-```{r}
-# linearity
-# residual plots
-plot(predict(lm.fit), residuals(lm.fit))
-plot(predict(lm.fit), rstudent(lm.fit))
-abline(h=c(-3,3))
-```
-
-***   
-**Note**  
-Residual plots are a useful graphical tool for identifying non-linearity. The standardized (or studentized) residuals, computed by dividing each residual by its estimated standard error. If the residual plot indicates that there are non-linear associations in the data, then a simple approach is to use non-linear transformations of the predictors, such as logX, √X, and X^2, in the regression model.   
-
-***    
-
-> How can we improve the model? 
-
-1. Polynomial  
-2. Multiple  
-
-polynomial linear regression  
-```{r}
-lm.fit2 = lm(medv ~ lstat + I(lstat^2))
-summary(lm.fit2)
-anova(lm.fit, lm.fit2)
-# plot
-library(ggplot2)
-ggplot(Boston, aes(lstat, medv)) + geom_point() + 
-  stat_smooth(method = "lm", col="blue") +
-  stat_smooth(method="lm", formula = y ~ poly(x, 2), col="red")
-```
-
-
-
-
-
-
-multipe linear regression  
-```{r}
-lm.fit3 = lm(medv ~ lstat + age, data = Boston)
-summary(lm.fit3)
-lm.fit4 = lm(medv ~ ., data = Boston)
-summary(lm.fit4)
-```
-
-
-### 2. Correlation of error terms 
-<br>
-If in fact there is correlation among the error terms, then the estimated standard errors will tend to underestimate the true standard errors. Such correlations frequently occur in the context of time series data, which consists of observations for which measurements are obtained at discrete points in time. In many cases, observations that are obtained at adjacent time points will have positively correlated errors. Many methods have been developed to properly take account of correlations in the error terms in time series data.
-
-
-### 3. Non-constant variance of error terms 
-<br>
-One can identify non-constant variances in the errors, or heteroscedasticity, from the presence of a funnel shape in
-the residual plot.
-When faced with this problem, one possible solution is to trans-
-form the response Y using a concave function such as log Y or $\sqrt{Y}$ . Such a transformation results in a greater amount of shrinkage of the larger responses, leading to a reduction in heteroscedasticity.
-
-
-### 4. Outliers 
-<br>
-If we believe that an outlier has occurred due to an error in data collection or recording, then one solution is to simply remove the observation. However, care should be taken, since an outlier may instead indicate a deficiency with the model, such as a missing predictor.
-
-### 5. High leverage points  
-<br>
-Observations with high leverage have an unusual value for $x_i$
-
-
-### 6. Collinearity  
-<br>
-Collinearity refers to the situation in which two or more predictor variables are closely related to one another. The presence of collinearity can pose problems in the regression context, since it can be difficult to separate out the individual effects of collinear variables on the response. Since collinearity reduces the accuracy of the estimates of the regression coefficients, it causes the standard error for $\hat{β}_j$ to grow. 
-
-***
-**Note**   
-A simple way to detect collinearity is to look at the correlation matrix of the predictors. Instead of inspecting the correlation matrix, a better way to assess multi-collinearity is to compute the variance inflation factor (VIF). 
-
-$$VIF = \frac{var(\hat{β}_j)_f}{var(\hat{β}_j)_u}$$$ 
-- f: full model  
-- u; univariate model 
-   
-As a rule of thumb, a VIF value that exceeds 5 or 10 indicates a problematic amount of collinearity.   
-
-***
-<br>
-
-```{r}
-library(car)
-vif(lm.fit4) # variance inflation factor
-# vif, cut-off for collinea rity
-# what would be the solution for collinearity problem? 
-lm.fit = update(lm.fit, ~. -age)
-summary(lm.fit)
-```
-
-
-## Other considerations 
-
-### 1. interaction terms 
-
-
-```{r}
-lm.fit = lm(medv ~ lstat*age, data = Boston)
-ggplot(Boston, aes(lstat, medv, col = age)) + geom_point()
-Boston$age_gr = cut(Boston$age, breaks = c(0,40,80,100), include.lowest = T, right = F)
-levels(Boston$age_gr)
-ggplot(Boston, aes(lstat, medv, col = age_gr)) + geom_point() + stat_smooth(method = "lm", se = F)
-```
-
-### 2. Qualitative predictors 
-
-```{r}
-Boston$chas = factor(Boston$chas)
-lm.fit5 = lm(medv~., data = Boston)
-summary(lm.fit5)
-contrasts(Boston$chas) # dummy variables 
-```
-
-
-
 # 분류(classification)   
 
 classifier: assign a probability to each class  
 
-> Examples of classification problem... 을 생각해보자... 
-
 ## logistic regression 
 
-Logit function  
-$$P(X) = \frac{e^{\beta_0+\beta_1X}}{1+e^{\beta_0+\beta_1X}}$$
+로지스틱 회귀는 회귀라는 이름을 가지고 있지만, 분류기로 광범위하게 사용됩니다. 분류 문제는 결국 결과 변수가 범주 변수일 때 결과가 특정 범주일 확률을 구하는 문제로 볼 수 있습니다.     
 
-Odds   
+먼저 odds 개념과 왜 log odds 를 사용하는지 알아봅시다.   
+[Odds and Log(Odds)](https://www.youtube.com/watch?v=ARfXDSkQf1Y)   
+
+[from 3min]
+[Logistic regression overview: Logit function](https://www.youtube.com/watch?v=yIYKR4sgzI8)   
+
+logistic function 
+$$y = \frac{1}{1 + e^{-x}}$$
+로지스틱 함수의 출력값은 항상 0에서 1사이입니다. 시그모이드 모양을 가져서 시그모이드 함수라고 합니다.  
+
+
+우리가 범주가 2개인 분류 문제를 푼다고 하겠습니다.   
+그리고, 아래와 같이 odds를 선형 함수로 모델링해보겠습니다.  
+$$\frac{P(X)}{1-P(X)} = \beta_0+\beta_1X$$
+
+위 식에서 좌변은 0에서 무한대, 우변은 모든 값이 가능합니다. 양변의 범위가 맞지 않죠. 좌변에 log 를 취해 이 문제를 해결해봅시다. odd의 로그 변환을 logit 변환이라고 부릅니다. 
+
 $$\frac{P(X)}{1-P(X)} = e^{\beta_0+\beta_1X}$$
-**odds: P(event)/P(nonevent)** 
 
 
 Logit 
 $$log(\frac{P(X)}{1-P(X)}) = \beta_0 + \beta_1X$$ 
 
-> titanic survival classification    
+
+위 식을 정리하면 다음과 같이 됩니다.   
+$$P(X) = \frac{1}{1+e^{-(\beta_0+\beta_1X)}}$$
+
+가장 앞에서 보았던 로지스틱 함수가 됩니다. 
+logistic regression은 결국 linear model의 일반화된 형태에 속하는 것입니다.   
+
+
+[Logistic regression details part I, coefficients](https://www.youtube.com/watch?v=vN5cNN2-HWE)    
+
+
+[maximum likelihood estimation](https://www.youtube.com/watch?v=XepXtl9YKwc)   
+
+
+## titanic survival classification    
+
+자, 이제 실습을 해봅시다.   
 
 ```{r}
 library(carData)
+```
+
+```{r}
 head(TitanicSurvival)
 str(TitanicSurvival)
 summary(TitanicSurvival)
 ```
 
+타이타닉호의 생존 데이터입니다. 생존 여부를 예측하는 분류 문제를 다루어봅시다.   
+
+missing data point 가 있군요(age, NA's). 해당 observation은 제거하기로 합시다.  
 ```{r}
 TitanicSurvival = TitanicSurvival[complete.cases(TitanicSurvival),]
 ```
 
-fit logistic regression model   
+다음으로 logistic regression model을 데이터에 적합시켜봅시다(fit).  
 ```{r}
 glm.fit = glm(survived ~., data = TitanicSurvival, family = "binomial")
 ```
 
+logistic regression model fit 의 결과를 해석해봅시다.   
 ```{r}
 summary(glm.fit)
-coef(glm.fit)
 ```
 
-odds  
+남자는 여자보다 생존할 확률이 큽니까? 얼마나 큽니까?   
 ```{r}
 exp(coef(glm.fit)[2])
 ```
 male 인 경우 female 에 비해서, 생존/죽음 odds가 0.08배 (즉, 훨씬 낮다, 10배 이상), Odds ratio 개념... 
 
-
-dummy variables  
+독립 변수가 범주형 변수일 때, 회귀 모델에서는 이를 dummy variable로 변환합니다.     
 ```{r}
 contrasts(TitanicSurvival$survived)
 contrasts(TitanicSurvival$passengerClass)
 ```
 
-prediction 
+## Classification model accurancy 
+
+앞에서 회귀 문제에서는 모델의 정확도는 RMSE 로 평가한다고 했습니다.  
+분류 문제에서는 모델의 정확도를 어떻게 평가할까요? 
+
+먼저, 위에서 만든 모델을 사용하여 타이타닉호의 생존 결과를 예측해봅시다.  
 ```{r}
 glm.probs = predict(glm.fit, type = "response")
 ```
 
-confusion matrix   
-accuracy  
+[Confusion matrix](https://www.youtube.com/watch?v=Kdsp6soqA7o)   
+
+자, 그럼 classification prediction accuracy를 계산해봅시다.   
 ```{r}
-glm.pred = rep("no", 1046)
+glm.pred = rep("no", length(glm.probs))
 glm.pred[glm.probs>0.5] = "yes"
 table(glm.pred, TitanicSurvival$survived)
 mean(glm.pred == TitanicSurvival$survived)
 ```
 
-test error rate
+위의 예제는 training data 에서 성능을 평가한 것이고, 우리가 실제로 관심이 있는 것은 모델 훈련에 사용되지 않은 새로운 데이터셋에서의 성능일겁니다. 아래는 전체 데이터셋을 training set 과 test set 으로 나누고, training set에서 만든 모델을 test set에 적용해 성능을 평가한 것입니다.  
+
 ```{r}
 set.seed(1)
 index = sample(1:1046, round(1046/7), replace = F)
-train.glm = TitanicSurvival[index,]
-test.glm = TitanicSurvival[-index,]
+train.data = TitanicSurvival[index,]
+test.data = TitanicSurvival[-index,]
 ```
 
-fit the model wit training data, and predict in test data
+fit the model with training data, and predict in test data
 ```{r}
-glm.fit = glm(survived ~., data = train.glm, 
+glm.fit = glm(survived ~., data = train.data, 
               family = "binomial")
-glm.probs = predict(glm.fit, test.glm, type = "response")
+glm.probs = predict(glm.fit, test.data, type = "response")
 ```
 
-confusion matrix  
-accuray  
+confusion matrix & accuray  
 ```{r}
 glm.pred = rep("no", 1046-round(1046/7))
 glm.pred[glm.probs>0.5] = "yes"
-table(glm.pred, test.glm$survived)
-mean(glm.pred == test.glm$survived)
+table(glm.pred, test.data$survived)
+mean(glm.pred == test.data$survived)
 ```
 
-## linear discrminant analysis 
 
-Bayes theorem  
+## Linear discrminant analysis (LDA)
+
+로지스틱 회귀는 로지스틱 함수를 이용하여 두 개의 반응 변수 클래스에 대해 $Pr(Y=k|X=x)$를 직접 모델링한다. 
+
+이제 LDA라고 불리는 대안 기법에 대해 알아보자. 
+
+LDA에서는 반응 변수 Y의 각 클래스내의 관측치들이 클래스 별로 평균($\mu_k$)과 클래스 공통 분산($\sigma^2$)을 갖는 정규분포를 따른다는 가정하에 이 파라미터에 대한 추정값을 베이즈 분류기에 대입한 것이다. 
+
+베이즈 뷘류기(Bayes classifier)는 설명변수 X가 $x$로 주어졌을 때 반응변수 Y가 $k$ 클래스일 확률을 베이즈 정리를 이용해 구하고, 이에 따라 관측치를 분류한다.   
+
+$$P(Y=k|X=x)$$
+
+베이즈 정리(Bayes theorem)를 기억하자.     
 $$P(B|A) = \frac{P(A|B)\times P(B)}{P(A)}$$
-Bayes classifier 
+
+베이즈 정리를 베이즈 분류기에 적용하면 아래 식이 된다.    
 $$P(Y=k|X=x) = \frac{P(X=x|Y=k) \times P(Y=k)}{\sum_{l=1}^k P(X=x|Y=l)} $$ 
 
-assume in LDA   
-- normal distribution of P(X|Y=k)   
+위 베이즈 정리가 의미하는 것은 $P(Y=k|X=x)$ - 사후 확률이라고 한다 - 를 직접 계산하는 대신에 $P(Y=k)$와 $P(X=x|Y=k)$ - 사전 확률 - 의 추정치를 통해 구할 수 있다는 것이다.   
+
+$P(Y=k)$ 추정은 쉽다. 즉, k번째 클래스에 속하는 관측치들의 비율을 단순히 계산하면 된다.   
+
+하지만, $P(X=x|Y=k)$에 대한 추정은 어떤 분포를 가정하지 않는다면 어렵다. LDA는 사전확률을 추정하기 위해 아래와 같은 가정을 한다.   
+
+Assumptions in LDA   
+- normal distribution of $P(X=x|Y=k)$   
 - common variance across different k class   
 
-calculate posterior probability with...   
+이제 우리는 k 클래스에 속한 관측치의 평균과 분산(공통)을 구해 확률밀도함수 $P(X=x|Y=k)$를 추정할 수 있고, 결국 $P(Y=k|X=x)$도 추정할 수 있다. (정규분포의 확률밀도함수 참조)   
+
+Calculate posterior probability with...   
 - P(Y=k): proportion   
 - $\mu_k: mean(X)\ in\ class\ k$   
 - $\sigma^2: variance$   
 
-다음 식이 최대가 되는 클래스에 관측치 X=x 를 할당한다.   
+최종적으로 얻어지는 분류기는 다음 식을 최대로 하는 클래스에 관측치를 할당하는 것과 동일하다.     
 $$\hat{\delta_k} = x\times\frac{\hat{\mu_k}}{\hat{\sigma}^2}-\frac{\hat{\mu_k}^2}{2\hat{\sigma}^2}+log(\hat{\pi_k})$$
+여기서 $\delta_k$는 k class에 대한 linear discriminant 값이고, 위 식을 linear disciminant function 이라고 한다. 분류기 이름에 선형이라는 말이 있는 것은 위 판별함수가 x의 선형함수이기 때문이다. 
+
 
 **figure** 
 <img src="img/LDA.png" style="border: #A9A9A9 1px solid; width:75%">
 
+LDA는 나중에 살펴볼 PCA (principal component analysis)와 매우 유사하다. 미리 어떤 유사점과 차이점이 있는지 알아보자.   
+
+[LDA & PCA](https://www.youtube.com/watch?v=azXCzI57Yfc)   
+
+
+로지스틱 회귀 vs. LDA   
+1. 클래스의 수가 2보다 많은 반응 변수를 분류해야 할 때가 있다. 다중 로지스틱회귀 모델이 있지만 실제로는 자주 사용되지 않는다.   
+2. 클래스들이 잘 분리될 때 로지스틱 회귀모델에 대한 모수 추정치는 아주 불안정하다. 선형판별분석은 이런 문제가 없다.   
+3. 만약 n이 작고, 각 클래스에서 설명변수 X의 분포가 근사적으ㄹ 정규분포이면 선형판별모델이 로지스틱회귀모델보다 더 안정적이다.   
+
+
+## LDA 실습   
+
+다시 titanic 호로 돌아와보자.    
+fit LDA to training data   
+
 ```{r}
 library(MASS)
-lda.fit = lda(survived~., data = train.glm)
+```
+
+```{r}
+lda.fit = lda(survived~., data = train.data)
+```
+
+LDA fit 결과를 살펴보자.    
+```{r}
 lda.fit
+```
+
+각 클래스에서 LD 값의 분포를 알고 싶다면...    
+```{r}
 plot(lda.fit)
 ```
 
+위에서 만든 LDA 모델을 이용해 test data에서 생존 결과를 예측해보자.   
 ```{r}
-lda.pred = predict(lda.fit, test.glm)
+lda.pred = predict(lda.fit, test.data)
+```
+
+```{r message=FALSE}
 names(lda.pred)
 ```
 
+confusion matrix   
 ```{r}
-table(lda.pred$class, test.glm$survived)
-mean(lda.pred$class == test.glm$survived)
+table(lda.pred$class, test.data$survived)
 ```
 
-## k-nearest neighbor 
+예측 정확도는 얼마인가? 로지스틱회귀모델과 비교하면 성능이 어떠한가?       
+```{r}
+mean(lda.pred$class == test.data$survived)
+```
 
+## k-nearest neighbor (KNN)
+
+KNN은 어떤 관측치의 클래스를 결정할 때, K개의 근접한 이웃의 클래스들이 무엇인지에 따라, 즉 majortity vote의 결과로 해당 관측치의 클래스를 결정하는 알고리즘입니다.     
+
+[KNN](https://www.youtube.com/watch?v=HVXime0nQeI)
+
+그럼, 바로 실습해봅시다.   
 ```{r}
 library(class) # knn
 ```
@@ -434,6 +399,9 @@ library(class) # knn
 dummy variables  
 ```{r}
 library(dummies)
+```
+
+```{r}
 TitanicSurvival = cbind(TitanicSurvival, dummy(TitanicSurvival$sex), dummy(TitanicSurvival$passengerClass))
 TitanicSurvival.dummy = TitanicSurvival[,c(1,3,5:9)]
 ```
@@ -452,8 +420,9 @@ test.y = test.knn[,1]
 ```
 
 ```{r}
-knn.pred = knn(train = train.x, test = test.x, cl = train.y, k=3)
+knn.pred = knn(train = train.x, cl = train.y, test = test.x, k=3)
 ```
+
 
 ```{r}
 table(knn.pred, test.y)
@@ -463,21 +432,23 @@ mean(knn.pred == test.y)
 
 ## ROC curve 
 
+[ROC](https://www.youtube.com/watch?v=4jRBRDbJemM)  
+
 **figure**
 <img src="img/ROC.png" style="border: #A9A9A9 1px solid; width:75%">
-
-```{r}
-probs.glm = predict(glm.fit, test.glm, type = "response")
-```
 
 Load the ROCR library
 ```{r}
 library(ROCR)
 ```
 
+```{r}
+probs.glm = predict(glm.fit, test.data, type = "response")
+```
+
 Make a prediction object: pred
 ```{r}
-pred = prediction(probs.glm, test.glm$survived)
+pred = prediction(probs.glm, test.data$survived)
 ```
 
 Make a performance object: perf
@@ -493,7 +464,10 @@ plot(perf1)
 Print out the AUC
 ```{r}
 perf2 = performance(pred, "auc")
+str(perf2)
 perf2@y.values[[1]]
 ```
+
+
 
 
