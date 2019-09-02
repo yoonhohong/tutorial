@@ -1,11 +1,11 @@
 ---
-title: "데이터 임상의학 w/ R (6)"
-date: Sept 4, 2018
-author: "Yoon-Ho Hong, MD, PhD"
+title: "교차검증과 부트스트랩"
 output:
   html_document:
     toc: yes
     toc_float: true
+editor_options: 
+  chunk_output_type: console
 ---
 
 resampling 은 무엇인가?   
@@ -96,57 +96,59 @@ sd(mse.kcv)
 # Bootstrap 
 추정치(parameter estimation)의 정확도(변동성) 평가  
 
-표본평균에서 모평균을 추정하는 문제... 
-먼저, remind...what you learned in high school...
+표본평균에서 모평균을 추정하는 문제를 살펴봅시다.   
 ```{r}
-# population 
 population = rnorm(1000, 0, 10) # number=1000, mean=0, sd=10
 mean(population)
 sd(population)
 ```
 
-
 ```{r}
-# sample 
-spl = sample(population, 100, replace = F) 
+sampl = sample(population, 100, replace = F) 
 ```
 
-suppose that we don't know the population mean and sd,   
-estimate the population mean  
-using the sample data   
+모집단의 평균과 표준편차를 모른다고 가정하고, 표본 데이터를 이용해서 모평균과 모표준편차를 추정해봅시다.      
 
-중심극한정리에 따르면... 
+먼저, 모평균. 중심극한정리에 따르면, 
 $$\mu = mean(\bar{X})$$
 $\mu: population\ mean$   
 $\bar{X}: sample\ mean$  
 
+즉, 표본평균의 평균이 모평균의 추정치가 되는데, 이 추정치는 얼마나 정확할까요? 우리는 먼저 모평균을 모른다고 가정하였으므로 추정치가 얼마나 정확한가에 대한 질문보다는  추정치의 변동성이 얼마나 큰가라는 질문이 더 적절한 질문이 됩니다. 추정치의 변동성을 나타내는 지표가 바로 표준 오차입니다.   
+
 standard error (of mean) = standard deviation of estimated population mean
-$$SE=\frac{\sigma}{n}$$  
+$$SE=\frac{\sigma}{\sqrt{n}}$$  
 
 $\sigma = standard\ deviation\ of\ population$
 $n = sample\ size$
 
+참고로, 신뢰구간은 표준오차와 비슷한 개념인데(추정치의 변동성) 모집단의 모수값이 포함될 가능성이 있는 범위를 나타냅니다.  
+
 95% confidence interval of population mean
 $$\bar{X}-1.96\times\frac{\sigma}{\sqrt{n}} < \mu < \bar{X}+1.96\times\frac{\sigma}{\sqrt{n}}$$    
 
-we can replace $\sigma$ with $\hat{\sigma}$  
+다시, 표준오차로 돌아가서 우리는 모집단의 표준편차 $\sigma$를 모른다고 가정하였으므로, 표본의 표준편차  $\hat{\sigma}$를 대신 사용합니다.  
+
 $$\hat{\sigma} = s$$
 $s = standard\ deviation\ of\ sample$
 
-We can calculate standard deviation of sample as following:   
+표본의 표준편차는 다음과 같이 구할 수 있습니다.     
 $$s^2 = \frac{\sum(X_i-\bar{X})^2}{n-1}$$
 **note: n-1 instead of n** 
+왜, n 대신 n-1을 사용하는 걸까요?   
+위 식과 같이 n-1을 사용해서 구한 표준편차는 정확히 말하면 표본 표준편차는 아닙니다. 대신 우리는 이를 모집단의 표준편차에 대한 불편 추정량이라고 합니다. 모집단의 표준편차는 항상 표본의 표준편차보다 클 것입니다. 1을 빼주는 것은 우리는 표본의 평균을 알고 있고, 표본의 평균이 주어지면 잔차의 합은 항상 0이기 때문입니다. 
 
-표본평균에서 모평균을 추정하는 문제로 돌아가서...    
-Calculate sample mean and sd -> Estimate population mean
+
+다시, 표본평균에서 모평균을 추정하는 위 문제로 돌아갑시다.       
 ```{r}
-x_bar = mean(spl)
+x_bar = mean(sampl)
 x_bar
-n = length(spl)
-s = sqrt((sd(spl)^2)*n/(n-1))
+n = length(sampl)
+s = sqrt((sd(sampl)^2)*n/(n-1))
 se = s/sqrt(n)
 se
 CI = c(x_bar - 1.96*s/sqrt(n), x_bar + 1.96*s/sqrt(n))
+CI
 ```
 
 We can estimate population mean, using bootstrapping  
@@ -163,16 +165,18 @@ fn = function(z, index){
 
 
 ```{r}
-fn(spl, sample(1:100, 100, replace = T))
+fn(sampl, sample(1:100, 100, replace = T))
 ```
 
 second, number of repeats    
 ```{r}
 # boot 
 library(boot)
-boot(spl, fn, R=1000) 
+boot(sampl, fn, R=1000) 
 ```
-cf> x_bar, se
+
+bootstrapping 방법으로 추정한 모평균은 위에서 모수적으로 추정한 모평균을 비교해봅시다.   
+
 
 
 

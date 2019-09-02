@@ -326,7 +326,7 @@ Calculate posterior probability with...
 
 최종적으로 얻어지는 분류기는 다음 식을 최대로 하는 클래스에 관측치를 할당하는 것과 동일하다.     
 $$\hat{\delta_k} = x\times\frac{\hat{\mu_k}}{\hat{\sigma}^2}-\frac{\hat{\mu_k}^2}{2\hat{\sigma}^2}+log(\hat{\pi_k})$$
-여기서 $\delta_k$는 k class에 대한 linear discriminant 값이고, 위 식을 linear disciminant function 이라고 한다. 분류기 이름에 선형이라는 말이 있는 것은 위 판별함수가 x의 선형함수이기 때문이다. 
+여기서 $\delta_k$는 linear disciminant function 이라고 한다. 분류기 이름에 선형이라는 말이 있는 것은 위 판별함수가 x의 선형함수이기 때문이다. 
 
 
 **figure** 

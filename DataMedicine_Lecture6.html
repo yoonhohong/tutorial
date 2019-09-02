@@ -9,10 +9,9 @@
 <meta name="generator" content="pandoc" />
 
 
-<meta name="author" content="Yoon-Ho Hong, MD, PhD" />
 
 
-<title>데이터 임상의학 w/ R (6)</title>
+<title>교차검증과 부트스트랩</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -401,9 +400,7 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore">데이터 임상의학 w/ R (6)</h1>
-<h4 class="author"><em>Yoon-Ho Hong, MD, PhD</em></h4>
-<h4 class="date"><em>Sept 4, 2018</em></h4>
+<h1 class="title toc-ignore">교차검증과 부트스트랩</h1>
 
 </div>
 
@@ -518,6 +515,7 @@ mean(mse.loocv)</code></pre>
 </dl>
 <pre class="r"><code>library(caret)</code></pre>
 <pre><code>## Loading required package: lattice</code></pre>
+<pre><code>## Loading required package: ggplot2</code></pre>
 <pre class="r"><code>folds = createFolds(1:392, k=10)
 mse.kcv = c()
 for (i in 1:10){
@@ -534,38 +532,38 @@ mean(mse.kcv)</code></pre>
 <div id="bootstrap" class="section level1">
 <h1>Bootstrap</h1>
 <p>추정치(parameter estimation)의 정확도(변동성) 평가</p>
-<p>표본평균에서 모평균을 추정하는 문제… 먼저, remind…what you learned in high school…</p>
-<pre class="r"><code># population 
-population = rnorm(1000, 0, 10) # number=1000, mean=0, sd=10
+<p>표본평균에서 모평균을 추정하는 문제를 살펴봅시다.</p>
+<pre class="r"><code>population = rnorm(1000, 0, 10) # number=1000, mean=0, sd=10
 mean(population)</code></pre>
 <pre><code>## [1] -0.2908895</code></pre>
 <pre class="r"><code>sd(population)</code></pre>
 <pre><code>## [1] 10.46025</code></pre>
-<pre class="r"><code># sample 
-spl = sample(population, 100, replace = F) </code></pre>
-<p>suppose that we don’t know the population mean and sd,<br />
-estimate the population mean<br />
-using the sample data</p>
-<p>중심극한정리에 따르면… <span class="math display">\[\mu = mean(\bar{X})\]</span> <span class="math inline">\(\mu: population\ mean\)</span><br />
+<pre class="r"><code>sampl = sample(population, 100, replace = F) </code></pre>
+<p>모집단의 평균과 표준편차를 모른다고 가정하고, 표본 데이터를 이용해서 모평균과 모표준편차를 추정해봅시다.</p>
+<p>먼저, 모평균. 중심극한정리에 따르면, <span class="math display">\[\mu = mean(\bar{X})\]</span> <span class="math inline">\(\mu: population\ mean\)</span><br />
 <span class="math inline">\(\bar{X}: sample\ mean\)</span></p>
-<p>standard error (of mean) = standard deviation of estimated population mean <span class="math display">\[SE=\frac{\sigma}{n}\]</span></p>
+<p>즉, 표본평균의 평균이 모평균의 추정치가 되는데, 이 추정치는 얼마나 정확할까요? 우리는 먼저 모평균을 모른다고 가정하였으므로 추정치가 얼마나 정확한가에 대한 질문보다는 추정치의 변동성이 얼마나 큰가라는 질문이 더 적절한 질문이 됩니다. 추정치의 변동성을 나타내는 지표가 바로 표준 오차입니다.</p>
+<p>standard error (of mean) = standard deviation of estimated population mean <span class="math display">\[SE=\frac{\sigma}{\sqrt{n}}\]</span></p>
 <p><span class="math inline">\(\sigma = standard\ deviation\ of\ population\)</span> <span class="math inline">\(n = sample\ size\)</span></p>
+<p>참고로, 신뢰구간은 표준오차와 비슷한 개념인데(추정치의 변동성) 모집단의 모수값이 포함될 가능성이 있는 범위를 나타냅니다.</p>
 <p>95% confidence interval of population mean <span class="math display">\[\bar{X}-1.96\times\frac{\sigma}{\sqrt{n}} &lt; \mu &lt; \bar{X}+1.96\times\frac{\sigma}{\sqrt{n}}\]</span></p>
-<p>we can replace <span class="math inline">\(\sigma\)</span> with <span class="math inline">\(\hat{\sigma}\)</span><br />
-<span class="math display">\[\hat{\sigma} = s\]</span> <span class="math inline">\(s = standard\ deviation\ of\ sample\)</span></p>
-<p>We can calculate standard deviation of sample as following:<br />
-<span class="math display">\[s^2 = \frac{\sum(X_i-\bar{X})^2}{n-1}\]</span> <strong>note: n-1 instead of n</strong></p>
-<p>표본평균에서 모평균을 추정하는 문제로 돌아가서…<br />
-Calculate sample mean and sd -&gt; Estimate population mean</p>
-<pre class="r"><code>x_bar = mean(spl)
+<p>다시, 표준오차로 돌아가서 우리는 모집단의 표준편차 <span class="math inline">\(\sigma\)</span>를 모른다고 가정하였으므로, 표본의 표준편차 <span class="math inline">\(\hat{\sigma}\)</span>를 대신 사용합니다.</p>
+<p><span class="math display">\[\hat{\sigma} = s\]</span> <span class="math inline">\(s = standard\ deviation\ of\ sample\)</span></p>
+<p>표본의 표준편차는 다음과 같이 구할 수 있습니다.<br />
+<span class="math display">\[s^2 = \frac{\sum(X_i-\bar{X})^2}{n-1}\]</span> <strong>note: n-1 instead of n</strong> 왜, n 대신 n-1을 사용하는 걸까요?<br />
+위 식과 같이 n-1을 사용해서 구한 표준편차는 정확히 말하면 표본 표준편차는 아닙니다. 대신 우리는 이를 모집단의 표준편차에 대한 불편 추정량이라고 합니다. 모집단의 표준편차는 항상 표본의 표준편차보다 클 것입니다. 1을 빼주는 것은 우리는 표본의 평균을 알고 있고, 표본의 평균이 주어지면 잔차의 합은 항상 0이기 때문입니다.</p>
+<p>다시, 표본평균에서 모평균을 추정하는 위 문제로 돌아갑시다.</p>
+<pre class="r"><code>x_bar = mean(sampl)
 x_bar</code></pre>
 <pre><code>## [1] -0.3538677</code></pre>
-<pre class="r"><code>n = length(spl)
-s = sqrt((sd(spl)^2)*n/(n-1))
+<pre class="r"><code>n = length(sampl)
+s = sqrt((sd(sampl)^2)*n/(n-1))
 se = s/sqrt(n)
 se</code></pre>
 <pre><code>## [1] 0.9665073</code></pre>
-<pre class="r"><code>CI = c(x_bar - 1.96*s/sqrt(n), x_bar + 1.96*s/sqrt(n))</code></pre>
+<pre class="r"><code>CI = c(x_bar - 1.96*s/sqrt(n), x_bar + 1.96*s/sqrt(n))
+CI</code></pre>
+<pre><code>## [1] -2.248222  1.540487</code></pre>
 <p>We can estimate population mean, using bootstrapping<br />
 We need two<br />
 - function<br />
@@ -574,7 +572,7 @@ We need two<br />
 <pre class="r"><code>fn = function(z, index){
   mean(z[index])
 } # function need two arguments, the second one should be index</code></pre>
-<pre class="r"><code>fn(spl, sample(1:100, 100, replace = T))</code></pre>
+<pre class="r"><code>fn(sampl, sample(1:100, 100, replace = T))</code></pre>
 <pre><code>## [1] 0.4933099</code></pre>
 <p>second, number of repeats</p>
 <pre class="r"><code># boot 
@@ -584,22 +582,19 @@ library(boot)</code></pre>
 <pre><code>## The following object is masked from &#39;package:lattice&#39;:
 ## 
 ##     melanoma</code></pre>
-<pre><code>## The following object is masked from &#39;package:car&#39;:
-## 
-##     logit</code></pre>
-<pre class="r"><code>boot(spl, fn, R=1000) </code></pre>
+<pre class="r"><code>boot(sampl, fn, R=1000) </code></pre>
 <pre><code>## 
 ## ORDINARY NONPARAMETRIC BOOTSTRAP
 ## 
 ## 
 ## Call:
-## boot(data = spl, statistic = fn, R = 1000)
+## boot(data = sampl, statistic = fn, R = 1000)
 ## 
 ## 
 ## Bootstrap Statistics :
 ##       original      bias    std. error
 ## t1* -0.3538677 -0.08676985   0.9617525</code></pre>
-<p>cf&gt; x_bar, se</p>
+<p>bootstrapping 방법으로 추정한 모평균은 위에서 모수적으로 추정한 모평균을 비교해봅시다.</p>
 </div>
 
 
