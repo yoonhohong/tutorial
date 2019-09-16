@@ -8,24 +8,22 @@ editor_options:
   chunk_output_type: console
 ---
 
-resampling 은 무엇인가?   
-왜 필요한가?   
-어떤 방법들이 있는가?   
+# Validation  
 
-# Cross validation 
-모델의 성능 평가(model assessment)   
-적절한 수준의 flexibility 를 선택(model selection)하는 데 사용   
+모델의 성능을  평가할 때에는 항상 검증셋(test dataset)을 이용해야 합니다. training set에서는 항상 더 유연한 모델이 더 정확한 예측 결과를 보여줍니다. 그러나, 훈련셋에서 더 정확한 결과가 검정셋에서의 정확성을 보장해주지는 못합니다. 오히려, 유연한 모델일 수록 검정셋의 noise까지 학습하게 됩니다.즉, overfit 하게 되어 variance 가 커지게 됩니다. 우리는 bias-variance trade-off 를 고려하여 적절한 수준의 flexibility 를 갖는 모델을 선택(model selection)해야 합니다.   
 
-Validation set approach  
-: test error 에 대한 추정치와 추정치의 변동성이 크다 (즉, bias와 variance가 모두 크다)  
+검증셋을 이용하여 모델의 성능을 평가하는 방법에는 아래의 세가지가 있습니다.   
 
-LOOCV (Leave-one-out cross-validation)   
-: test error 에 대한 추정치와 추정치의 변동성이 훨씬 작다 (즉, bias와 variance가 모두 작다)
-
-k-fold CV 
-: test error 에 대한 추정치의 정확성, 즉 bias는 validation set approach와 LOOCV의 중간에 해당   
-: test error 추정치는 LOOCV의 추정치보다 변동성이 작은 경향이 있다.   
+1. Validation set approach  
+2. LOOCV (Leave-one-out cross-validation)
+3. k-fold CV 
 **rule of thumb: k=5 or 10 (bias-variance trade-off)**
+
+Auto 데이터셋에서 연비(mpg)를 예측하는 회귀 모델을 만들고, 모델의 성능을 평가해봅시다.  
+
+```{r}
+library(dplyr)
+```
 
 ```{r}
 Auto = read.csv("Auto.csv")
@@ -35,86 +33,99 @@ Auto = Auto[complete.cases(Auto),]
 summary(Auto)
 ```
 
-validation set approach
 ```{r}
 set.seed(1)
-train = sample(392, 196)
-lm.fit = lm(mpg ~ horsepower, data = Auto, subset = train)
-pred = predict(lm.fit, Auto[-train,])
-obs = Auto[-train,]$mpg
+train_index = sample(nrow(Auto), round(nrow(Auto)*2/3))
+Auto = select(Auto, -name)
+train_data = Auto[train_index, ]
+test_data = Auto[-train_index, ]
+lm.fit = lm(mpg ~ ., data = train_data)
+pred = predict(lm.fit, test_data)
+obs = test_data$mpg
 mse = mean((pred - obs)^2)
 mse
 ```
 
-
-validation set approach
-: 평균제곱오차의 추정치를 구해보자.   
+validation set approach 를 10번 반복해서 평균제곱오차의 추정치와 분산을  구해보자.   
 ```{r}
-mse = c()
+mse_vset = c()
 for (i in 1:10){
-  train = sample(392, 196)
-  lm.fit = lm(mpg ~ horsepower, data = Auto, subset = train)
-  pred = predict(lm.fit, Auto[-train,])
-  obs = Auto[-train,]$mpg
-  mse[i] = mean((pred - obs)^2)
+  train_index = sample(nrow(Auto), round(nrow(Auto)*2/3), replace = F)
+  train_data = Auto[train_index, ]
+  test_data = Auto[-train_index, ]
+  lm.fit = lm(mpg ~ ., data = train_data)
+  pred = predict(lm.fit, test_data)
+  obs = test_data$mpg
+  mse_vset[i] = mean((pred - obs)^2)
 }
-mean(mse)
-sd(mse)
+mean(mse_vset)
+var(mse_vset)
 ```
 
-LOOCV   
-: 평균제곱오차의 추정치를 구해보자.   
+LOOCV 를 이용하여 평균제곱오차의 추정치와 분산을 구해보자.   
 ```{r}
-mse.loocv = c()
-for (i in 1:392){
-  lm.fit = lm(mpg ~ horsepower, data = Auto[-i,])
+mse_loocv = c()
+for (i in 1:nrow(Auto)){
+  lm.fit = lm(mpg ~ ., data = Auto[-i,])
   pred = predict(lm.fit, Auto[i,])
   obs = Auto$mpg[i]
-  mse.loocv[i] = (pred - obs)^2
+  mse_loocv[i] = (pred - obs)^2
 }
-mean(mse.loocv)
-sd(mse.loocv)
+mean(mse_loocv)
+var(mse_loocv)
 ```
 
 K-fold CV 
-: MSE 추정치   
 ```{r}
 library(caret)
-folds = createFolds(1:392, k=10)
-mse.kcv = c()
+set.seed(1)
+folds = createFolds(1:nrow(Auto), k=10)
+mse_kcv = c()
 for (i in 1:10){
-  lm.fit = lm(mpg ~ horsepower, data = Auto[-folds[[i]],])
+  lm.fit = lm(mpg ~ ., data = Auto[-folds[[i]],])
   pred = predict(lm.fit, Auto[folds[[i]],])
   obs = Auto[folds[[i]],]$mpg
-  mse.kcv[i] = mean((pred - obs)^2)
+  mse_kcv[i] = mean((pred - obs)^2)
 }
-mean(mse.kcv)
-sd(mse.kcv)
+mean(mse_kcv)
+var(mse_kcv)
 ```
+
+위 세가지 검증 기법을 비교해봅시다.  
+
+Validation set approach는 training set의 크기가 적어 bias가 큰 경향이 있고, training vs. test dataset 분할의 임의성으로 인해 test error 에 대한 추정치의 변동성이 보통 크게 나타납니다. 즉, bias와 variance가 모두 큽니다. 
+
+반면에, LOOCV는 training dataset의 크기가 커서 bias를 줄일 수 있고, k-fold CV 에서의 bias 는 validation set approach와 LOOCV의 사이에 해당합니다.   
+
+variance 는 LOOCV 와 k-fold CV 중 어느 것이 더 클까요? 보통 예상과 달리 k-fold CV 이 LOOCV 보다 variance 가 더 작은 경향이 있습니다. LOOCV 는 training dataset 이 서로 매우 유사하므로 모델간의 상관 관계가 매우 높습니다. 모델 간의 상관 관계가 높을 수록 variance 가 더 크게 나타납니다.  
 
 
 # Bootstrap 
-추정치(parameter estimation)의 정확도(변동성) 평가  
+추정치의 정확도, 즉 변동성 평가  
 
-표본평균에서 모평균을 추정하는 문제를 살펴봅시다.   
+표본평균에서 모평균을 추정하는 문제를 기억해봅시다.     
+
+다음과 같은 모집단이 있다고 합시다.   
 ```{r}
 population = rnorm(1000, 0, 10) # number=1000, mean=0, sd=10
 mean(population)
 sd(population)
 ```
 
+모집단에서 표본을 추출합니다.   
 ```{r}
 sampl = sample(population, 100, replace = F) 
 ```
 
-모집단의 평균과 표준편차를 모른다고 가정하고, 표본 데이터를 이용해서 모평균과 모표준편차를 추정해봅시다.      
+이제, 모집단의 평균과 표준편차를 모른다고 가정하고, 표본 데이터를 이용해서 모평균과 모표준편차를 추정해봅시다.      
 
-먼저, 모평균. 중심극한정리에 따르면, 
+먼저, 모평균을 추청해봅시다.  
+중심극한정리에 따라서 모집단의 평균은 표본평균의 평균과 같습니다.   
 $$\mu = mean(\bar{X})$$
 $\mu: population\ mean$   
 $\bar{X}: sample\ mean$  
 
-즉, 표본평균의 평균이 모평균의 추정치가 되는데, 이 추정치는 얼마나 정확할까요? 우리는 먼저 모평균을 모른다고 가정하였으므로 추정치가 얼마나 정확한가에 대한 질문보다는  추정치의 변동성이 얼마나 큰가라는 질문이 더 적절한 질문이 됩니다. 추정치의 변동성을 나타내는 지표가 바로 표준 오차입니다.   
+즉, 표본평균의 평균이 모평균의 추정치가 되는데, 이 추정치는 얼마나 정확할까요? 우리는 먼저 모평균을 모른다고 가정하였으므로 추정치가 얼마나 정확한지 알수 없습니다. 따라서, 추정치가 얼마나 정확한가에 대한 질문보다는 추정치의 변동성이 얼마나 큰가라는 질문이 더 적절한 질문입니다. 추정치의 변동성을 나타내는 지표가 바로 표준 오차입니다.   
 
 standard error (of mean) = standard deviation of estimated population mean
 $$SE=\frac{\sigma}{\sqrt{n}}$$  
@@ -136,51 +147,45 @@ $s = standard\ deviation\ of\ sample$
 $$s^2 = \frac{\sum(X_i-\bar{X})^2}{n-1}$$
 **note: n-1 instead of n** 
 왜, n 대신 n-1을 사용하는 걸까요?   
-위 식과 같이 n-1을 사용해서 구한 표준편차는 정확히 말하면 표본 표준편차는 아닙니다. 대신 우리는 이를 모집단의 표준편차에 대한 불편 추정량이라고 합니다. 모집단의 표준편차는 항상 표본의 표준편차보다 클 것입니다. 1을 빼주는 것은 우리는 표본의 평균을 알고 있고, 표본의 평균이 주어지면 잔차의 합은 항상 0이기 때문입니다. 
-
-
-다시, 표본평균에서 모평균을 추정하는 위 문제로 돌아갑시다.       
+위 식과 같이 n-1을 사용해서 구한 표준편차는 정확히 말하면 표본 표준편차는 아닙니다. 대신 우리는 이를 모집단의 표준편차에 대한 불편 추정량이라고 합니다. 모집단의 표준편차는 항상 표본의 표준편차보다 클 것입니다. 1을 빼주는 것은 우리는 표본의 평균을 알고 있고, 표본의 평균이 주어지면 잔차의 합은 항상 0이기 때문입니다. 즉, 모집단의 분산에 대한 불편 추정량으로서 표본의 분산에 대한 자유도는 n이 아니라 n-1 이 됩니다.   
+이제 위에서 설명한 식을 이용해서 다음과 같이 표본에서 모평균을 추정할 수 있습니다.   
 ```{r}
 x_bar = mean(sampl)
-x_bar
 n = length(sampl)
 s = sqrt((sd(sampl)^2)*n/(n-1))
 se = s/sqrt(n)
-se
 CI = c(x_bar - 1.96*s/sqrt(n), x_bar + 1.96*s/sqrt(n))
-CI
+se; CI
 ```
 
-We can estimate population mean, using bootstrapping  
-We need two  
-- function   
-- number of repeats
-
-first, function   
+다음으로 bootstrapping 기법을 이용해 모평균을 추정해봅시다. bootstrapping 을 위해 반복적으로 적용한 function 을 먼저 정의해주어야 합니다. 여기서는 표본의 평균을 추정하는 함수가 되겠습니다.  
 ```{r}
 fn = function(z, index){
   mean(z[index])
 } # function need two arguments, the second one should be index
 ```
 
-
+이제 표본에서 하위 표본을 추출하고(복원을 허락, resample), 해당 하위 표본에 평균을 구하는 함수를 적용합니다.   
 ```{r}
-fn(sampl, sample(1:100, 100, replace = T))
+fn(sampl, sample(length(sampl), length(sampl), replace = T))
 ```
 
-second, number of repeats    
+위 과정을 n번 반복합니다.  
 ```{r}
 # boot 
 library(boot)
-boot(sampl, fn, R=1000) 
+res = boot(sampl, fn, R=1000) 
+res$t0 
+# original = the mean of the original sample
+mean(res$t)
+mean(res$t) - res$t0
+# bias  = the mean of resamples (the esimated mean of the population) - the mean of original sample 
+sd(res$t)
+# std. error = the standard deviation of the mean of resamples
+boot.ci(res)
 ```
 
-bootstrapping 방법으로 추정한 모평균은 위에서 모수적으로 추정한 모평균을 비교해봅시다.   
-
-
-
-
-
+bootstrapping 방법으로 추정한 모평균과 신뢰구간을 위에서 모수적으로 추정한 모평균, 신뢰구간과 비교해봅시다.    
 
 
 

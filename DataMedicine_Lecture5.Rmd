@@ -307,15 +307,14 @@ $$P(B|A) = \frac{P(A|B)\times P(B)}{P(A)}$$
 베이즈 정리를 베이즈 분류기에 적용하면 아래 식이 된다.    
 $$P(Y=k|X=x) = \frac{P(X=x|Y=k) \times P(Y=k)}{\sum_{l=1}^k P(X=x|Y=l)} $$ 
 
-위 베이즈 정리가 의미하는 것은 $P(Y=k|X=x)$ - 사후 확률이라고 한다 - 를 직접 계산하는 대신에 $P(Y=k)$와 $P(X=x|Y=k)$ - 사전 확률 - 의 추정치를 통해 구할 수 있다는 것이다.   
+위 베이즈 정리가 의미하는 것은 $P(Y=k|X=x)$ - 사후 확률이라고 한다 - 를 직접 계산하는 대신에 사전 확률 $P(Y=k)$와 조건부 확률밀도 함수 $P(X=x|Y=k)$의 추정치를 통해 구할 수 있다는 것이다.   
 
 $P(Y=k)$ 추정은 쉽다. 즉, k번째 클래스에 속하는 관측치들의 비율을 단순히 계산하면 된다.   
 
 하지만, $P(X=x|Y=k)$에 대한 추정은 어떤 분포를 가정하지 않는다면 어렵다. LDA는 사전확률을 추정하기 위해 아래와 같은 가정을 한다.   
 
-Assumptions in LDA   
-- normal distribution of $P(X=x|Y=k)$   
-- common variance across different k class   
+1. normal distribution of $P(X=x|Y=k)$   
+2. common variance across different k class   
 
 이제 우리는 k 클래스에 속한 관측치의 평균과 분산(공통)을 구해 확률밀도함수 $P(X=x|Y=k)$를 추정할 수 있고, 결국 $P(Y=k|X=x)$도 추정할 수 있다. (정규분포의 확률밀도함수 참조)   
 
@@ -326,7 +325,7 @@ Calculate posterior probability with...
 
 최종적으로 얻어지는 분류기는 다음 식을 최대로 하는 클래스에 관측치를 할당하는 것과 동일하다.     
 $$\hat{\delta_k} = x\times\frac{\hat{\mu_k}}{\hat{\sigma}^2}-\frac{\hat{\mu_k}^2}{2\hat{\sigma}^2}+log(\hat{\pi_k})$$
-여기서 $\delta_k$는 linear disciminant function 이라고 한다. 분류기 이름에 선형이라는 말이 있는 것은 위 판별함수가 x의 선형함수이기 때문이다. 
+위 식을 linear disciminant function 이라고 한다. 분류기 이름에 선형이라는 말이 있는 것은 위 판별함수가 x의 선형함수이기 때문이다. 
 
 
 **figure** 
@@ -349,7 +348,7 @@ LDA는 나중에 살펴볼 PCA (principal component analysis)와 매우 유사�
 fit LDA to training data   
 
 ```{r}
-library(MASS)
+library(MASS) # lda 함수를 위해 필요하다.  
 ```
 
 ```{r}
@@ -374,8 +373,10 @@ lda.pred = predict(lda.fit, test.data)
 ```{r message=FALSE}
 names(lda.pred)
 ```
+class, posterior, x   
+class는 예측 결과값을, posterior는 각 클래스일 확률을, x는 linear discriminant function 값을 돌려준다.   
 
-confusion matrix   
+실제 관측치와 예측치가 얼마나 일치하는지 알아보기 위해 confusion matrix 를 구해보자.   
 ```{r}
 table(lda.pred$class, test.data$survived)
 ```

@@ -649,19 +649,21 @@ mean(glm.pred == test.data$survived)
 <span class="math display">\[P(B|A) = \frac{P(A|B)\times P(B)}{P(A)}\]</span></p>
 <p>베이즈 정리를 베이즈 분류기에 적용하면 아래 식이 된다.<br />
 <span class="math display">\[P(Y=k|X=x) = \frac{P(X=x|Y=k) \times P(Y=k)}{\sum_{l=1}^k P(X=x|Y=l)} \]</span></p>
-<p>위 베이즈 정리가 의미하는 것은 <span class="math inline">\(P(Y=k|X=x)\)</span> - 사후 확률이라고 한다 - 를 직접 계산하는 대신에 <span class="math inline">\(P(Y=k)\)</span>와 <span class="math inline">\(P(X=x|Y=k)\)</span> - 사전 확률 - 의 추정치를 통해 구할 수 있다는 것이다.</p>
+<p>위 베이즈 정리가 의미하는 것은 <span class="math inline">\(P(Y=k|X=x)\)</span> - 사후 확률이라고 한다 - 를 직접 계산하는 대신에 사전 확률 <span class="math inline">\(P(Y=k)\)</span>와 조건부 확률밀도 함수 <span class="math inline">\(P(X=x|Y=k)\)</span>의 추정치를 통해 구할 수 있다는 것이다.</p>
 <p><span class="math inline">\(P(Y=k)\)</span> 추정은 쉽다. 즉, k번째 클래스에 속하는 관측치들의 비율을 단순히 계산하면 된다.</p>
 <p>하지만, <span class="math inline">\(P(X=x|Y=k)\)</span>에 대한 추정은 어떤 분포를 가정하지 않는다면 어렵다. LDA는 사전확률을 추정하기 위해 아래와 같은 가정을 한다.</p>
-<p>Assumptions in LDA<br />
-- normal distribution of <span class="math inline">\(P(X=x|Y=k)\)</span><br />
-- common variance across different k class</p>
+<ol style="list-style-type: decimal">
+<li>normal distribution of <span class="math inline">\(P(X=x|Y=k)\)</span><br />
+</li>
+<li>common variance across different k class</li>
+</ol>
 <p>이제 우리는 k 클래스에 속한 관측치의 평균과 분산(공통)을 구해 확률밀도함수 <span class="math inline">\(P(X=x|Y=k)\)</span>를 추정할 수 있고, 결국 <span class="math inline">\(P(Y=k|X=x)\)</span>도 추정할 수 있다. (정규분포의 확률밀도함수 참조)</p>
 <p>Calculate posterior probability with…<br />
 - P(Y=k): proportion<br />
 - <span class="math inline">\(\mu_k: mean(X)\ in\ class\ k\)</span><br />
 - <span class="math inline">\(\sigma^2: variance\)</span></p>
 <p>최종적으로 얻어지는 분류기는 다음 식을 최대로 하는 클래스에 관측치를 할당하는 것과 동일하다.<br />
-<span class="math display">\[\hat{\delta_k} = x\times\frac{\hat{\mu_k}}{\hat{\sigma}^2}-\frac{\hat{\mu_k}^2}{2\hat{\sigma}^2}+log(\hat{\pi_k})\]</span> 여기서 <span class="math inline">\(\delta_k\)</span>는 linear disciminant function 이라고 한다. 분류기 이름에 선형이라는 말이 있는 것은 위 판별함수가 x의 선형함수이기 때문이다.</p>
+<span class="math display">\[\hat{\delta_k} = x\times\frac{\hat{\mu_k}}{\hat{\sigma}^2}-\frac{\hat{\mu_k}^2}{2\hat{\sigma}^2}+log(\hat{\pi_k})\]</span> 위 식을 linear disciminant function 이라고 한다. 분류기 이름에 선형이라는 말이 있는 것은 위 판별함수가 x의 선형함수이기 때문이다.</p>
 <p><strong>figure</strong> <img src="img/LDA.png" style="border: #A9A9A9 1px solid; width:75%"></p>
 <p>LDA는 나중에 살펴볼 PCA (principal component analysis)와 매우 유사하다. 미리 어떤 유사점과 차이점이 있는지 알아보자.</p>
 <p><a href="https://www.youtube.com/watch?v=azXCzI57Yfc">LDA &amp; PCA</a></p>
@@ -674,7 +676,7 @@ mean(glm.pred == test.data$survived)
 <h2>LDA 실습</h2>
 <p>다시 titanic 호로 돌아와보자.<br />
 fit LDA to training data</p>
-<pre class="r"><code>library(MASS)
+<pre class="r"><code>library(MASS) # lda 함수를 위해 필요하다.  
 ## 
 ## Attaching package: &#39;MASS&#39;
 ## The following object is masked from &#39;package:dplyr&#39;:
@@ -708,7 +710,9 @@ fit LDA to training data</p>
 <pre class="r"><code>lda.pred = predict(lda.fit, test.data)</code></pre>
 <pre class="r"><code>names(lda.pred)
 ## [1] &quot;class&quot;     &quot;posterior&quot; &quot;x&quot;</code></pre>
-<p>confusion matrix</p>
+<p>class, posterior, x<br />
+class는 예측 결과값을, posterior는 각 클래스일 확률을, x는 linear discriminant function 값을 돌려준다.</p>
+<p>실제 관측치와 예측치가 얼마나 일치하는지 알아보기 위해 confusion matrix 를 구해보자.</p>
 <pre class="r"><code>table(lda.pred$class, test.data$survived)
 ##      
 ##        no yes
