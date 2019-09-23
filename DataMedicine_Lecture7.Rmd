@@ -1,29 +1,31 @@
 ---
-title: "데이터 임상의학 w/ R (7)"
-date: Sept 11, 2018
-author: "Yoon-Ho Hong, MD, PhD"
+title: "Decision tree and Random forest"
 output:
   html_document:
     toc: yes
     toc_float: true
+editor_options: 
+  chunk_output_type: console
 ---
+
+[Decision tree](https://www.youtube.com/watch?v=7VeUPuFGJHk)  
 
 # Decision trees: regression  
 
 설명변수 공간을 다수의 영역으로 분할하는 방법   
-예측: 해당 관측치가 속하는 영역의 훈련 관측치들의 평균 (회귀) 또는 최빈값 (분류)을 사용한다.  
+해당 관측치가 속하는 영역의 훈련 관측치들의 평균 (회귀) 또는 최빈값 (분류)을 사용하여 예측한다.  
 
+<메이저리그 타자의 연봉을 예측하는 문제>    
 <img src="img/tree1.png" style="border: #A9A9A9 1px solid; width:75%">
 
 <img src="img/treeRegression.png" style="border: #A9A9A9 1px solid; width:75%">
-
 
 *advantage*  
 - glass-box model   
 - intuitive   
 
 
-아래 식으로 주어진 RSS 를 최소로 하는 셜명변수 공간을 찾는 것이 목적   
+회귀 문제에서는 아래 식으로 주어진 RSS 를 최소로 하는 셜명변수 공간을 찾는 것이 목적   
 
 $$\sum_{j=1}^J\sum_{i\in R_j}(y_i - \hat{y}_{R_j})^2$$
 
@@ -31,8 +33,7 @@ $R_j$: jth 설명변수 공간
 $\hat{y}_{R_j}$: jth 설명변수 공간에 속한 훈련 관측치 반응변수들의 평균값   
 
 
-그러나.... 
-설명변수 공간을 J개로 분할하는 모든 가능한 경우를 고려하는 것은 계산상 실현 불가능하다...  
+그러나, 설명변수 공간을 J개로 분할하는 모든 가능한 경우를 고려하는 것은 계산상 실현이 불가능하다.   
 
 **recursive binary splitting**  
 - top-down   
@@ -56,9 +57,7 @@ optimal solution: 15 + 15 = 30c, with 2 coins
 
 **strategies to overcome drawbacks**   
 *pruning*   
-: 트리빌딩 초기 쓸모 없어 보이는 분할 이후에 아주 좋은 분할이 올 수 있다. 따라서, 더 나은 전략은 아주 큰 트리를 만든 다음에 그것을 다시 prune하여 subtree 를 얻는 것이다.     
-그러나....   
-모든 가능한 subtree 에 대해 교차 검증(혹은 검증셋 기법)을 이용하여 검정오차율를 추청하는 것은 너무 번거롭다. 대신, 우리는 고려할 작은 subtree 집합을 선택한다.    
+: 트리빌딩 초기 쓸모 없어 보이는 분할 이후에 아주 좋은 분할이 올 수 있다. 따라서, 더 나은 전략은 아주 큰 트리를 만든 다음에 그것을 다시 prune하여 subtree 를 얻는 것이다. 그러나, 이렇게 모든 가능한 subtree 에 대해 교차 검증(혹은 검증셋 기법)을 이용하여 검정오차율를 추청하는 것은 너무 번거롭다. 대신, 우리는 고려할 작은 subtree 집합을 다음 알고리즘으로 선택할 것이다.  
 
 **cost complexity pruning (weakest link pruning)**    
 모든 가능한 subtree 를 고려하는 대신에 tuning parameter $\alpha$ (>=0) 에 의해 색인된 일련의 tree 들을 고려.    
@@ -83,67 +82,14 @@ Linear model vs. Tree-based model
 
 <img src="img/linearVsTree.png" style="border: #A9A9A9 1px solid; width:75%">
 
-load tree package   
-```{r}
-library(tree)
-```
-
-
-load MASS package to use Boston dataset   
-make train dataset   
-fit decision tree model to train dataset   
-```{r}
-library(MASS)
-set.seed(1)
-train = sample(1:nrow(Boston), nrow(Boston)/2)
-tree.boston = tree(medv~., Boston, subset = train)
-summary(tree.boston) # deviance: residual sum of square  
-```
-
-plot decision tree   
-```{r}
-plot(tree.boston)
-text(tree.boston)
-```
-
-what are the stopping criteria?   
-```{r}
-?tree
-?tree.control
-```
-
-pruning and cross-validation to set the optimal size of tree    
-```{r}
-cv.boston = cv.tree(tree.boston) # default K=10, cost complexity pruning
-plot(cv.boston$size, cv.boston$dev, type = "b")
-```
-
-if you want a specific size of tree by pruning  
-```{r}
-prune.boston = prune.tree(tree.boston, best = 5)
-plot(prune.boston)
-text(prune.boston)
-```
-
-
-```{r}
-predicted = predict(tree.boston, newdata = Boston[-train,])
-observed = Boston[-train,]$medv
-plot(predicted, observed)
-abline(0,1)
-mean((predicted-observed)^2)
-```
-
 
 # Decision trees: classification  
 
-$\hat{p}_{mk}$: m번째 설명변수 공간 내 k class에 속하는 훈련 관측치들의 비율    
-...이라고 할 때, 아래 분류오류율을 최소로 하는 것이 목적이다.   
+$\hat{p}_{mk}$를 m번째 설명변수 공간 내 k class에 속하는 훈련 관측치들의 비율이라고 할 때, 아래 분류오류율을 최소로 하는 것이 목적이다.    
 
 $$E = 1 - \max(\hat{p}_{mk})$$
 
-binary split 과정에서 분류오류율을 사용할 수 있지만...    
-실제로는 node purity 에 더 민감한 아래 두 가지 척도를 주로 사용한다.     
+binary split 과정에서 분류오류율을 사용할 수 있지만, 실제로는 node purity 에 더 민감한 아래 두 가지 척도를 주로 사용한다.     
 
 - 지니 지수(Gini index)  
 - 교차엔트로피(cross-entropy)   
@@ -155,63 +101,9 @@ Cross-entropy
 $$D = - \sum_{k=1}^{K} \hat{p}_{mk}log(\hat{p}_{mk})$$  
 
 
-
-```{r}
-library(ISLR)
-attach(Carseats)
-High = ifelse(Sales<=8, "No", "Yes")
-Carseats = data.frame(Carseats, High)
-```
-
-```{r}
-set.seed(1)
-train = sample(1:nrow(Carseats), 200)
-test = Carseats[-train,]
-tree.carseats = tree(High~.-Sales, data = Carseats, subset = train)
-summary(tree.carseats)
-```
-
-```{r}
-plot(tree.carseats)
-text(tree.carseats, pretty = 0)
-```
-
-```{r}
-tree.carseats
-```
-
-```{r}
-pred.class = predict(tree.carseats, newdata = test, type = "class")
-table(pred.class, test$High)
-mean(pred.class == test$High)
-```
-
-cost complexity pruning and 10-fold CV
-```{r}
-set.seed(2)
-cv.carseats = cv.tree(tree.carseats, FUN = prune.misclass)
-```
-
-```{r}
-plot(cv.carseats$size, cv.carseats$dev, type = "b")
-```
-
-```{r}
-prune.carseats = prune.misclass(tree.carseats, best = 5)
-plot(prune.carseats)
-text(prune.carseats, pretty = 0)
-```
-
-```{r}
-tree.pred = predict(prune.carseats, test, type = "class")
-table(tree.pred, test$High)
-mean(tree.pred == test$High)
-```
-
-
 # Bagging 
 
-aka bootstrap aggregation   
+a.k.a. bootstrap aggregation   
 기계학습모델의 분산을 줄여 예측 정확도를 증가시키기 위한 범용 절차 (general-purpose procedure)   
 
 $$\hat{f}_{bag}(x) = \frac{1}{B}\sum_{b=1}^{B}\hat{f}_b(x)$$ 
@@ -229,6 +121,10 @@ majority rule for classification
 주어진 설명변수에 대한 분할로 RSS (or Gini index) 가 감소되는 총량을 모든 B개 트리에 대해 평균한 값이 크면 해당 설명변수가 중요하다고 할 수 있다.   
 
 # Random Forest 
+
+[Random Forest part I](https://www.youtube.com/watch?v=J4Wdy0Wc_xQ)
+[Random Forest part II](https://www.youtube.com/watch?v=nyxTdL_4Q-Q) 
+
 배깅에서와 마찬가지로 bootstrap 에 의해 다수의 트리를 만든다. 그러나, 배깅과 달리 트리 내에서 split 이 고려될 때마다 p개 설명변수들의 전체 집합에서 랜덤하게 m개 설명변수가 선택된다. 
 rule of thumb, $m = \sqrt{p}$   
 
@@ -236,50 +132,63 @@ rule of thumb, $m = \sqrt{p}$
 
 <img src="img/randomForest.png" style="border: #A9A9A9 1px solid; width:75%">
 
-```{r}
-library(randomForest)
-set.seed(1)
-bag.boston = randomForest(medv ~., data=Boston, subset=train, ntree=500, mtry=13, importance=T)
-bag.boston
+자, 이제 실습을 해보자.  
+
+```{r message=FALSE}
+library(MASS)
+?Boston
 ```
+medv: median value of owner-occupied homes in  $1K  
+
+```{r message=FALSE}
+library(caret)
+```
+
+```{r}
+set.seed(1) 
+train_index = createDataPartition(1:nrow(Boston), p=0.75, list = FALSE)
+train_boston = Boston[train_index,]
+test_boston = Boston[-train_index,]
+```
+
+set resampling method 
+```{r}
+myTrCtrl = trainControl(method = "repeatedcv", number = 10, repeats = 2)
+```
+
+build model by using training data 
+```{r}
+set.seed(999)
+rf_model = train(medv ~ ., data = train_boston, method = "rf", trControl = myTrCtrl, importance = TRUE)
+rf_model
+plot(rf_model)
+```
+
+mtry: Number of variables randomly sampled as candidates at each split. Note that the default values are different for classification (sqrt(p) where p is number of variables in x) and regression (p/3)
+
 
 test set 에서의 성능
 ```{r}
-predicted.bag = predict(bag.boston, newdata = Boston[-train,])
-plot(predicted.bag, Boston[-train,]$medv)
+pred = predict(rf_model, newdata = test_boston)
+plot(pred, test_boston$medv)
 abline(0,1)
-mean((predicted.bag - Boston[-train,]$medv)^2)
+sqrt(mean((pred - test_boston$medv)^2))
 ```
 
 
 ```{r}
-rf.boston = randomForest(medv ~., data=Boston, subset=train, ntree=500, mtry=6, importance=T)
-rf.boston
+rf_imp = varImp(rf_model, scale = F)
 ```
 
 ```{r}
-predicted.rf = predict(rf.boston, newdata = Boston[-train,])
-plot(predicted.rf, Boston[-train,]$medv)
-abline(0,1)
-mean((predicted.rf - Boston[-train,]$medv)^2)
-```
-
-```{r}
-importance(rf.boston)
-```
-%IncMSE: 주어진 변수가 모델에서 제외될 때 OOB 에서 예측 정확도의 평균 감소량   
-IncNodePurity: 주어진 변수에 대한 분할로 인한 노드 purity 의 증가량(RSS의 감소량, deviance의 감소량)을 모든 트리에 대해 평균한 것  
-
-```{r}
-varImpPlot(rf.boston)
+plot(rf_imp)
 ```
 
 # Boosting 
 
-여러개의 decision tree 를 만들어 결합하는데, 배깅과 달리 bootstrap 샘플링을 하지 않고, 대신...   
-모든 훈련셋 자료를 이용하여 순차적으로... 
-천천히... 
-학습한다.   
+
+
+여러개의 decision tree 를 만들어 결합하는데, 배깅과 달리 bootstrap 샘플링을 하지 않고, 대신 모든 훈련셋 자료를 이용하여 순차적으로 천천히 학습한다.   
 
 Regression decision tree boosting   
 
@@ -302,40 +211,46 @@ $$r_i \leftarrow r_i - \lambda \hat{f}^b(x_i)$$
 $$\hat{f}(x) = \sum_{b=1}^B \lambda \hat{f}^b(x)$$
 
 Boosting 의 tuning parameters   
-- B: number of trees 
+- B: number of trees   
 - $\lambda$: 수축 파라미터 (학습 속도를 제어)  
 - d: number of split in each tree (boosting 의 복잡도를 제어) 
 
 <img src="img/boosting.png" style="border: #A9A9A9 1px solid; width:75%">
 
+자, 바로 Boston 데이터셋에서  실습을 해봅시다.   
 ```{r}
-library(gbm)
-set.seed(1)
-boost.boston = gbm(medv~., data = Boston[train,], distribution = "gaussian", n.trees = 5000, interaction.depth = 4) # shrinkage = 0.001
+set.seed(999)
+gbm_model = train(medv~., data = train_boston, trControl = myTrCtrl, method = "gbm", verbose = F) 
+gbm_model
+```
+
+interaction.depth: the maximum depth of each tree, i.e., the highest level of variable interactions allowed
+n.trees: number of trees to fit   
+shrinkage: learning rate   
+n.minobsinnode: the mininum number of observations in the terminal nodes of the trees    
+
+```{r}
+plot(gbm_model)
 ```
 
 ```{r}
-summary(boost.boston)
+gbmGrid <-  expand.grid(interaction.depth = c(1, 5,10), n.trees = c(50*(1:10)), shrinkage = 0.1, n.minobsinnode = 10)
 ```
-
-partial dependence plot (PD plot)
+                        
 ```{r}
-par(mfrow=c(1,2))
-plot(boost.boston, i = "rm")
-plot(boost.boston, i= "lstat")
+summary(gbm_model, las = 1)
 ```
 
 ```{r}
-predicted.boost = predict(boost.boston, newdata = Boston[-train,], n.trees = 5000)
-mean((predicted.boost - Boston[-train,]$medv)^2)
+gbm_pred = predict(gbm_model, newdata = test_boston)
+sqrt(mean(gbm_pred - test_boston$medv)^2)
 ```
 
-
-
-
-
-
-
-
-
+```{r}
+resamps = resamples(list(RF = rf_model, 
+               GBM = gbm_model))
+resamps
+summary(resamps)
+bwplot(resamps)
+```
 
