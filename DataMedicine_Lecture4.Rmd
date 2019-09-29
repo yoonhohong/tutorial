@@ -6,6 +6,9 @@ output:
     toc_float: true
 ---
 
+```{r, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE)
+```
 
 기계 학습 모델은 features 및 label 이라고도하는 입력 (input)및 출력(output) 데이터 수집이 필요합니다. 예를 들어, 환자들에서 기저 심혈관 위험인자들을 결정한 다음,  심근경색 발생 여부를 추적한 연구는 features가 위험 인자 세트이고 label이 미래의 심근 경색인 훈련 데이터를 제공 할 것입니다. 이 모델은 features을 사용하여 label을 예측하도록 훈련되었으므로, 새 환자의 경우 모델에서 심근경색이 발생할 위험을 예측합니다. 이 일반적인 프레임 워크는 다양한 작업에 사용될 수 있습니다.
 

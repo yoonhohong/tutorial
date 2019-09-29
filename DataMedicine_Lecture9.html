@@ -7,6 +7,7 @@
 <meta charset="utf-8" />
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
@@ -75,9 +76,7 @@ h6 {
 
 <link rel="stylesheet" href="styles.css" type="text/css" />
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -91,7 +90,6 @@ code {
 }
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -196,8 +194,6 @@ $(document).ready(function () {
 });
 </script>
 
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
 
 <style type="text/css">
@@ -254,48 +250,9 @@ $(document).ready(function () {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
 
-
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
 
 <style type="text/css">
 
@@ -344,8 +301,6 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
-  padding-left: 25px;
-  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -354,6 +309,16 @@ div.tocify {
 
 
 </style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
@@ -414,11 +379,11 @@ div.tocify {
 </li>
 <li>Hierchical clustering</li>
 </ul>
-<p>not interested in prediction<br />
-then, for what?</p>
 <dl>
 <dt>PCA</dt>
-<dd>data visualization and preprocessing for high-dimensional data
+<dd>data visualization
+</dd>
+<dd>preprocessing for high-dimensional data
 </dd>
 <dt>clustering</dt>
 <dd>subgrouping of predictors or observations which may provide valuable insignts on the data
@@ -435,7 +400,9 @@ then, for what?</p>
 <p><span class="math display">\[\sum_{j=1}^p \phi^2_{j1} = 1\]</span></p>
 <p>loading vector (length=p)</p>
 <p><span class="math display">\[\phi_1 = (\phi_{11}, \phi_{21},,,\phi_{p1})^T\]</span></p>
-<p>principal component scores (length=n)</p>
+<p>principal component scores (length=n) 각 관측치의 수치 값을 principal component로 변환한 점수 값<br />
+해당 principal component별로 있음</p>
+<p>예를 들어, 첫번째 principal component에 대한 각 관측치의 principal component scores 값은 아래와 같이 표현함</p>
 <p><span class="math display">\[(z_{11}, z_{21},,, z_{n1})\]</span></p>
 <dl>
 <dt>the second principal component</dt>
@@ -445,9 +412,9 @@ then, for what?</p>
 <dd>스케일링되지 않은 변수에 PCA 를 수행하면 단순히 분산이 큰 변수에 의해 주성분벡터가 결정됨
 </dd>
 </dl>
-<pre class="r"><code>states = row.names(USArrests)
-states</code></pre>
-<pre><code>##  [1] &quot;Alabama&quot;        &quot;Alaska&quot;         &quot;Arizona&quot;        &quot;Arkansas&quot;      
+<pre class="r"><code>states = row.names(USArrests) 
+states # 50 states in USA 
+##  [1] &quot;Alabama&quot;        &quot;Alaska&quot;         &quot;Arizona&quot;        &quot;Arkansas&quot;      
 ##  [5] &quot;California&quot;     &quot;Colorado&quot;       &quot;Connecticut&quot;    &quot;Delaware&quot;      
 ##  [9] &quot;Florida&quot;        &quot;Georgia&quot;        &quot;Hawaii&quot;         &quot;Idaho&quot;         
 ## [13] &quot;Illinois&quot;       &quot;Indiana&quot;        &quot;Iowa&quot;           &quot;Kansas&quot;        
@@ -460,219 +427,129 @@ states</code></pre>
 ## [41] &quot;South Dakota&quot;   &quot;Tennessee&quot;      &quot;Texas&quot;          &quot;Utah&quot;          
 ## [45] &quot;Vermont&quot;        &quot;Virginia&quot;       &quot;Washington&quot;     &quot;West Virginia&quot; 
 ## [49] &quot;Wisconsin&quot;      &quot;Wyoming&quot;</code></pre>
-<pre class="r"><code>names(USArrests)</code></pre>
-<pre><code>## [1] &quot;Murder&quot;   &quot;Assault&quot;  &quot;UrbanPop&quot; &quot;Rape&quot;</code></pre>
-<pre class="r"><code>summary(USArrests)</code></pre>
-<pre><code>##      Murder          Assault         UrbanPop          Rape      
+<pre class="r"><code>names(USArrests)
+## [1] &quot;Murder&quot;   &quot;Assault&quot;  &quot;UrbanPop&quot; &quot;Rape&quot;</code></pre>
+<pre class="r"><code>summary(USArrests)
+##      Murder          Assault         UrbanPop          Rape      
 ##  Min.   : 0.800   Min.   : 45.0   Min.   :32.00   Min.   : 7.30  
 ##  1st Qu.: 4.075   1st Qu.:109.0   1st Qu.:54.50   1st Qu.:15.07  
 ##  Median : 7.250   Median :159.0   Median :66.00   Median :20.10  
 ##  Mean   : 7.788   Mean   :170.8   Mean   :65.54   Mean   :21.23  
 ##  3rd Qu.:11.250   3rd Qu.:249.0   3rd Qu.:77.75   3rd Qu.:26.18  
 ##  Max.   :17.400   Max.   :337.0   Max.   :91.00   Max.   :46.00</code></pre>
-<pre class="r"><code>apply(USArrests, 2, var)</code></pre>
-<pre><code>##     Murder    Assault   UrbanPop       Rape 
+<pre class="r"><code>apply(USArrests, 2, var) # column-wise 
+##     Murder    Assault   UrbanPop       Rape 
 ##   18.97047 6945.16571  209.51878   87.72916</code></pre>
-<pre class="r"><code>pr.out = prcomp(USArrests, scale = TRUE)
-names(pr.out)</code></pre>
-<pre><code>## [1] &quot;sdev&quot;     &quot;rotation&quot; &quot;center&quot;   &quot;scale&quot;    &quot;x&quot;</code></pre>
-<pre class="r"><code>pr.out$rotation # loading vectors </code></pre>
-<pre><code>##                 PC1        PC2        PC3         PC4
+<pre class="r"><code>pr.out = prcomp(USArrests, scale = TRUE) 
+names(pr.out)
+## [1] &quot;sdev&quot;     &quot;rotation&quot; &quot;center&quot;   &quot;scale&quot;    &quot;x&quot;
+pr.out$rotation # loading vectors 
+##                 PC1        PC2        PC3         PC4
 ## Murder   -0.5358995  0.4181809 -0.3412327  0.64922780
 ## Assault  -0.5831836  0.1879856 -0.2681484 -0.74340748
 ## UrbanPop -0.2781909 -0.8728062 -0.3780158  0.13387773
-## Rape     -0.5434321 -0.1673186  0.8177779  0.08902432</code></pre>
-<pre class="r"><code>pr.out$x # pc scores</code></pre>
-<pre><code>##                        PC1         PC2         PC3          PC4
-## Alabama        -0.97566045  1.12200121 -0.43980366  0.154696581
-## Alaska         -1.93053788  1.06242692  2.01950027 -0.434175454
-## Arizona        -1.74544285 -0.73845954  0.05423025 -0.826264240
-## Arkansas        0.13999894  1.10854226  0.11342217 -0.180973554
-## California     -2.49861285 -1.52742672  0.59254100 -0.338559240
-## Colorado       -1.49934074 -0.97762966  1.08400162  0.001450164
-## Connecticut     1.34499236 -1.07798362 -0.63679250 -0.117278736
-## Delaware       -0.04722981 -0.32208890 -0.71141032 -0.873113315
-## Florida        -2.98275967  0.03883425 -0.57103206 -0.095317042
-## Georgia        -1.62280742  1.26608838 -0.33901818  1.065974459
-## Hawaii          0.90348448 -1.55467609  0.05027151  0.893733198
-## Idaho           1.62331903  0.20885253  0.25719021 -0.494087852
-## Illinois       -1.36505197 -0.67498834 -0.67068647 -0.120794916
-## Indiana         0.50038122 -0.15003926  0.22576277  0.420397595
-## Iowa            2.23099579 -0.10300828  0.16291036  0.017379470
-## Kansas          0.78887206 -0.26744941  0.02529648  0.204421034
-## Kentucky        0.74331256  0.94880748 -0.02808429  0.663817237
-## Louisiana      -1.54909076  0.86230011 -0.77560598  0.450157791
-## Maine           2.37274014  0.37260865 -0.06502225 -0.327138529
-## Maryland       -1.74564663  0.42335704 -0.15566968 -0.553450589
-## Massachusetts   0.48128007 -1.45967706 -0.60337172 -0.177793902
-## Michigan       -2.08725025 -0.15383500  0.38100046  0.101343128
-## Minnesota       1.67566951 -0.62590670  0.15153200  0.066640316
-## Mississippi    -0.98647919  2.36973712 -0.73336290  0.213342049
-## Missouri       -0.68978426 -0.26070794  0.37365033  0.223554811
-## Montana         1.17353751  0.53147851  0.24440796  0.122498555
-## Nebraska        1.25291625 -0.19200440  0.17380930  0.015733156
-## Nevada         -2.84550542 -0.76780502  1.15168793  0.311354436
-## New Hampshire   2.35995585 -0.01790055  0.03648498 -0.032804291
-## New Jersey     -0.17974128 -1.43493745 -0.75677041  0.240936580
-## New Mexico     -1.96012351  0.14141308  0.18184598 -0.336121113
-## New York       -1.66566662 -0.81491072 -0.63661186 -0.013348844
-## North Carolina -1.11208808  2.20561081 -0.85489245 -0.944789648
-## North Dakota    2.96215223  0.59309738  0.29824930 -0.251434626
-## Ohio            0.22369436 -0.73477837 -0.03082616  0.469152817
-## Oklahoma        0.30864928 -0.28496113 -0.01515592  0.010228476
-## Oregon         -0.05852787 -0.53596999  0.93038718 -0.235390872
-## Pennsylvania    0.87948680 -0.56536050 -0.39660218  0.355452378
-## Rhode Island    0.85509072 -1.47698328 -1.35617705 -0.607402746
-## South Carolina -1.30744986  1.91397297 -0.29751723 -0.130145378
-## South Dakota    1.96779669  0.81506822  0.38538073 -0.108470512
-## Tennessee      -0.98969377  0.85160534  0.18619262  0.646302674
-## Texas          -1.34151838 -0.40833518 -0.48712332  0.636731051
-## Utah            0.54503180 -1.45671524  0.29077592 -0.081486749
-## Vermont         2.77325613  1.38819435  0.83280797 -0.143433697
-## Virginia        0.09536670  0.19772785  0.01159482  0.209246429
-## Washington      0.21472339 -0.96037394  0.61859067 -0.218628161
-## West Virginia   2.08739306  1.41052627  0.10372163  0.130583080
-## Wisconsin       2.05881199 -0.60512507 -0.13746933  0.182253407
-## Wyoming         0.62310061  0.31778662 -0.23824049 -0.164976866</code></pre>
+## Rape     -0.5434321 -0.1673186  0.8177779  0.08902432
+head(pr.out$x) # pc scores
+##                   PC1        PC2         PC3          PC4
+## Alabama    -0.9756604  1.1220012 -0.43980366  0.154696581
+## Alaska     -1.9305379  1.0624269  2.01950027 -0.434175454
+## Arizona    -1.7454429 -0.7384595  0.05423025 -0.826264240
+## Arkansas    0.1399989  1.1085423  0.11342217 -0.180973554
+## California -2.4986128 -1.5274267  0.59254100 -0.338559240
+## Colorado   -1.4993407 -0.9776297  1.08400162  0.001450164</code></pre>
 <pre class="r"><code>biplot(pr.out)</code></pre>
-<p><img src="DataMedicine_Lecture9_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p><img src="DataMedicine_Lecture9_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 <pre class="r"><code>pr.out$rotation = -pr.out$rotation # loading vectors 
 pr.out$x = -pr.out$x # pc scores
-biplot(pr.out, scale = 0)</code></pre>
-<p><img src="DataMedicine_Lecture9_files/figure-html/unnamed-chunk-6-2.png" width="672" /></p>
-<pre class="r"><code>pr.var = pr.out$sdev^2
-pr.var</code></pre>
-<pre><code>## [1] 2.4802416 0.9897652 0.3565632 0.1734301</code></pre>
-<pre class="r"><code>pve = pr.var/sum(pr.var)
-pve</code></pre>
-<pre><code>## [1] 0.62006039 0.24744129 0.08914080 0.04335752</code></pre>
-<pre class="r"><code>plot(pve, xlab = &quot;Principal component&quot;, ylab = &quot;Proportion of Variance Explained&quot;, type = &quot;b&quot;) # scree plot </code></pre>
-<p><img src="DataMedicine_Lecture9_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
-<pre class="r"><code>library(ISLR)
-class(NCI60) # NCI60: 64개 암세포주에 대한 6830개의 유전자 발현 관측치 </code></pre>
-<pre><code>## [1] &quot;list&quot;</code></pre>
-<pre class="r"><code>names(NCI60)</code></pre>
-<pre><code>## [1] &quot;data&quot; &quot;labs&quot;</code></pre>
-<pre class="r"><code>nci.labs = NCI60$labs 
-nci.labs</code></pre>
-<pre><code>##  [1] &quot;CNS&quot;         &quot;CNS&quot;         &quot;CNS&quot;         &quot;RENAL&quot;       &quot;BREAST&quot;     
-##  [6] &quot;CNS&quot;         &quot;CNS&quot;         &quot;BREAST&quot;      &quot;NSCLC&quot;       &quot;NSCLC&quot;      
-## [11] &quot;RENAL&quot;       &quot;RENAL&quot;       &quot;RENAL&quot;       &quot;RENAL&quot;       &quot;RENAL&quot;      
-## [16] &quot;RENAL&quot;       &quot;RENAL&quot;       &quot;BREAST&quot;      &quot;NSCLC&quot;       &quot;RENAL&quot;      
-## [21] &quot;UNKNOWN&quot;     &quot;OVARIAN&quot;     &quot;MELANOMA&quot;    &quot;PROSTATE&quot;    &quot;OVARIAN&quot;    
-## [26] &quot;OVARIAN&quot;     &quot;OVARIAN&quot;     &quot;OVARIAN&quot;     &quot;OVARIAN&quot;     &quot;PROSTATE&quot;   
-## [31] &quot;NSCLC&quot;       &quot;NSCLC&quot;       &quot;NSCLC&quot;       &quot;LEUKEMIA&quot;    &quot;K562B-repro&quot;
-## [36] &quot;K562A-repro&quot; &quot;LEUKEMIA&quot;    &quot;LEUKEMIA&quot;    &quot;LEUKEMIA&quot;    &quot;LEUKEMIA&quot;   
-## [41] &quot;LEUKEMIA&quot;    &quot;COLON&quot;       &quot;COLON&quot;       &quot;COLON&quot;       &quot;COLON&quot;      
-## [46] &quot;COLON&quot;       &quot;COLON&quot;       &quot;COLON&quot;       &quot;MCF7A-repro&quot; &quot;BREAST&quot;     
-## [51] &quot;MCF7D-repro&quot; &quot;BREAST&quot;      &quot;NSCLC&quot;       &quot;NSCLC&quot;       &quot;NSCLC&quot;      
-## [56] &quot;MELANOMA&quot;    &quot;BREAST&quot;      &quot;BREAST&quot;      &quot;MELANOMA&quot;    &quot;MELANOMA&quot;   
-## [61] &quot;MELANOMA&quot;    &quot;MELANOMA&quot;    &quot;MELANOMA&quot;    &quot;MELANOMA&quot;</code></pre>
-<pre class="r"><code>table(nci.labs) # 14개 유형 </code></pre>
-<pre><code>## nci.labs
+biplot(pr.out, scale = 0) </code></pre>
+<p><img src="DataMedicine_Lecture9_files/figure-html/unnamed-chunk-7-2.png" width="672" /></p>
+<pre class="r"><code>summary(pr.out)
+## Importance of components:
+##                           PC1    PC2     PC3     PC4
+## Standard deviation     1.5749 0.9949 0.59713 0.41645
+## Proportion of Variance 0.6201 0.2474 0.08914 0.04336
+## Cumulative Proportion  0.6201 0.8675 0.95664 1.00000
+pr.var = pr.out$sdev^2
+pve = pr.var/sum(pr.var)
+plot(pve, xlab = &quot;Principal component&quot;, ylab = &quot;Proportion of Variance Explained&quot;, type = &quot;b&quot;) # scree plot </code></pre>
+<p><img src="DataMedicine_Lecture9_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>Another example for PCA</p>
+<pre class="r"><code>library(ISLR) # NCI60 data in this package </code></pre>
+<pre class="r"><code>class(NCI60) # NCI60: 64개 암세포주에 대한 6830개의 유전자 발현 관측치 
+## [1] &quot;list&quot;
+nci.labs = NCI60$labs
+table(nci.labs) # 14개 유형의 암세포주 
+## nci.labs
 ##      BREAST         CNS       COLON K562A-repro K562B-repro    LEUKEMIA 
 ##           7           5           7           1           1           6 
 ## MCF7A-repro MCF7D-repro    MELANOMA       NSCLC     OVARIAN    PROSTATE 
 ##           1           1           8           9           6           2 
 ##       RENAL     UNKNOWN 
 ##           9           1</code></pre>
-<pre class="r"><code>nci.data = NCI60$data</code></pre>
-<pre class="r"><code>pr.out = prcomp(nci.data, scale = TRUE) </code></pre>
+<pre class="r"><code>nci.data = NCI60$data
+dim(nci.data)
+## [1]   64 6830</code></pre>
+<pre class="r"><code>nci_pc_out = prcomp(nci.data, scale = TRUE) </code></pre>
 <pre class="r"><code>library(ggplot2)
-df = data.frame(pr.out$x[,c(1,2,3)], nci.labs)
-ggplot(data = df, aes(x=PC1, y=PC2, col = nci.labs)) + geom_point(size = 3)</code></pre>
+pc12scores = nci_pc_out$x[,c(&quot;PC1&quot;, &quot;PC2&quot;)]
+df = data.frame(cell_lines = nci.labs, pc12scores)
+ggplot(data = df, aes(x=PC1, y=PC2, col = cell_lines)) + geom_point(size = 3)</code></pre>
 <p><img src="DataMedicine_Lecture9_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
-<pre class="r"><code>summary(pr.out)</code></pre>
-<pre><code>## Importance of components:
-##                            PC1      PC2      PC3      PC4      PC5
-## Standard deviation     27.8535 21.48136 19.82046 17.03256 15.97181
-## Proportion of Variance  0.1136  0.06756  0.05752  0.04248  0.03735
-## Cumulative Proportion   0.1136  0.18115  0.23867  0.28115  0.31850
-##                             PC6      PC7      PC8      PC9     PC10
-## Standard deviation     15.72108 14.47145 13.54427 13.14400 12.73860
-## Proportion of Variance  0.03619  0.03066  0.02686  0.02529  0.02376
-## Cumulative Proportion   0.35468  0.38534  0.41220  0.43750  0.46126
-##                            PC11     PC12     PC13     PC14     PC15
-## Standard deviation     12.68672 12.15769 11.83019 11.62554 11.43779
-## Proportion of Variance  0.02357  0.02164  0.02049  0.01979  0.01915
-## Cumulative Proportion   0.48482  0.50646  0.52695  0.54674  0.56590
-##                            PC16     PC17     PC18     PC19    PC20
-## Standard deviation     11.00051 10.65666 10.48880 10.43518 10.3219
-## Proportion of Variance  0.01772  0.01663  0.01611  0.01594  0.0156
-## Cumulative Proportion   0.58361  0.60024  0.61635  0.63229  0.6479
-##                            PC21    PC22    PC23    PC24    PC25    PC26
-## Standard deviation     10.14608 10.0544 9.90265 9.64766 9.50764 9.33253
-## Proportion of Variance  0.01507  0.0148 0.01436 0.01363 0.01324 0.01275
-## Cumulative Proportion   0.66296  0.6778 0.69212 0.70575 0.71899 0.73174
-##                           PC27   PC28    PC29    PC30    PC31    PC32
-## Standard deviation     9.27320 9.0900 8.98117 8.75003 8.59962 8.44738
-## Proportion of Variance 0.01259 0.0121 0.01181 0.01121 0.01083 0.01045
-## Cumulative Proportion  0.74433 0.7564 0.76824 0.77945 0.79027 0.80072
-##                           PC33    PC34    PC35    PC36    PC37    PC38
-## Standard deviation     8.37305 8.21579 8.15731 7.97465 7.90446 7.82127
-## Proportion of Variance 0.01026 0.00988 0.00974 0.00931 0.00915 0.00896
-## Cumulative Proportion  0.81099 0.82087 0.83061 0.83992 0.84907 0.85803
-##                           PC39    PC40    PC41   PC42    PC43   PC44
-## Standard deviation     7.72156 7.58603 7.45619 7.3444 7.10449 7.0131
-## Proportion of Variance 0.00873 0.00843 0.00814 0.0079 0.00739 0.0072
-## Cumulative Proportion  0.86676 0.87518 0.88332 0.8912 0.89861 0.9058
-##                           PC45   PC46    PC47    PC48    PC49    PC50
-## Standard deviation     6.95839 6.8663 6.80744 6.64763 6.61607 6.40793
-## Proportion of Variance 0.00709 0.0069 0.00678 0.00647 0.00641 0.00601
-## Cumulative Proportion  0.91290 0.9198 0.92659 0.93306 0.93947 0.94548
-##                           PC51    PC52    PC53    PC54    PC55    PC56
-## Standard deviation     6.21984 6.20326 6.06706 5.91805 5.91233 5.73539
-## Proportion of Variance 0.00566 0.00563 0.00539 0.00513 0.00512 0.00482
-## Cumulative Proportion  0.95114 0.95678 0.96216 0.96729 0.97241 0.97723
-##                           PC57   PC58    PC59    PC60    PC61    PC62
-## Standard deviation     5.47261 5.2921 5.02117 4.68398 4.17567 4.08212
-## Proportion of Variance 0.00438 0.0041 0.00369 0.00321 0.00255 0.00244
-## Cumulative Proportion  0.98161 0.9857 0.98940 0.99262 0.99517 0.99761
-##                           PC63      PC64
-## Standard deviation     4.04124 2.148e-14
-## Proportion of Variance 0.00239 0.000e+00
-## Cumulative Proportion  1.00000 1.000e+00</code></pre>
+<pre class="r"><code>summary(pr.out)
+## Importance of components:
+##                           PC1    PC2     PC3     PC4
+## Standard deviation     1.5749 0.9949 0.59713 0.41645
+## Proportion of Variance 0.6201 0.2474 0.08914 0.04336
+## Cumulative Proportion  0.6201 0.8675 0.95664 1.00000</code></pre>
 </div>
 <div id="k-means-clustering" class="section level2">
 <h2>K-means clustering</h2>
-<p>n개 관측치들을 K개 클러스터로 분할하는 방법: <span class="math inline">\(K^n\)</span> 모든 가능한 경우들 중에서 within cluster variation 을 가장 작게만드는 분할을 찾지 않고 (global optimum), 대신 국소 최적값(local optimum)을 제공하는 알고리즘을 사용한다.</p>
-<p>즉,</p>
-<ol style="list-style-type: decimal">
-<li><p>각 관측치에 1에서 K까지의 숫자를 랜덤하게 할당한다. 이것은 관측체에 대한 초기 클러스터 할당으로 작용한다.</p></li>
-<li><p>클러스터 할당이 변하지 않을 때까지 다음을 반복한다.</p></li>
-</ol>
-<ul>
-<li>2-1. K개 클러스터 각각에 대해 클러스터 무게중심을 계산한다 (p 변수 평균들의 벡터)<br />
-</li>
-<li>2-2. 각 관측치를 그 무게 중심이 가장 가까운 클러스터에 할당한다.</li>
-</ul>
+<p>n개 관측치들을 K개 클러스터로 분할하는 방법: <span class="math inline">\(K^n\)</span></p>
+<blockquote>
+<p>알고리즘 1. 각 관측치에 1에서 K까지의 숫자를 랜덤하게 할당한다. 이것은 관측체에 대한 초기 클러스터 할당으로 작용한다. 2. 클러스터 할당이 변하지 않을 때까지 다음을 반복한다. + 2-1. 클러스터 각각에 대해 클러스터 무게중심을 계산한다.<br />
++ 2-2. 각 관측치와 각 클러스터의 무게중심 간의 거리를 계산한다.<br />
++ 2-3. 무게 중심이 가장 가까운 클러스터로 각 관측치를 새롭게 할당한다.</p>
+</blockquote>
+<p>*주의<br />
+K 를 선택하는 것은 전혀 단순한 문제가 아니다.</p>
 </div>
 <div id="hierachical-clustering" class="section level2">
 <h2>Hierachical clustering</h2>
-<p>bottom-up or agglomerative<br />
-dendrogram</p>
-<p>distance measures… - euclidean distance<br />
-<span class="math display">\[d_{euc}(x,y) = \sqrt{\sum_{i=1}^n(x_i - y_i)^2}\]</span></p>
+<p>예를 들어 두 개의 관측치가 서로 유사하다는 것을 어떻게 결정할지 생각해보자. 유사성의 척도가 필요한데, 이를 위해 우리는 거리를 계산한다.</p>
+<p>유사성의 척도(거리)</p>
 <ul>
+<li><p>euclidean distance<br />
+<span class="math display">\[d_{euc}(x,y) = \sqrt{\sum_{i=1}^n(x_i - y_i)^2}\]</span></p></li>
 <li><p>manhattan distance<br />
 <span class="math display">\[d_{man}(x,y) = \sum_{i=1}^n |{(x_i - y_i)|}\]</span></p></li>
-<li><p>pearson correlation distance<br />
-<span class="math display">\[d_{cor}(x, y) = 1 - \frac{\sum\limits_{i=1}^n (x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum\limits_{i=1}^n(x_i - \bar{x})^2 \sum\limits_{i=1}^n(y_i -\bar{y})^2}}\]</span></p></li>
+<li>pearson correlation distance<br />
+<span class="math display">\[d_{cor}(x, y) = 1 - \frac{\sum\limits_{i=1}^n (x_i - \bar{x})(y_i - \bar{y})}{\sqrt{\sum\limits_{i=1}^n(x_i - \bar{x})^2 \sum\limits_{i=1}^n(y_i -\bar{y})^2}}\]</span><br />
+</li>
+<li><p>correlation distance 는 관측치들의 크기보다는 그들의 모양(프로파일)에 중점을 둔다.</p></li>
 </ul>
-<p>스케일링<br />
-<span class="math display">\[\frac{x_i - center(x)}{scale(x)}\]</span></p>
+<p>스케일링: 관측치간의 유사성을 계산하기 전에 각 변수에 주어진 중요도를 동일하게 만들기 위해서 표준편차가 1이 되도록 한다. 이것은 k-mean clustering 에서도 동일하게 적용된다.</p>
+<blockquote>
+<p>알고리즘(aggolomerative hierachical clustering의 경우)<br />
+1. n개 관측치에서 모든 쌍별로 비유사성의 척도(예를 들어, 유클리드 거리)를 계산한다. 각 관측치 자체를 하나의 클러스터로 취급한다.<br />
+2. 모든 클러스터들간의 쌍별 거리를 계산하여, 가장 거리가 작은(즉, 가장 유사한) 클러스터 쌍을 융합한다. 3. 위에서 융합된 새로운 클러스터를 포함하여, 다시 2번 과정을 반복한다.</p>
+</blockquote>
+<p>만약, 클러스터가 두 개 이상의 관측치들을 포함하는 경우, 클러스터 사이의 비유사성을 어떻게 정의할 것인가?</p>
 <p>linkage<br />
 - complete linkage<br />
+클러스터 간 거리의 최대치<br />
 - average linkage<br />
+클러스터 간 거리의 평균치<br />
 - single linkage<br />
-- centroid linkage</p>
-<pre class="r"><code>sd.data = scale(nci.data) # scaling </code></pre>
-<pre class="r"><code>data.dist = dist(sd.data)
-hclust.complete = hclust(data.dist, method = &quot;complete&quot;)
+클러스터 간 거리의 최소치 - centroid linkage<br />
+클러스터 간 무게중심사이의 거리</p>
+<p>complete, average linkage 가 좀 더 균형잡힌 클러스터들을 제공하는 경향이 있다.</p>
+<pre class="r"><code>nci_scaled = scale(nci.data) # center and scale are TRUE in default  </code></pre>
+<pre class="r"><code>dist = dist(nci_scaled)
+hclust.complete = hclust(dist, method = &quot;complete&quot;)
 plot(hclust.complete, labels = nci.labs, main = &quot;complete linkage&quot;)
 hc.clusters = cutree(hclust.complete, 5)
-table(hc.clusters, nci.labs)</code></pre>
-<pre><code>##            nci.labs
+table(hc.clusters, nci.labs)
+##            nci.labs
 ## hc.clusters BREAST CNS COLON K562A-repro K562B-repro LEUKEMIA MCF7A-repro
 ##           1      0   3     2           0           0        0           0
 ##           2      3   2     0           0           0        0           0
@@ -685,68 +562,77 @@ table(hc.clusters, nci.labs)</code></pre>
 ##           2           0        0     1       0        0     1       0
 ##           3           0        0     0       0        0     0       0
 ##           4           1        0     0       0        0     0       0
-##           5           0        6     1       0        0     0       0</code></pre>
-<pre class="r"><code>abline(h=135, col=&quot;red&quot;)</code></pre>
+##           5           0        6     1       0        0     0       0
+abline(h=135, col=&quot;red&quot;)</code></pre>
 <p><img src="DataMedicine_Lecture9_files/figure-html/unnamed-chunk-16-1.png" width="672" /></p>
 <pre class="r"><code>set.seed(2)
-km.out = kmeans(sd.data, 5, nstart = 20)
+km.out = kmeans(nci_scaled, centers = 5, nstart = 20)
 km.clusters = km.out$cluster
-table(km.clusters, hc.clusters)</code></pre>
-<pre><code>##            hc.clusters
+table(km.clusters, hc.clusters)
+##            hc.clusters
 ## km.clusters  1  2  3  4  5
 ##           1  1  0  0  0  8
-##           2 20  7  0  0  0
-##           3  0  0  0  4  0
+##           2  0  0  8  0  0
+##           3 20  7  0  0  0
 ##           4 10  0  0  5  1
-##           5  0  0  8  0  0</code></pre>
-<pre class="r"><code>pc.dist = dist(pr.out$x[,1:5])
-hc.out = hclust(pc.dist)
-plot(hc.out, labels = nci.labs, main = &quot;Hier. Clust. on First Five Score Vectors&quot;)</code></pre>
+##           5  0  0  0  4  0</code></pre>
+<blockquote>
+<p>clustering based on principal components</p>
+</blockquote>
+<p>hierchical clustering based on the first five principal components</p>
+<pre class="r"><code>nci_pc_dist = dist(nci_pc_out$x[,1:5])
+hc_pc_out = hclust(nci_pc_dist)
+plot(hc_pc_out, labels = nci.labs, main = &quot;Hier. Clust. on First Five Score Vectors&quot;)</code></pre>
 <p><img src="DataMedicine_Lecture9_files/figure-html/unnamed-chunk-18-1.png" width="672" /></p>
-<pre class="r"><code>hc.clusters = cutree(hc.out, 4)
-table(hc.clusters, nci.labs)</code></pre>
-<pre><code>##            nci.labs
-## hc.clusters BREAST CNS COLON K562A-repro K562B-repro LEUKEMIA MCF7A-repro
-##           1      0   2     7           0           0        2           0
-##           2      5   3     0           0           0        0           0
-##           3      0   0     0           1           1        4           0
-##           4      2   0     0           0           0        0           1
-##            nci.labs
-## hc.clusters MCF7D-repro MELANOMA NSCLC OVARIAN PROSTATE RENAL UNKNOWN
-##           1           0        1     8       5        2     7       0
-##           2           0        7     1       1        0     2       1
-##           3           0        0     0       0        0     0       0
-##           4           1        0     0       0        0     0       0</code></pre>
+<pre class="r"><code>hc_pc_clusters = cutree(hc_pc_out, 4)
+table(hc_pc_clusters, nci.labs)
+##               nci.labs
+## hc_pc_clusters BREAST CNS COLON K562A-repro K562B-repro LEUKEMIA
+##              1      0   2     7           0           0        2
+##              2      5   3     0           0           0        0
+##              3      0   0     0           1           1        4
+##              4      2   0     0           0           0        0
+##               nci.labs
+## hc_pc_clusters MCF7A-repro MCF7D-repro MELANOMA NSCLC OVARIAN PROSTATE
+##              1           0           0        1     8       5        2
+##              2           0           0        7     1       1        0
+##              3           0           0        0     0       0        0
+##              4           1           1        0     0       0        0
+##               nci.labs
+## hc_pc_clusters RENAL UNKNOWN
+##              1     7       0
+##              2     2       1
+##              3     0       0
+##              4     0       0</code></pre>
 <pre class="r"><code>set.seed(3)
-pc.scale = scale(pr.out$x[,1:5])
-km.out = kmeans(pc.scale, 4, nstart = 20)
-table(km.out$cluster, hc.clusters)</code></pre>
-<pre><code>##    hc.clusters
+nci_pc_scaled = scale(nci_pc_out$x[,1:5])
+km_pc_out = kmeans(nci_pc_scaled, 4, nstart = 20)
+table(km_pc_out$cluster, hc_pc_clusters)
+##    hc_pc_clusters
 ##      1  2  3  4
-##   1 32 11  0  0
-##   2  0  0  0  4
-##   3  2  0  6  0
-##   4  0  9  0  0</code></pre>
+##   1  0  9  0  0
+##   2  2  0  6  0
+##   3 32 11  0  0
+##   4  0  0  0  4</code></pre>
 <div id="heatmap" class="section level3">
 <h3>Heatmap</h3>
-<pre class="r"><code>df.scaled = scale(USArrests)
-df.dist = dist(df.scaled) # row-wise distance matrix 
-hc.out = hclust(df.dist, method = &quot;complete&quot;)
-plot(hc.out)</code></pre>
+<pre class="r"><code>df_scaled = scale(USArrests)
+df_dist = dist(df_scaled) # row-wise distance matrix 
+hc_out = hclust(df_dist, method = &quot;complete&quot;)
+plot(hc_out)</code></pre>
 <p><img src="DataMedicine_Lecture9_files/figure-html/unnamed-chunk-20-1.png" width="672" /></p>
-<pre class="r"><code>hc.clusters = cutree(hc.out, 4)
-cluster.membership = hc.clusters </code></pre>
+<pre class="r"><code>hc_clusters = cutree(hc_out, 4)</code></pre>
 <p>load package</p>
 <pre class="r"><code>library(pheatmap)</code></pre>
-<pre class="r"><code>mat = as.matrix(t(df.scaled))
-apply(mat, 1, sd)</code></pre>
-<pre><code>##   Murder  Assault UrbanPop     Rape 
+<pre class="r"><code>mat = as.matrix(t(df_scaled))
+apply(mat, 1, sd)
+##   Murder  Assault UrbanPop     Rape 
 ##        1        1        1        1</code></pre>
 <pre class="r"><code>pheatmap(mat, 
          cluster_rows = T,
          # cellheight = 20,
-         annotation_col = data.frame(cluster.membership))</code></pre>
-<p><img src="DataMedicine_Lecture9_files/figure-html/unnamed-chunk-24-1.png" width="672" /></p>
+         annotation_col = data.frame(hc_clusters))</code></pre>
+<p><img src="DataMedicine_Lecture9_files/figure-html/unnamed-chunk-23-1.png" width="672" /></p>
 </div>
 </div>
 </div>
@@ -769,6 +655,49 @@ $(document).ready(function () {
 });
 
 
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
 </script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->

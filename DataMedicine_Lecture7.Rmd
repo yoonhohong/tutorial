@@ -8,6 +8,10 @@ editor_options:
   chunk_output_type: console
 ---
 
+```{r, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE)
+```
+
 [Decision tree](https://www.youtube.com/watch?v=7VeUPuFGJHk)  
 
 # Decision trees: regression  
